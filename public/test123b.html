@@ -1,0 +1,741 @@
+
+<!DOCTYPE html>
+<head>
+    <title>WebRTC Simple Calling API + Mobile</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="css/styles1.css" rel="stylesheet" type="text/css">    <meta charset="utf-8">
+    <link rel="stylesheet" href="./css/style.css">
+    <meta charset="utf-8">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" type="text/css" href="./css/control_utils.css">
+    <script src="./javascript/camera_utils.js"></script>
+    <script src="./javascript/control_utils.js"></script>
+    <script src="./javascript/drawing_utils.js"></script>
+    <script src="./javascript/pose.js"></script>  <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.6.3.js"></script>
+
+    <title>Curl Counter</title>
+
+
+
+
+    <script>
+        const buttonClick = () => {
+            var input = document.getElementById('message-body');
+            publishMessage(input.value);
+            input.value = '';
+        };
+    
+        const showMessage = (msg) => {
+            var message = document.createElement('div');
+            message.innerText = msg;
+            document.getElementById('messages').appendChild(message);
+        };
+    
+        let pubnub;
+    
+        const setupPubNub = () => {
+            // Update this block with your publish/subscribe keys
+            pubnub = new PubNub({
+                publishKey : "pub-c-10014c5b-885f-4816-815f-7be5500dcd9a",
+                subscribeKey : "sub-c-98a82c09-e66c-4762-9a80-f3a9ac217571",
+                userId: "3bad82d9-6faf-41e4-9519-77d4632ed143"
+            });
+    
+            // add listener
+    
+            // publish message
+    
+            // subscribe to a channel
+        };
+    
+        // run after page is loaded
+        window.onload = setupPubNub;
+        </script>
+
+
+    <style>
+  
+
+.overlay {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 10000;
+  top: 0;
+  left: 0;
+  background-color: rgb(0,0,0);
+  background-color: rgba(0,0,0, 0.9);
+  overflow-x: hidden;
+  transition: 0.5s;
+}
+
+.overlay-content {
+  position: relative;
+  top: 25%;
+  width: 100%;
+  text-align: center;
+  margin-top: 30px;
+}
+
+.overlay a {
+  padding: 8px;
+  text-decoration: none;
+  font-size: 36px;
+  color: #818181;
+  display: block;
+  transition: 0.3s;
+}
+
+.overlay a:hover, .overlay a:focus {
+  color: #f1f1f1;
+}
+
+.overlay .closebtn {
+  position: absolute;
+  top: 20px;
+  right: 45px;
+  font-size: 60px;
+}
+
+@media screen and (max-height: 450px) {
+  .overlay a {font-size: 20px}
+  .overlay .closebtn {
+  font-size: 40px;
+  top: 15px;
+  right: 35px;
+  }
+}
+    </style>
+</head>
+<script>/* Open when someone clicks on the span element */
+
+function fuckyou() {
+    var pubnub = new PubNub({
+        publishKey: 'pub-c-10014c5b-885f-4816-815f-7be5500dcd9a',
+        subscribeKey: 'sub-c-98a82c09-e66c-4762-9a80-f3a9ac217571',
+                userId: "3bad82d9-6faf-41e4-9519-77d4632ed143"
+    });
+
+    pubnub.publish({
+        channel: 'dude',
+        message: 'sdfsdfsdfsdfsdsdf'
+    }, (status, response) => {
+        if (status.error) {
+            console.error(status.errorData);
+            console.log('Something went wrong');
+        } else {
+            console.log('Message published successfuxcxcxccxclly');
+        }
+    });
+}
+  
+    function openNav() {
+      document.getElementById("myNav").style.width = "100%";
+    }
+  
+    /* Close when someone clicks on the "x" symbol inside the overlay */
+    function closeNav() {
+      document.getElementById("myNav").style.width = "0%";
+    }</script>
+<body>
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+<!--      <a href="#">About</a>
+      <a href="#">Services</a>
+      <a href="#">Clients</a>
+      <a href="#">Contact</a>-->
+     <h1> Waiting for Player</h1>
+     <a href="javascript:void(0)" id="sendButton">sdfsdfsdf</a>
+     <button id="sendButton" onclick="fuckyou()">sdfsfdsfsdfsdfsdfsdsdfsfsdfsdf</button>
+
+
+     <input id="message-body" type="text">
+     <button onclick="buttonClick()">Send</button>
+     <div id="messages"></div>
+  
+    </div>
+  </div>
+  
+
+<!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+<!-- My Phone Number & Dial Areas -->
+<!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+<div class="container">
+    <div class="row">
+
+<span style="font-size:30px;cursor:pointer" onclick="openNav()">&#9776; open</span>
+
+      <button onclick="myFunction()">Click me</button>
+
+<p id="demo"></p>
+
+        <div class="row begin-countdown">
+      <div class="col-md-12 text-center">
+        <div class="dot" style="position: center">
+          <h3 id="pageBeginCountdownText" class="clock">10</h3>
+          <p class="pp">Seonds</p>
+        </div>
+      </div>
+    </div>
+
+<script>
+
+
+
+     ProgressCountdown(10, "pageBeginCountdownText");
+
+      function ProgressCountdown(timeleft, text) {
+        return new Promise((resolve, reject) => {
+          var countdownTimer = setInterval(() => {
+            timeleft--;
+
+            document.getElementById(text).textContent = timeleft;
+
+            if (timeleft <= 0) {
+              clearInterval(countdownTimer);
+              resolve(true);
+            }
+          }, 1000);
+        });
+      }
+
+    
+function myFunction() {
+  document.getElementById("demo").innerHTML = "Hello World";
+   // alert ("This is an alert dialog box");  
+}
+</script>
+
+        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        <!-- MY PHONE NUMBER -->
+        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        <div class="col-sm-6">
+        
+            <div id="my-number-section" class="text-center">
+                <div id="my-number">LOADING</div>
+                <div id="my-number-title" class="hidden-sm hidden-xs">
+                    this is <strong>your phone number</strong>
+                </div>
+                <div id="my-number-permalink">
+                    <span class="glyphicon glyphicon-link"></span>
+                    call link:
+                    <a id="my-number-link" href="..." target="_blank">https://...</a>
+                </div>
+            </div>
+            <div id="pubnub-chat-section" class="text-center">
+                <input id="pubnub-chat-input" type="text" placeholder="chat here">
+                <div id="pubnub-chat-output"><div></div></div>
+            </div>
+        </div>
+
+
+<!--dfggrgegerg-->
+
+
+<div class="container">
+    <video class="input_video"></video>
+    <canvas class="output_canvas" width="1280px" height="720px"></canvas>
+    <!-- <canvas class="counter_canvas" width="200px" height="720px"></canvas> -->
+    <div class="loading">
+        <div class="spinner"></div>
+        <div class="message">
+            Loading
+        </div>
+    </div>
+    <a class="abs logo" href="https://github.com/baoanh1310/pose_demo" target="_blank">
+        <div style="display: flex;align-items: center;bottom: 0;right: 10px;">
+            <img class="logo" src="logo_white.png" alt="" style="
+      height: 50px;">
+            <span class="title">Group 02 - AI Project</span>
+        </div>
+    </a>
+    <div class="shoutout">
+        <div>
+            <a href="https://github.com/baoanh1310/pose_demo">
+                Click here for more info
+            </a>
+        </div>
+    </div>
+</div>
+<div class="control-panel">
+</div>
+
+
+
+
+<!--dfggrgegerg-->
+
+        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        <!-- Video -->
+        <!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= -->
+        <div class="col-sm-6">
+            <!-- DISPLAY -->
+            <div class="row">
+                <div class="col-xs-12 text-center">
+                    <div id="video-border">
+                        <div class="pubnub-relative">
+                            <div id="video-self"></div>
+                        </div>
+                        <div id="video-display">
+                            <span class="glyphicon glyphicon-flash"></span>
+                        </div>
+                    </div>
+                    <div id="pubnub-relative">
+                        <div id="video-thumbnail"></div>
+                        <div id="pubnub-logo">
+                            <div id="pubnub-logo-img"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DIAL CONTROLS -->
+            <div class="row">
+                <div class="col-sm-6 col-xs-7">
+                    <div class="form-group"><div class="input-group">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                    <input id="number" class="form-control" type="number" placeholder="Type Recipient's #">
+                    </div></div>
+                </div>
+                <div class="col-sm-6 col-xs-5 dial-buttons">
+                    <button id="dial" class="btn btn-primary">
+                        <span class="glyphicon glyphicon-earphone"></span>
+                    </button>
+                    <button id="snap" class="btn btn-success">
+                        <span class="glyphicon glyphicon-camera"></span>
+                    </button>
+                    <button id="hangup" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-ban-circle"></span>
+                    </button>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+<!-- WebRTC Peer Connections -->
+<!-- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- -->
+<!-- IMPORTANT: THIS IS AN UNMINIFIED DEVELOPMENT PUBNUB LIBRARY 
+    replace this with the latest versioned, minified CDN lib link before 
+    you deploy your app to a production enviornment.
+    https://github.com/pubnub/javascript#cdn-links
+-->
+<script src="https://cdn.pubnub.com/pubnub.js"></script>
+
+<!-- WebRTC SDK -->
+<script src="js/webrtc.js"></script>
+<script src="js/sound.js"></script>
+<script>
+ 
+// Our input frames will come from here.
+const videoElement = document.getElementsByClassName('input_video')[0];
+const canvasElement = document.getElementsByClassName('output_canvas')[0];
+const controlsElement = document.getElementsByClassName('control-panel')[0];
+const canvasCtx = canvasElement.getContext('2d');
+
+// const counterElement = document.getElementsByClassName('counter_canvas')[0];
+// const canvasCounter = counterElement.getContext('2d');
+
+// We'll add this to our control panel later, but we'll save it here so we can
+// call tick() each time the graph runs.
+const fpsControl = new FPS();
+
+// Optimization: Turn off animated spinner after its hiding animation is done.
+const spinner = document.querySelector('.loading');
+spinner.ontransitionend = () => {
+    spinner.style.display = 'none';
+};
+
+// Curl counter stuff
+let angle = 0.0;
+let stage = "DOWN";
+let counter = 0;
+
+function zColor(data) {
+    return 'white';
+}
+
+function calculate_angle(shoulder, elbow, wrist) {
+  let radians = Math.atan2(wrist[1]-elbow[1], wrist[0]-elbow[0]) - 
+    Math.atan2(shoulder[1]-elbow[1], shoulder[0]-elbow[0]);
+  let angle = Math.abs(radians * 180.0 / Math.PI);
+
+  if (angle > 180.0) {
+    angle = 360 - angle;
+  }
+
+  return angle;
+}
+
+function onResults(results) {
+    // Hide the spinner.
+    document.body.classList.add('loaded');
+
+    // Update the frame rate.
+    fpsControl.tick();
+
+    // Draw the overlays.
+    canvasCtx.save();
+    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    canvasCtx.drawImage(
+        results.image, 0, 0, canvasElement.width, canvasElement.height);
+    drawConnectors(
+        canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
+            visibilityMin: 0.65,
+            color: 'white'
+        });
+    drawLandmarks(
+        canvasCtx,
+        Object.values(POSE_LANDMARKS_LEFT)
+        .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: zColor, fillColor: 'rgb(255,138,0)' });
+    drawLandmarks(
+        canvasCtx,
+        Object.values(POSE_LANDMARKS_RIGHT)
+        .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: zColor, fillColor: 'rgb(0,217,231)' });
+    drawLandmarks(
+        canvasCtx,
+        Object.values(POSE_LANDMARKS_NEUTRAL)
+        .map(index => results.poseLandmarks[index]), { visibilityMin: 0.65, color: zColor, fillColor: 'white' });
+    // canvasCtx.restore();
+
+    const landmarksRight = Object.values(POSE_LANDMARKS_LEFT)
+      .map(index => results.poseLandmarks[index]);
+
+    const shoulder = [landmarksRight[5].x, landmarksRight[5].y];
+    const elbow = [landmarksRight[6].x, landmarksRight[6].y];
+    const wrist = [landmarksRight[7].x, landmarksRight[7].y];
+
+    angle = calculate_angle(shoulder, elbow, wrist);
+    
+    // console.log(angle);
+    if (angle > 140) {
+      stage = "DOWN";
+    } 
+    if (angle < 30 && stage == "DOWN") {
+      stage = "UP";
+      counter += 1;
+      // console.log(stage + ", ", counter);
+    }
+    console.log("Angle: " + angle + ", Stage: " + stage + ", ", counter);
+
+    canvasCtx.font = "30px Arial";
+    canvasCtx.fillStyle = "red";
+    canvasCtx.fillText(stage + ": " + counter.toString(), 1100, 50);
+    canvasCtx.restore();
+}
+
+const pose = new Pose({
+    locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/pose@0.3.1621277220/${file}`;
+    }
+});
+pose.onResults(onResults);
+
+/**
+ * Instantiate a camera. We'll feed each frame we receive into the solution.
+ */
+const camera = new Camera(videoElement, {
+    onFrame: async () => {
+        await pose.send({ image: videoElement });
+    },
+    width: 1280,
+    height: 720
+});
+camera.start();
+
+// Present a control panel through which the user can manipulate the solution
+// options.
+new ControlPanel(controlsElement, {
+        selfieMode: true,
+        modelComplexity: 0,
+        smoothLandmarks: true,
+        minDetectionConfidence: 0.2,
+        minTrackingConfidence: 0.2
+    })
+    .add([
+        new StaticText({ title: 'Curl Counter Mode' }),
+        fpsControl,
+        new Toggle({ title: 'Right Hand Practice', field: 'selfieMode' }),
+        // new Slider({
+        //     title: 'Model Complexity',
+        //     field: 'modelComplexity',
+        //     discrete: ['Lite', 'Full', 'Heavy'],
+        // }),
+        // new Toggle({ title: 'Smooth Landmarks', field: 'smoothLandmarks' }),
+        // new Slider({
+        //     title: 'Min Detection Confidence',
+        //     field: 'minDetectionConfidence',
+        //     range: [0, 1],
+        //     step: 0.01
+        // }),
+        // new Slider({
+        //     title: 'Min Tracking Confidence',
+        //     field: 'minTrackingConfidence',
+        //     range: [0, 1],
+        //     step: 0.01
+        // }),
+    ])
+    .on(options => {
+        videoElement.classList.toggle('selfie', options.selfieMode);
+        pose.setOptions(options);
+    });
+
+</script>
+<script>(function(){
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Generate Random Number if Needed
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+var urlargs         = urlparams();
+var my_number       = PUBNUB.$('my-number');
+var my_link         = PUBNUB.$('my-number-link');
+var number          = urlargs.number || Math.floor(Math.random()*999+1);
+
+my_number.number    = number;
+my_number.innerHTML = ''+my_number.number;
+my_link.href        = location.href.split('?')[0] + '?call=' + number;
+my_link.innerHTML   = my_link.href;
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Update Location if Not Set
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+if (!('number' in urlargs)) {
+    urlargs.number = my_number.number;
+    location.href = urlstring(urlargs);
+    return;
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Get URL Params
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function urlparams() {
+    var params = {};
+    if (location.href.indexOf('?') < 0) return params;
+
+    PUBNUB.each(
+        location.href.split('?')[1].split('&'),
+        function(data) { var d = data.split('='); params[d[0]] = d[1]; }
+    );
+
+    return params;
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Construct URL Param String
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function urlstring(params) {
+    return location.href.split('?')[0] + '?' + PUBNUB.map(
+        params, function( key, val) { return key + '=' + val }
+    ).join('&');
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Calling & Answering Service
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+var video_out = PUBNUB.$('video-display');
+var img_out   = PUBNUB.$('video-thumbnail');
+var img_self  = PUBNUB.$('video-self');
+
+var phone     = window.phone = PHONE({
+    number        : my_number.number // listen on this line
+,   media         : { video: { width:640, height:480 }, audio: true } // <--- Set Camera Resolution
+,   publish_key   : 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c'
+,   subscribe_key : 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe'
+,   secure        : true, ssl: true
+});
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Video Session Connected
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function connected(session) {
+    video_out.innerHTML = '';
+    video_out.appendChild(session.video);
+
+    PUBNUB.$('number').value = ''+session.number;
+    sounds.play('sound/hi');
+    console.log("Hi!");
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Video Session Ended
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function ended(session) {
+    clearInterval(thumbnail.ival);
+    thumbnail.ival = 0;
+    set_icon('facetime-video');
+    img_out.innerHTML = '';
+    sounds.play('sound/goodbye');
+    console.log("Bye!");
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Video Session Ended
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function set_icon(icon) {
+    video_out.innerHTML = '<span class="glyphicon glyphicon-' +
+        icon + '"></span>';
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Start Phone Call
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function dial(number) {
+    // Hangup an old call
+    phone.hangup();
+
+    // Dial Number
+    var session = phone.dial(number);
+
+    // No Dupelicate Dialing Allowed
+    if (!session) return;
+
+    // Show Connecting Status
+    set_icon('send');
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Ready to Send or Receive Calls
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+phone.ready(function(){
+    // Ready To Call
+    set_icon('facetime-video');
+
+    // Auto Call
+    if ('call' in urlargs) {
+        var number = urlargs['call'];
+        PUBNUB.$('number').value = number;
+        dial(number);
+    }
+
+    // Make a Phone Call
+    PUBNUB.bind( 'mousedown,touchstart', PUBNUB.$('dial'), function(){
+        var number = PUBNUB.$('number').value;
+        if (!number) return;
+        dial(number);
+    } );
+
+    // Hanup Call
+    PUBNUB.bind( 'mousedown,touchstart', PUBNUB.$('hangup'), function() {
+        phone.hangup();
+        set_icon('facetime-video');
+    } );
+
+    // Take Picture
+    PUBNUB.bind( 'mousedown,touchstart', PUBNUB.$('snap'), function() {
+        var photo = phone.snap();
+
+        if (!(photo && photo.image))
+            return console.error(
+                '%c Connect your video with a partner first.',
+                'font-size:30px;background:#f00;color:#fff'
+            );
+
+        img_self.innerHTML = ' ';
+        img_self.appendChild(photo.image);
+        setTimeout( function() { img_self.innerHTML = ' ' }, 750 );
+    } );
+});
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Received Call Thumbnail
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function thumbnail(session) {
+    img_out.innerHTML = '';
+    img_out.appendChild(session.image);
+    img_out.appendChild(phone.snap().image);
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Receiver for Calls
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+phone.receive(function(session){
+    session.message(message);
+    session.thumbnail(thumbnail);
+    session.connected(connected);
+    session.ended(ended);
+
+    if (!thumbnail.ival)
+        thumbnail.ival = setInterval( () => thumbnail(session), 400 );
+});
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Chat
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+var chat_in  = PUBNUB.$('pubnub-chat-input');
+var chat_out = PUBNUB.$('pubnub-chat-output');
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Send Chat MSG and update UI for Sending Messages
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+PUBNUB.bind( 'keydown', chat_in, function(e) {
+    if ((e.keyCode || e.charCode) !== 13)     return true;
+    if (!chat_in.value.replace( /\s+/g, '' )) return true;
+
+    phone.send({ text : chat_in.value });
+    add_chat( my_number.number + " (Me)", chat_in.value );
+    chat_in.value = '';
+} )
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Update Local GUI
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function add_chat( number, text ) {
+    if (!text.replace( /\s+/g, '' )) return true;
+
+    var newchat       = document.createElement('div');
+    newchat.innerHTML = PUBNUB.supplant(
+        '<strong>{number}: </strong> {message}', {
+        message : safetxt(text),
+        number  : safetxt(number)
+    } );
+    chat_out.insertBefore( newchat, chat_out.firstChild );
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// WebRTC Message Callback
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function message( session, message ) {
+    add_chat( session.number, message.text );
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// XSS Prevent
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+function safetxt(text) {
+    return (''+text).replace( /[<>]/g, '' );
+}
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Problem Occured During Init
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+phone.unable(function(details){
+    console.log("Alert! - Reload Page.");
+    console.log(details);
+    set_icon('remove');
+});
+
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+// Debug Output
+// -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+phone.debug(function(details){
+    console.log(details);
+});
+
+})();
+
+
+
+</script>
+
+
+</body>
+</html>

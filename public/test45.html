@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Hello, PubNub</title>
+		<!-- Update this block with the URL to the content delivery network version of the SDK -->
+		<script src="https://cdn.pubnub.com/sdk/javascript/pubnub.7.6.3.js"></script>
+	</head>
+	<body>
+		<script>
+			const buttonClick = () => {
+				var input = document.getElementById('message-body');
+				publishMessage(input.value);
+				input.value = '';
+			};
+
+			const showMessage = (msg) => {
+				var message = document.createElement('div');
+				message.innerText = msg;
+				document.getElementById('messages').appendChild(message);
+			};
+
+			let pubnub;
+
+			const setupPubNub = () => {
+				// Update this block with your publish/subscribe keys
+				pubnub = new PubNub({
+        publishKey: 'pub-c-10014c5b-885f-4816-815f-7be5500dcd9a',
+        subscribeKey: 'sub-c-98a82c09-e66c-4762-9a80-f3a9ac217571',
+                userId: "3bad82d9-6faf-41e4-9519-77d4632ed143",
+				});
+
+				// create a local channel entity
+				const channel = pubnub.channel('hello_world');
+				// create a subscription on the channel
+				const subscription = channel.subscription();
+				// add listeners
+
+				pubnub.addListener({
+					status: (s) => {
+						console.log('Status', s.category);
+					},
+				});
+
+				// add an onMessage listener to the channel subscription
+				subscription.onMessage = (messageEvent) => {
+					showMessage(messageEvent.message.description);
+				};
+
+				// subscribe to the channel
+				subscription.subscribe();
+			};
+			// run after page is loaded
+			window.onload = setupPubNub;
+
+			// publish message
+			const publishMessage = async (message) => {
+				// With the right payload, you can publish a message, add a reaction to a message,
+				// send a push notification, or send a small payload called a signal.
+				const publishPayload = {
+					channel: 'hello_world',
+					message: {
+						title: 'greeting',
+						description: message,
+					},
+				};
+				await pubnub.publish(publishPayload);
+			};
+		</script>
+
+		<div>
+			<input id="message-body" type="text" />
+			<button onclick="buttonClick()">Send</button>
+			<div id="messages"></div>
+		</div>
+	</body>
+</html>
