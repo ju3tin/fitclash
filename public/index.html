@@ -14,6 +14,8 @@
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Hugo 0.122.0">
     <title>Cover Template · Bootstrap v5.3</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <link href="css/styles1.css" rel="stylesheet" type="text/css">
     <link rel="canonical" href="https://getbootstrap.com/docs/5.3/examples/cover/">
 
@@ -25,6 +27,43 @@
 
     <style>
 
+.copy-link {
+  --height: 36px;
+
+  display: flex;
+  max-width: 250px;
+}
+
+.copy-link-input {
+  flex-grow: 1;
+  padding: 0 8px;
+  font-size: 14px;
+  border: 1px solid #cccccc;
+  border-right: none;
+  outline: none;
+}
+
+.copy-link-input:hover {
+  background: #eeeeee;
+}
+
+.copy-link-button {
+  flex-shrink: 0;
+  width: var(--height);
+  height: var(--height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dddddd;
+  color: #333333;
+  outline: none;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+}
+
+.copy-link-button:hover {
+  background: #cccccc;
+}
 
 
 .overlay {
@@ -1147,6 +1186,46 @@ td,th {
     content: "\e200"
 }
 
+.copy-link {
+  --height: 36px;
+
+  display: flex;
+  max-width: 250px;
+}
+
+.copy-link-input {
+  flex-grow: 1;
+  padding: 0 8px;
+  font-size: 14px;
+  color: #000;
+  border: 1px solid #cccccc;
+  border-right: none;
+  outline: none;
+}
+
+.copy-link-input:hover {
+  background: #eeeeee;
+}
+
+.copy-link-button {
+  flex-shrink: 0;
+  width: var(--height);
+  height: var(--height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #dddddd;
+  color: #333333;
+  outline: none;
+  border: 1px solid #cccccc;
+  cursor: pointer;
+}
+
+.copy-link-button:hover {
+  background: #cccccc;
+}
+
+
 * {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -1556,12 +1635,15 @@ function urlparams() {
     );
 
     return params;
+
+   
 }
 
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Construct URL Param String
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 function urlstring(params) {
+   
     return location.href.split('?')[0] + '?' + PUBNUB.map(
         params, function( key, val) { return key + '=' + val }
     ).join('&');
@@ -1614,6 +1696,9 @@ function set_icon(icon) {
         icon + '"></span>';
 }
 
+
+
+
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 // Start Phone Call
 // -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
@@ -1639,6 +1724,41 @@ phone.ready(function(){
     set_icon('facetime-video');
 
     // Auto Call
+    if('number' in urlargs){
+        var dickhead = urlargs['number'];
+        const elem = document.getElementById("onctent5");   if (elem) {
+                elem.innerHTML = `<div class="copy-link">
+  <input type="text" class="copy-link-input" value="https://fitclash.vercel.app/?call=`+dickhead+`" readonly>
+  <button type="button" class="copy-link-button">
+    <span class="material-icons">content_copy</span>
+  </button>
+</div>`+ dickhead;
+                console.log('you 8'+ dickhead);
+
+
+                document.querySelectorAll(".copy-link").forEach(copyLinkParent => {
+  const inputField = copyLinkParent.querySelector(".copy-link-input");
+  const copyButton = copyLinkParent.querySelector(".copy-link-button");
+  const text = inputField.value;
+
+  inputField.addEventListener("focus", () => inputField.select());
+
+  copyButton.addEventListener("click", () => {
+    inputField.select();
+    navigator.clipboard.writeText(text);
+
+    inputField.value = "Copied!";
+    setTimeout(() => inputField.value = text, 2000);
+  });
+});
+
+
+            } else {
+                console.log('you 7');
+            }
+        console.log(dickhead+ 'fuck you');
+    }
+    console.log('your mum')
     if ('call' in urlargs) {
         var number = urlargs['call'];
         PUBNUB.$('number').value = number;
