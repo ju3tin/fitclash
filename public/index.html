@@ -7,6 +7,7 @@
     <script src="./javascript/camera_utils.js"></script>
     <script src="./javascript/control_utils.js"></script>
     <script src="./javascript/drawing_utils.js"></script>
+     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script src="./javascript/pose.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1423,6 +1424,31 @@ function openNav() {
     }</script>
 
     </script>
+
+  
+
+    <script>
+        function handleCredentialResponse(response) {
+            // Decoding the JWT token from Google
+            console.log("Encoded JWT ID token: " + response.credential);
+
+            // You can now verify the token on your server or use it to get user info
+            const jwt = response.credential;
+            
+            // Parse the JWT to extract user details (optional)
+            const base64Url = jwt.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            const user = JSON.parse(jsonPayload);
+            console.log("User Info: ", user);
+
+            // You can now use 'user' object, which contains user details like email, name, etc.
+            alert(`Welcome, ${user.name}!`);
+        }
+    </script>
     <!-- Custom styles for this template -->
     <link href="cover.css" rel="stylesheet">
   </head>
@@ -1436,6 +1462,22 @@ function openNav() {
     <a href="#">Clients</a>
     <a href="#">Contact</a>-->
    <h1> Waiting for Player</h1>
+       <h1>Login with Google</h1>
+
+    <!-- The Google Sign-In button -->
+    <div id="g_id_onload"
+         data-client_id="YOUR_GOOGLE_CLIENT_ID"
+         data-callback="handleCredentialResponse">
+    </div>
+
+    <div class="g_id_signin" 
+         data-type="standard"
+         data-size="large"
+         data-theme="outline"
+         data-text="sign_in_with"
+         data-shape="rectangular"
+         data-logo_alignment="left">
+    </div>
    <button id="sendButton" onclick="timer3();closeNav();">Start demo</button>
 
 
