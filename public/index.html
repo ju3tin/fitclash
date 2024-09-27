@@ -1426,6 +1426,8 @@ function openNav() {
     </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor/0.14.0-beta.1/anchor.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.31.0/lib/index.iife.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor/0.14.0-beta.1/anchor.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.31.0/lib/index.iife.min.js"></script>
     <script>
         let provider;
         let walletAddress = '';
@@ -1441,19 +1443,27 @@ function openNav() {
             window.open("https://phantom.app/", "_blank");
         }
 
-        window.onload = async () => {
-            provider = getProvider();
-
-            if (provider) {
-                // Try to auto-connect on load
-                await provider.connect({ onlyIfTrusted: true });
-                walletAddress = provider.publicKey?.toString();
-                updateWalletStatus();
+        // Update wallet status on the frontend
+        function updateWalletStatus() {
+            if (walletAddress) {
+                document.getElementById('wallet-status').innerText = 'Wallet connected!';
+                document.getElementById('wallet-address').innerText = `Wallet Address: ${walletAddress}`;
+                document.getElementById('connect-button').style.display = 'none';
+                document.getElementById('disconnect-button').style.display = 'block';
+                document.getElementById('create-user-button').style.display = 'block';
+            } else {
+                document.getElementById('wallet-status').innerText = 'Not connected';
+                document.getElementById('wallet-address').innerText = '';
+                document.getElementById('connect-button').style.display = 'block';
+                document.getElementById('disconnect-button').style.display = 'none';
+                document.getElementById('create-user-button').style.display = 'none';
             }
-        };
+        }
 
         // Connect to Phantom Wallet
         document.getElementById('connect-button').addEventListener('click', async () => {
+            provider = getProvider();
+
             if (provider) {
                 try {
                     await provider.connect();
@@ -1467,47 +1477,35 @@ function openNav() {
             }
         });
 
-        // Update wallet status on the frontend
-        function updateWalletStatus() {
-            if (walletAddress) {
-                document.getElementById('wallet-status').innerText = 'Wallet connected!';
-                document.getElementById('wallet-address').innerText = `Wallet Address: ${walletAddress}`;
-                document.getElementById('create-user-button').style.display = 'block';
-            } else {
-                document.getElementById('wallet-status').innerText = 'Not connected';
-                document.getElementById('create-user-button').style.display = 'none';
+        // Disconnect from Phantom Wallet
+        document.getElementById('disconnect-button').addEventListener('click', async () => {
+            if (provider) {
+                try {
+                    await provider.disconnect();
+                    walletAddress = '';
+                    updateWalletStatus();
+                    console.log("Wallet disconnected");
+                } catch (err) {
+                    console.error("Wallet disconnection failed:", err);
+                }
             }
-        }
+        });
 
-        // Create user account on Solana
+        // Auto-connect if Phantom is already connected
+        window.onload = async () => {
+            provider = getProvider();
+
+            if (provider) {
+                // Try to auto-connect on load
+                await provider.connect({ onlyIfTrusted: true });
+                walletAddress = provider.publicKey?.toString();
+                updateWalletStatus();
+            }
+        };
+
+        // Create user account on Solana (optional button functionality)
         document.getElementById('create-user-button').addEventListener('click', async () => {
-            // Fetch or generate program-related data (such as user account creation)
-            const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl('devnet'));
-            const wallet = provider;
-
-            // Create transaction for the Solana program interaction
-            const transaction = new solanaWeb3.Transaction();
-
-            // Example transaction (could be creating a user in your program)
-            const instruction = new solanaWeb3.TransactionInstruction({
-                keys: [{ pubkey: wallet.publicKey, isSigner: true, isWritable: true }],
-                programId: new solanaWeb3.PublicKey('YourProgramIDHere'),
-                data: Buffer.from('create_user_instruction'), // This is the instruction data
-            });
-
-            transaction.add(instruction);
-
-            try {
-                // Send transaction to Phantom for signing
-                let signedTransaction = await wallet.signTransaction(transaction);
-                
-                // Send transaction to Solana
-                const txId = await connection.sendRawTransaction(signedTransaction.serialize());
-                await connection.confirmTransaction(txId);
-                alert(`Transaction sent with ID: ${txId}`);
-            } catch (err) {
-                console.error("Transaction failed:", err);
-            }
+            // Create user account logic (you can place your Solana transaction code here)
         });
     </script>
   
