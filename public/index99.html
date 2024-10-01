@@ -24,8 +24,8 @@
                 try {
                     await window.solana.connect();
                     provider = new AnchorProvider(connection, window.solana, {});
-                    const idl = await Program.fetchIdl("YourProgramIdHere", provider);
-                    program = new Program(idl, "YourProgramIdHere", provider);
+                    const idl = await Program.fetchIdl("Fmbfde4JXW18ZZ4o2SfouYydGZAuN1izrQPjkNnNJ6YX", provider);
+                    program = new Program(idl, "Fmbfde4JXW18ZZ4o2SfouYydGZAuN1izrQPjkNnNJ6YX", provider);
                     console.log("Connected with wallet: ", provider.wallet.publicKey.toString());
                 } catch (err) {
                     console.error("Error connecting wallet: ", err);
