@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Game DApp</title>
+
+    <!-- Include Solana Web3.js -->
+    <script src="https://unpkg.com/@solana/web3.js@1.36.0/lib/index.iife.js"></script>
+
+    <!-- Include Anchor UMD for browser environments -->
+    <script src="https://unpkg.com/@project-serum/anchor@0.26.0/dist/anchor.browser.umd.min.js"></script>
+
+</head>
+<body>
+    <h1>Solana Game DApp</h1>
+
+    <button id="connectWallet">Connect Wallet</button>
+    <button id="initializeGame">Initialize Game</button>
+    <button id="declareWinner">Declare Winner</button>
+
+    <script>
+        // Define required imports from Solana Web3.js and Anchor
+        const { Connection, PublicKey, clusterApiUrl, Keypair, SystemProgram, LAMPORTS_PER_SOL } = solanaWeb3;
+        const { Program, AnchorProvider, web3 } = anchor;
+
+        // Solana devnet connection
+        const connection = new Connection(clusterApiUrl('devnet'));
+
+        // Global variables for provider and program
+        let provider = null;
+        let program = null;
+
+        // Replace with your deployed program ID and the IDL from your Anchor program
+        const PROGRAM_ID = "YourProgramIdHere";  // Insert your program's deployed ID
+        const idl = {/* Your IDL content */};  // Paste your IDL JSON object here
+
+        // Function to connect Phantom Wallet
+        async function connectWallet() {
+            if (window.solana && window.solana.isPhantom) {
+                try {
+                    // Connect to Phantom wallet
+                    await window.solana.connect();
+                    provider = new AnchorProvider(connection, window.solana, {});
+                    program = new Program(idl, PROGRAM_ID, provider);
+
+                    console.log("Connected with wallet:", provider.wallet.publicKey.toString());
+                    alert("Wallet connected: " + provider.wallet.publicKey.toString());
+                } catch (error) {
+                    console.error("Error connecting wallet:", error);
+                }
+            } else {
+                alert("Please install Phantom Wallet!");
+            }
+        }
+
+        // Function to initialize the game
+        async function initializeGame() {
+            const player2Pubkey = new PublicKey("Player2PublicKeyHere");  // Replace with Player 2 public key
+            const amount = 1 * LAMPORTS_PER_SOL;  // Example amount (1 SOL)
+
+            // Generate a new account for the game
+            const gameAccount = Keypair.generate();
+            console.log("Game account:", gameAccount.publicKey.toString());
+
+            try {
+                const tx = await program.rpc.initializeGame(
+                    new anchor.BN(amount),  // Amount in lamports
+                    {
+                        accounts: {
+                            game: gameAccount.publicKey,
+                            player1: provider.wallet.publicKey,
+                            player2: player2Pubkey,
+                            escrow: provider.wallet.publicKey,  // Replace with actual escrow account if required
+                            platform: provider.wallet.publicKey,  // Replace with platform account (e.g., the platform)
+                            systemProgram: SystemProgram.programId,
+                        },
+                        signers: [gameAccount],
+                    }
+                );
+                console.log("Transaction successful:", tx);
+                alert("Game initialized successfully with transaction: " + tx);
+            } catch (error) {
+                console.error("Error initializing game:", error);
+            }
+        }
+
+        // Function to declare the winner
+        async function declareWinner() {
+            const winnerPubkey = new PublicKey("WinnerPublicKeyHere");  // Replace with the winner's public key
+
+            try {
+                const tx = await program.rpc.declareWinner(
+                    winnerPubkey,
+                    {
+                        accounts: {
+                            game: new PublicKey("GameAccountPublicKeyHere"),  // Replace with the game account public key
+                            player1: provider.wallet.publicKey,
+                            player2: new PublicKey("Player2PublicKeyHere"),  // Replace with Player 2 public key
+                            escrow: provider.wallet.publicKey,  // Replace with actual escrow account
+                            platform: provider.wallet.publicKey,  // Replace with platform account
+                            systemProgram: SystemProgram.programId,
+                        },
+                    }
+                );
+                console.log("Winner declared successfully:", tx);
+                alert("Winner declared with transaction: " + tx);
+            } catch (error) {
+                console.error("Error declaring winner:", error);
+            }
+        }
+
+        // Attach functions to buttons
+        document.getElementById("connectWallet").onclick = connectWallet;
+        document.getElementById("initializeGame").onclick = initializeGame;
+        document.getElementById("declareWinner").onclick = declareWinner;
+    </script>
+</body>
+</html>
