@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoveNet with Skeleton Overlay and Bone Logging</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        #video, #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" playsinline></video>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script>
+        async function setupMoveNet() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const detector = await poseDetection.createDetector(
+                poseDetection.SupportedModels.MoveNet,
+                { modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING }
+            );
+            console.log("MoveNet model loaded.");
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true
+            });
+            video.srcObject = stream;
+
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    resolve({ detector, video, canvas, ctx });
+                };
+            });
+        }
+
+        function drawKeypoints(keypoints, ctx) {
+            keypoints.forEach(keypoint => {
+                if (keypoint.score > 0.3) {
+                    const { y, x } = keypoint;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "red";
+                    ctx.fill();
+                }
+            });
+        }
+
+        function drawSkeleton(keypoints, ctx) {
+            const adjacentKeyPoints = [
+                ['leftShoulder', 'leftElbow'], ['leftElbow', 'leftWrist'],
+                ['rightShoulder', 'rightElbow'], ['rightElbow', 'rightWrist'],
+                ['leftShoulder', 'leftHip'], ['rightShoulder', 'rightHip'],
+                ['leftHip', 'leftKnee'], ['leftKnee', 'leftAnkle'],
+                ['rightHip', 'rightKnee'], ['rightKnee', 'rightAnkle'],
+                ['leftHip', 'rightHip'], ['leftShoulder', 'rightShoulder']
+            ];
+
+            adjacentKeyPoints.forEach(([partA, partB]) => {
+                const pointA = keypoints.find(k => k.name === partA);
+                const pointB = keypoints.find(k => k.name === partB);
+
+                if (pointA && pointB && pointA.score > 0.3 && pointB.score > 0.3) {
+                    ctx.beginPath();
+                    ctx.moveTo(pointA.x, pointA.y);
+                    ctx.lineTo(pointB.x, pointB.y);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = "red";
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function logBones(keypoints) {
+            const bones = [
+                ['leftShoulder', 'leftElbow'], ['leftElbow', 'leftWrist'],
+                ['rightShoulder', 'rightElbow'], ['rightElbow', 'rightWrist'],
+                ['leftShoulder', 'leftHip'], ['rightShoulder', 'rightHip'],
+                ['leftHip', 'leftKnee'], ['leftKnee', 'leftAnkle'],
+                ['rightHip', 'rightKnee'], ['rightKnee', 'rightAnkle'],
+                ['leftHip', 'rightHip'], ['leftShoulder', 'rightShoulder']
+            ];
+
+            const bonePositions = bones.map(([partA, partB]) => {
+                const pointA = keypoints.find(k => k.name === partA);
+                const pointB = keypoints.find(k => k.name === partB);
+                
+                if (pointA && pointB && pointA.score > 0.5 && pointB.score > 0.5) {
+                    return {
+                        bone: `${partA} -> ${partB}`,
+                        positionA: { x: pointA.x, y: pointA.y },
+                        positionB: { x: pointB.x, y: pointB.y }
+                    };
+                } else {
+                    return null;
+                }
+            }).filter(b => b !== null);
+
+            console.log('Bone Positions:', bonePositions);
+        }
+
+        async function main() {
+            const { detector, video, canvas, ctx } = await setupMoveNet();
+
+            async function detectPose() {
+                const poses = await detector.estimatePoses(video);
+                
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                if (poses.length > 0) {
+                    const keypoints = poses[0].keypoints;
+
+                    drawKeypoints(keypoints, ctx);
+                    drawSkeleton(keypoints, ctx);
+
+                    // Log bones every 2 seconds
+                    setInterval(() => {
+                        logBones(keypoints);
+                    }, 2000);
+                }
+
+                requestAnimationFrame(detectPose);
+            }
+
+            detectPose();
+        }
+
+        main();
+    </script>
+</body>
+</html>
