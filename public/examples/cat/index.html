@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PoseNet with Three.js</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" playsinline style="display: none;"></video>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/posenet"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        async function setupPoseNet() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const net = await posenet.load();
+            console.log("PoseNet model loaded.");
+
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: true
+            });
+            video.srcObject = stream;
+
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    resolve({ net, video, canvas, ctx });
+                };
+            });
+        }
+
+        function drawKeypoints(keypoints, ctx) {
+            keypoints.forEach(keypoint => {
+                if (keypoint.score > 0.5) {
+                    const { y, x } = keypoint.position;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+                    ctx.fillStyle = "red";
+                    ctx.fill();
+                }
+            });
+        }
+
+        function drawSkeleton(keypoints, ctx) {
+            const adjacentKeyPoints = posenet.getAdjacentKeyPoints(keypoints, 0.5);
+            
+            adjacentKeyPoints.forEach((keypoints) => {
+                const [firstPoint, secondPoint] = keypoints;
+
+                ctx.beginPath();
+                ctx.moveTo(firstPoint.position.x, firstPoint.position.y);
+                ctx.lineTo(secondPoint.position.x, secondPoint.position.y);
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "red";
+                ctx.stroke();
+            });
+        }
+
+        function setupThreeJS() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const geometry = new THREE.BoxGeometry();
+            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+            const cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            camera.position.z = 5;
+
+            return { scene, camera, renderer, cube };
+        }
+
+        async function main() {
+            const { net, video, canvas, ctx } = await setupPoseNet();
+            const { scene, camera, renderer, cube } = setupThreeJS();
+
+            async function detectPose() {
+                const pose = await net.estimateSinglePose(video, {
+                    flipHorizontal: false
+                });
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                drawKeypoints(pose.keypoints, ctx);
+                drawSkeleton(pose.keypoints, ctx);
+
+                const rightWrist = pose.keypoints.find(k => k.part === 'rightWrist');
+
+                if (rightWrist && rightWrist.score > 0.5) {
+                    const { x, y } = rightWrist.position;
+                    console.log(`Right Wrist Position: x = ${x}, y = ${y}`);
+
+                    // Check for unusual values
+                    if (x !== 0 || y !== 0) {
+                        cube.rotation.x = (y / window.innerHeight) * Math.PI * 2;
+                        cube.rotation.y = (x / window.innerWidth) * Math.PI * 2;
+                    }
+                } else {
+                    console.log('Right wrist not confidently detected.');
+                }
+
+                requestAnimationFrame(detectPose);
+            }
+
+            function animate() {
+                requestAnimationFrame(animate);
+                renderer.render(scene, camera);
+            }
+
+            detectPose();
+            animate();
+        }
+
+        main();
+    </script>
+</body>
+</html>

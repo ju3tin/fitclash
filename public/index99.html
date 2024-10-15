@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solana Game DApp</title>
+    <script src="https://cdn.jsdelivr.net/npm/@solana/web3.js@1.36.0/lib/index.iife.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@project-serum/anchor@0.26.0/lib/index.iife.js"></script>
+</head>
+<body>
+    <h1>Solana Game</h1>
+    <button id="connectWallet">Connect Wallet</button>
+
+    <script>
+        const { Connection, PublicKey, clusterApiUrl } = solanaWeb3;
+        const { AnchorProvider, Program, web3 } = anchor;
+        const connection = new Connection(clusterApiUrl('devnet'));
+
+        let provider = null;
+        let program = null;
+
+        async function connectWallet() {
+            if (window.solana) {
+                try {
+                    await window.solana.connect();
+                    provider = new AnchorProvider(connection, window.solana, {});
+                    const idl = await Program.fetchIdl("Fmbfde4JXW18ZZ4o2SfouYydGZAuN1izrQPjkNnNJ6YX", provider);
+                    program = new Program(idl, "Fmbfde4JXW18ZZ4o2SfouYydGZAuN1izrQPjkNnNJ6YX", provider);
+                    console.log("Connected with wallet: ", provider.wallet.publicKey.toString());
+                } catch (err) {
+                    console.error("Error connecting wallet: ", err);
+                }
+            } else {
+                alert("Solana wallet not found. Please install Phantom.");
+            }
+        }
+
+        document.getElementById("connectWallet").onclick = connectWallet;
+
+        async function initializeGame(player2, amount) {
+            // Call the `initialize_game` function from your program
+        }
+
+        async function declareWinner(winnerPubkey) {
+            // Call the `declare_winner` function from your program
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoveNet Debugging</title>
+</head>
+<body>
+    <video id="video" playsinline autoplay muted></video>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script>
+        async function setup() {
+            try {
+                // Step 1: Set up video stream
+                const video = document.getElementById('video');
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        resolve();
+                    };
+                });
+
+                alert("Video stream is working.");
+
+                // Step 2: Load MoveNet model
+                const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+                    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+                });
+
+                alert("MoveNet model loaded successfully.");
+
+                // Step 3: Pose detection loop
+                async function detectPose() {
+                    const poses = await detector.estimatePoses(video);
+
+                    console.log("Raw Pose Data:", poses);
+
+                    if (poses.length > 0 && poses[0].keypoints) {
+                        alert("Keypoints detected!");
+                        console.log("Keypoints:", poses[0].keypoints);
+                    } else {
+                        console.log("No keypoints detected.");
+                    }
+
+                    requestAnimationFrame(detectPose);
+                }
+
+                detectPose();
+
+            } catch (error) {
+                alert("An error occurred: " + error.message);
+                console.error(error);
+            }
+        }
+
+        setup();
+    </script>
+</body>
+</html>

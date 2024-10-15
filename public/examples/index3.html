@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Loader</title>
+    <style>
+
+
+		.row {
+			display: flex;
+			flex-direction: row;
+		}
+        .column {
+            flex: 50%;
+            padding: 10px;
+            display: flex; /* Add flex display */
+            flex-direction: column; /* Stack children vertically */
+            justify-content: center; /* Center vertically */
+            align-items: center; /* Center horizontally */
+        }
+		.webcam-container {
+    position: relative;
+    width: 720px;
+    height: 1280px;
+    max-width: 100%;
+    max-height: 100vh;
+    overflow: hidden;
+}
+
+.video1 {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mask {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Example mask color */
+    pointer-events: none; /* Allows clicking through the mask */
+}
+               #container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+        video, canvas {
+            display: block;
+            max-width: 100%;
+            height: 100vh;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Allows clicks to pass through the canvas to the video */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="row">
+        <div class="column" style="background-color:#aaa;">
+          
+            <div id="container">
+                <video id="videoPlayer" controls>
+                    <!-- Fallback for browsers that do not support the video tag -->
+                    Your browser does not support the video tag.
+                </video>
+                <canvas id="overlayCanvas"></canvas>
+                </div>
+
+        </div>
+        <div class="column" style="background-color:#bbb;">
+            
+         
+
+            <div class="webcam-container">
+                <video id="video1" playsinline autoplay muted style="height: 100vh;"></video>
+                
+          <canvas id="canvas1" style="height: 100vh;"></canvas>
+                <div class="mask"></div>
+            </div>
+        </div>
+      </div>
+      
+
+   
+    
+    <script>
+        // Function to get URL parameter by name
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+
+        // Load video and overlay canvas
+        function loadVideo() {
+            const videoUrl = getUrlParameter('video');
+            if (videoUrl) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                const overlayCanvas = document.getElementById('overlayCanvas');
+                const ctx = overlayCanvas.getContext('2d');
+
+                videoPlayer.src = videoUrl;
+
+                // Load the video and pause at the first frame
+                videoPlayer.load();
+                videoPlayer.addEventListener('loadeddata', function() {
+                    videoPlayer.currentTime = 0;  // Set video to first frame
+                    videoPlayer.pause();  // Pause the video at the first frame
+
+                    // Set canvas size to match video size
+                    overlayCanvas.width = videoPlayer.videoWidth;
+                    overlayCanvas.height = videoPlayer.videoHeight;
+
+                    // Draw the video dimensions on the canvas
+                    ctx.font = '24px Arial';
+                    ctx.fillStyle = 'red';
+                    ctx.fillText(`Width: ${videoPlayer.videoWidth}px`, 10, 30);
+                    ctx.fillText(`Height: ${videoPlayer.videoHeight}px`, 10, 60);
+                }, { once: true });
+            }
+        }
+
+        // Load video when the page is ready
+        window.onload = loadVideo;
+    </script>
+    	    
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+<script>
+    async function setup() {
+        try {
+            const video = document.getElementById('videoPlayer');
+            const canvas = document.getElementById('overlayCanvas');
+            const video1 = document.getElementById('video1');
+            const canvas1 = document.getElementById('canvas1');
+            const ctx = canvas.getContext('2d');
+            const ctx1 = canvas1.getContext('2d');
+
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video1.srcObject = stream;
+
+            await new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                    video.play();
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    resolve();
+                };
+                video1.onloadedmetadata = () => {
+                    video1.play();
+                    canvas1.width = video1.videoWidth;
+                    canvas1.height = video1.videoHeight;
+                    resolve();
+                };
+            });
+
+            console.log("Video stream is working.");
+
+            const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+                modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+            });
+
+            console.log("MoveNet model loaded successfully.");
+
+            let allKeypointPositions = [];
+
+            async function detectPose() {
+                const poses = await detector.estimatePoses(video);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                if (poses.length > 0 && poses[0].keypoints) {
+                    const currentKeypointPositions = poses[0].keypoints.map(keypoint => ({
+                        name: keypoint.name,
+                        x: keypoint.x,
+                        y: keypoint.y
+                    }));
+
+                    allKeypointPositions.push(currentKeypointPositions);
+                    
+                    drawKeypoints(poses[0].keypoints, ctx);
+
+                    console.log("Current Keypoint Positions:", currentKeypointPositions);
+                } else {
+                    console.log("No keypoints detected.");
+                }
+                if (poses.length > 0 && poses[0].keypoints) {
+                        drawKeypoints(poses[0].keypoints, ctx);
+                        checkEyePosition(poses[0].keypoints);
+                    }
+
+                requestAnimationFrame(detectPose);
+            }
+
+            function drawKeypoints(keypoints, ctx) {
+keypoints.forEach(keypoint => {
+    if (keypoint.score > 0.3) { // Ensure keypoint confidence is high
+        ctx.beginPath();
+        ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI); // Draw circle
+        ctx.fillStyle = "red";
+        ctx.fill();
+    }
+});
+
+// Draw line from keypoint 0 to keypoint 1
+if (keypoints[0].score > 0.3 && keypoints[1].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[0].x, keypoints[0].y);
+    ctx.lineTo(keypoints[1].x, keypoints[1].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[2].score > 0.3 && keypoints[0].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[2].x, keypoints[2].y);
+    ctx.lineTo(keypoints[0].x, keypoints[0].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[3].score > 0.3 && keypoints[1].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[3].x, keypoints[3].y);
+    ctx.lineTo(keypoints[1].x, keypoints[1].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[4].score > 0.3 && keypoints[2].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[4].x, keypoints[4].y);
+    ctx.lineTo(keypoints[2].x, keypoints[2].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[5].score > 0.3 && keypoints[6].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[5].x, keypoints[5].y);
+    ctx.lineTo(keypoints[6].x, keypoints[6].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[5].score > 0.3 && keypoints[7].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[5].x, keypoints[5].y);
+    ctx.lineTo(keypoints[7].x, keypoints[7].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[6].score > 0.3 && keypoints[8].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[6].x, keypoints[6].y);
+    ctx.lineTo(keypoints[8].x, keypoints[8].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[7].score > 0.3 && keypoints[9].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[7].x, keypoints[7].y);
+    ctx.lineTo(keypoints[9].x, keypoints[9].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[8].score > 0.3 && keypoints[10].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[8].x, keypoints[8].y);
+    ctx.lineTo(keypoints[10].x, keypoints[10].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[5].score > 0.3 && keypoints[11].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[5].x, keypoints[5].y);
+    ctx.lineTo(keypoints[11].x, keypoints[11].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[6].score > 0.3 && keypoints[12].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[6].x, keypoints[6].y);
+    ctx.lineTo(keypoints[12].x, keypoints[12].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[11].score > 0.3 && keypoints[12].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[11].x, keypoints[11].y);
+    ctx.lineTo(keypoints[12].x, keypoints[12].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[11].score > 0.3 && keypoints[13].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[11].x, keypoints[11].y);
+    ctx.lineTo(keypoints[13].x, keypoints[13].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[12].score > 0.3 && keypoints[14].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[12].x, keypoints[12].y);
+    ctx.lineTo(keypoints[14].x, keypoints[14].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[14].score > 0.3 && keypoints[16].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[14].x, keypoints[14].y);
+    ctx.lineTo(keypoints[16].x, keypoints[16].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+if (keypoints[13].score > 0.3 && keypoints[15].score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(keypoints[13].x, keypoints[13].y);
+    ctx.lineTo(keypoints[15].x, keypoints[15].y);
+    ctx.strokeStyle = "yellow"; // Line color
+    ctx.lineWidth = 2; // Line width
+    ctx.stroke();
+}
+}
+
+async function checkEyePosition(keypoints) {
+                    const leftEye = keypoints[2]; // Left Eye
+                    const rightEye = keypoints[1]; // Right Eye
+                    const leftHip = keypoints[11]; // Left Hip
+                    const rightHip = keypoints[12]; // Right Hip
+                   
+                }
+
+            detectPose();
+
+        } catch (error) {
+            console.error("An error occurred: " + error.message);
+        }
+    }
+
+    setup();
+
+
+    
+    async function detectPose() {
+const poses = await detector.estimatePoses(video);
+
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+if (poses.length > 0 && poses[0].keypoints) {
+    const currentKeypointPositions = poses[0].keypoints.map(keypoint => ({
+        name: keypoint.name,
+        x: keypoint.x,
+        y: keypoint.y
+    }));
+
+    allKeypointPositions.push(currentKeypointPositions);
+    
+    drawKeypoints(poses[0].keypoints, ctx);
+
+    // Check if keypoints 1 and 2 are below the red line
+   
+
+    console.log("Current Keypoint Positions:", currentKeypointPositions);
+} else {
+    console.log("No keypoints detected.");
+}
+
+requestAnimationFrame(detectPose);
+}
+
+
+</script>
+</body>
+</html>

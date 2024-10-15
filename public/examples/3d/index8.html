@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoveNet Pose with Keypoints</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+        }
+        #video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 440px;
+            height: 280px;
+        }
+        #canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 440px;
+            height: 280px;
+        }
+        #info1 {
+            position: absolute;
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            color: white; 
+            font-size: 24px; 
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" playsinline autoplay muted></video>
+    <canvas id="canvas"></canvas>
+    <div id="info1">Idle</div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+    <script>
+        async function setup() {
+            try {
+                const video = document.getElementById('video');
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = stream;
+
+                await new Promise((resolve) => {
+                    video.onloadedmetadata = () => {
+                        video.play();
+                        canvas.width = video.videoWidth;
+                        canvas.height = video.videoHeight;
+                        resolve();
+                    };
+                });
+
+                const detector = await poseDetection.createDetector(poseDetection.SupportedModels.MoveNet, {
+                    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+                });
+
+                async function detectPose() {
+                    const poses = await detector.estimatePoses(video);
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                    if (poses.length > 0 && poses[0].keypoints) {
+                        drawKeypoints(poses[0].keypoints, ctx);
+                        checkEyePosition(poses[0].keypoints);
+                    }
+
+                    requestAnimationFrame(detectPose);
+                }
+
+                function drawKeypoints(keypoints, ctx) {
+                    keypoints.forEach(keypoint => {
+                        if (keypoint.score > 0.3) {
+                            ctx.beginPath();
+                            ctx.arc(keypoint.x, keypoint.y, 5, 0, 2 * Math.PI);
+                            ctx.fillStyle = "red";
+                            ctx.fill();
+                        }
+                    });
+
+                    // Draw lines from left ear to left eye, to nose, to right eye, to right ear
+                    if (keypoints[3].score > 0.3 && keypoints[2].score > 0.3) {
+                        drawLine(keypoints[3], keypoints[2], ctx);
+                    }
+                    if (keypoints[2].score > 0.3 && keypoints[0].score > 0.3) {
+                        drawLine(keypoints[2], keypoints[0], ctx);
+                    }
+                    if (keypoints[0].score > 0.3 && keypoints[1].score > 0.3) {
+                        drawLine(keypoints[0], keypoints[1], ctx);
+                    }
+                    if (keypoints[1].score > 0.3 && keypoints[4].score > 0.3) {
+                        drawLine(keypoints[1], keypoints[4], ctx);
+                    }
+                }
+
+                function drawLine(pointA, pointB, ctx) {
+                    ctx.beginPath();
+                    ctx.moveTo(pointA.x, pointA.y);
+                    ctx.lineTo(pointB.x, pointB.y);
+                    ctx.strokeStyle = "yellow";
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+
+                async function checkEyePosition(keypoints) {
+                    const leftEye = keypoints[2]; // Left Eye
+                    const rightEye = keypoints[1]; // Right Eye
+                    const thresholdY = canvas.height / 4;
+
+                    if (leftEye.y > thresholdY || rightEye.y > thresholdY) {
+                        document.getElementById('info1').innerText = "Eyes Below Threshold";
+                    } else {
+                        document.getElementById('info1').innerText = "Eyes Above Threshold";
+                    }
+                }
+
+                detectPose();
+            } catch (error) {
+                console.error("An error occurred: " + error.message);
+            }
+        }
+
+        setup();
+    </script>
+</body>
+</html>

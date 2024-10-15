@@ -1,0 +1,714 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - additive animation - skinning</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="/assets/css/main1.css">
+		<style>
+			a {
+				color: blue;
+			}
+			.control-inactive button {
+				color: #888;
+			}
+		</style>
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.0.0/video-js.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.0.0/video.min.js"></script>
+	</head>
+	<body>
+		<div id="container"></div>
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - Skeletal Additive Animation Blending
+			(model from <a href="https://www.mixamo.com/" target="_blank" rel="noopener">mixamo.com</a>)<br/>
+		</div>
+        <div id="wrapper" class="container-fluid">		
+            <canvas id="canvas" class="camera" width="1410" height="693"></canvas>
+            <video id="video" class="video-js vjs-fluid vjs-default-skin" preload="metadata" width="1280" height="720">
+                <source src="">
+            </video>
+            <div id="info_debug"></div>
+            <div id="info_counter">1</div>
+          </div>
+		<script type="importmap">
+			{
+				"imports": {
+					"three": "../../assets/build/three.module.js",
+					"three/addons/": "../../assets/jsm/"
+				}
+			}
+		</script>
+
+		<script type="module">
+
+			import * as THREE from 'three';
+
+			import Stats from 'three/addons/libs/stats.module.js';
+			import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+			import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+			import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+			let scene, renderer, camera, stats;
+			let model1, skeletonHelper, skeleton, mixer, clock;
+
+			const crossFadeControls = [];
+
+			let currentBaseAction = '';
+			const allActions = [];
+			const baseActions = {
+				idle: { weight: 0 },
+				walk: { weight: 0 },
+				run: { weight: 0 }
+			};
+			const additiveActions = {
+				sneak_pose: { weight: 0 },
+				sad_pose: { weight: 0 },
+				agree: { weight: 0 },
+				headShake: { weight: 0 }
+			};
+			let panelSettings, numAnimations;
+
+			init();
+
+			function init() {
+
+				const container = document.getElementById( 'container' );
+				clock = new THREE.Clock();
+
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0xa0a0a0 );
+				scene.fog = new THREE.Fog( 0xa0a0a0, 10, 50 );
+
+				const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x8d8d8d, 3 );
+				hemiLight.position.set( 0, 20, 0 );
+				scene.add( hemiLight );
+
+				const dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
+				dirLight.position.set( 3, 10, 10 );
+				dirLight.castShadow = true;
+				dirLight.shadow.camera.top = 2;
+				dirLight.shadow.camera.bottom = - 2;
+				dirLight.shadow.camera.left = - 2;
+				dirLight.shadow.camera.right = 2;
+				dirLight.shadow.camera.near = 0.1;
+				dirLight.shadow.camera.far = 40;
+				scene.add( dirLight );
+
+				// ground
+
+				const mesh = new THREE.Mesh( new THREE.PlaneGeometry( 100, 100 ), new THREE.MeshPhongMaterial( { color: 0xcbcbcb, depthWrite: false } ) );
+				mesh.rotation.x = - Math.PI / 2;
+				mesh.receiveShadow = true;
+				scene.add( mesh );
+
+				const loader = new GLTFLoader();
+				loader.load( '../../assets/models/gltf/Xbot.glb', function ( gltf ) {
+
+					model1 = gltf.scene;
+					scene.add( model1 );
+                    const mesh = gltf.scene.children[ 0 ];
+skeletonHelper = new THREE.SkeletonHelper(mesh);
+console.log(skeletonHelper.bones)
+		
+                    console.log('model',model1)
+					model1.traverse( function ( object ) {
+
+						if ( object.isMesh ) object.castShadow = true;
+
+					} );
+
+					skeleton = new THREE.SkeletonHelper( model1 );
+					skeleton.visible = false;
+					scene.add( skeleton );
+                    logAllBones(skeleton);
+                    //addBoneRotationControls(skeleton);
+
+                    
+
+					const animations = gltf.animations;
+					mixer = new THREE.AnimationMixer( model1 );
+
+					numAnimations = animations.length;
+
+					for ( let i = 0; i !== numAnimations; ++ i ) {
+
+						let clip = animations[ i ];
+						const name = clip.name;
+
+						if ( baseActions[ name ] ) {
+
+							const action = mixer.clipAction( clip );
+							activateAction( action );
+							baseActions[ name ].action = action;
+							allActions.push( action );
+
+						} else if ( additiveActions[ name ] ) {
+
+							// Make the clip additive and remove the reference frame
+
+							THREE.AnimationUtils.makeClipAdditive( clip );
+
+							if ( clip.name.endsWith( '_pose' ) ) {
+
+								clip = THREE.AnimationUtils.subclip( clip, clip.name, 2, 3, 30 );
+
+							}
+
+							const action = mixer.clipAction( clip );
+							activateAction( action );
+							additiveActions[ name ].action = action;
+							allActions.push( action );
+
+						}
+
+					}
+
+					createPanel();
+
+					renderer.setAnimationLoop( animate );
+
+				} );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
+
+				// camera
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 100 );
+				camera.position.set( - 1, 2, 3 );
+
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.enablePan = false;
+				controls.enableZoom = false;
+				controls.target.set( 0, 1, 0 );
+				controls.update();
+
+				stats = new Stats();
+				container.appendChild( stats.dom );
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+          
+			function createPanel() {
+
+				const panel = new GUI( { width: 310 } );
+
+				const folder1 = panel.addFolder( 'Base Actions' );
+				const folder2 = panel.addFolder( 'Additive Action Weights' );
+				const folder3 = panel.addFolder( 'General Speed' );
+                const folder4 = panel.addFolder( 'Skeleton Visibility' );
+                const folder5 = panel.addFolder( 'Bone Rotation' ); // Add a new folder for skeleton controls
+                //panelSettings.showSkeleton = false; // Initialize the setting for skeleton visibility
+
+				panelSettings = {
+					'modify time scale': 1.0
+				};
+
+				const baseNames = [ 'None', ...Object.keys( baseActions ) ];
+
+				for ( let i = 0, l = baseNames.length; i !== l; ++ i ) {
+
+					const name = baseNames[ i ];
+					const settings = baseActions[ name ];
+					panelSettings[ name ] = function () {
+
+						const currentSettings = baseActions[ currentBaseAction ];
+						const currentAction = currentSettings ? currentSettings.action : null;
+						const action = settings ? settings.action : null;
+
+						if ( currentAction !== action ) {
+
+							prepareCrossFade( currentAction, action, 0.35 );
+
+						}
+
+					};
+
+					crossFadeControls.push( folder1.add( panelSettings, name ) );
+
+				}
+
+				for ( const name of Object.keys( additiveActions ) ) {
+
+					const settings = additiveActions[ name ];
+
+					panelSettings[ name ] = settings.weight;
+					folder2.add( panelSettings, name, 0.0, 1.0, 0.01 ).listen().onChange( function ( weight ) {
+
+						setWeight( settings.action, weight );
+						settings.weight = weight;
+
+					} );
+
+				}
+                
+				folder3.add( panelSettings, 'modify time scale', 0.0, 1.5, 0.01 ).onChange( modifyTimeScale );
+                panelSettings.showSkeleton = false; // Initialize the setting for skeleton visibility
+                folder4.add(panelSettings, 'showSkeleton').onChange(function (value) {skeleton.visible = value;});
+                folder5.add(skeletonHelper.bones[0].rotation, 'x', -3.141592653589793, Math.PI).name('Hips x');
+                folder5.add(skeletonHelper.bones[0].rotation, 'y', -3.141592653589793, Math.PI).name('Hips y');
+                folder5.add(skeletonHelper.bones[0].rotation, 'z', -3.141592653589793, Math.PI).name('Hips z');
+				folder5.add(skeletonHelper.bones[1].rotation, 'x', -3.141592653589793, Math.PI).name('Spine x');
+                folder5.add(skeletonHelper.bones[1].rotation, 'y', -3.141592653589793, Math.PI).name('Spine y');
+                folder5.add(skeletonHelper.bones[1].rotation, 'z', -3.141592653589793, Math.PI).name('Spine z');
+				folder5.add(skeletonHelper.bones[2].rotation, 'x', -3.141592653589793, Math.PI).name('Spine1 x');
+                folder5.add(skeletonHelper.bones[2].rotation, 'y', -3.141592653589793, Math.PI).name('Spine1 y');
+                folder5.add(skeletonHelper.bones[2].rotation, 'z', -3.141592653589793, Math.PI).name('Spine1 z');
+				folder5.add(skeletonHelper.bones[3].rotation, 'x', -3.141592653589793, Math.PI).name('Spine2 x');
+                folder5.add(skeletonHelper.bones[3].rotation, 'y', -3.141592653589793, Math.PI).name('Spine2 y');
+                folder5.add(skeletonHelper.bones[3].rotation, 'z', -3.141592653589793, Math.PI).name('Spine2 z');
+				folder5.add(skeletonHelper.bones[4].rotation, 'x', -3.141592653589793, Math.PI).name('Neck x');
+                folder5.add(skeletonHelper.bones[4].rotation, 'y', -3.141592653589793, Math.PI).name('Neck y');
+                folder5.add(skeletonHelper.bones[4].rotation, 'z', -3.141592653589793, Math.PI).name('Neck z');
+				folder5.add(skeletonHelper.bones[5].rotation, 'x', -3.141592653589793, Math.PI).name('Head x');
+                folder5.add(skeletonHelper.bones[5].rotation, 'y', -3.141592653589793, Math.PI).name('Head y');
+                folder5.add(skeletonHelper.bones[5].rotation, 'z', -3.141592653589793, Math.PI).name('Head z');
+				folder5.add(skeletonHelper.bones[6].rotation, 'x', -3.141592653589793, Math.PI).name('HeadTop_End x');
+                folder5.add(skeletonHelper.bones[6].rotation, 'y', -3.141592653589793, Math.PI).name('HeadTop_End y');
+                folder5.add(skeletonHelper.bones[6].rotation, 'z', -3.141592653589793, Math.PI).name('HeadTop_End z');
+				folder5.add(skeletonHelper.bones[7].rotation, 'x', -3.141592653589793, Math.PI).name('LeftEye x');
+                folder5.add(skeletonHelper.bones[7].rotation, 'y', -3.141592653589793, Math.PI).name('LeftEye y');
+                folder5.add(skeletonHelper.bones[7].rotation, 'z', -3.141592653589793, Math.PI).name('LeftEye z');
+				folder5.add(skeletonHelper.bones[8].rotation, 'x', -3.141592653589793, Math.PI).name('RightEye x');
+                folder5.add(skeletonHelper.bones[8].rotation, 'y', -3.141592653589793, Math.PI).name('RightEye y');
+                folder5.add(skeletonHelper.bones[8].rotation, 'z', -3.141592653589793, Math.PI).name('RightEye z');
+				folder5.add(skeletonHelper.bones[9].rotation, 'x', -3.141592653589793, Math.PI).name('LeftShoulder x');
+                folder5.add(skeletonHelper.bones[9].rotation, 'y', -3.141592653589793, Math.PI).name('LeftShoulder y');
+                folder5.add(skeletonHelper.bones[9].rotation, 'z', -3.141592653589793, Math.PI).name('LeftShoulder z');
+				folder5.add(skeletonHelper.bones[10].rotation, 'x', -3.141592653589793, Math.PI).name('LeftArm x');
+                folder5.add(skeletonHelper.bones[10].rotation, 'y', -3.141592653589793, Math.PI).name('LeftArm y');
+                folder5.add(skeletonHelper.bones[10].rotation, 'z', -3.141592653589793, Math.PI).name('LeftArm z');
+				folder5.add(skeletonHelper.bones[11].rotation, 'x', -3.141592653589793, Math.PI).name('LeftForeArm x');
+                folder5.add(skeletonHelper.bones[11].rotation, 'y', -3.141592653589793, Math.PI).name('LeftForeArm y');
+                folder5.add(skeletonHelper.bones[11].rotation, 'z', -3.141592653589793, Math.PI).name('LeftForeArm z');
+				folder5.add(skeletonHelper.bones[12].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHand x');
+                folder5.add(skeletonHelper.bones[12].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHand y');
+                folder5.add(skeletonHelper.bones[12].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHand z');
+				folder5.add(skeletonHelper.bones[13].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandThumb1 x');
+                folder5.add(skeletonHelper.bones[13].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandThumb1 y');
+                folder5.add(skeletonHelper.bones[13].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandThumb1 z');
+				folder5.add(skeletonHelper.bones[14].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandThumb2 x');
+                folder5.add(skeletonHelper.bones[14].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandThumb2 y');
+                folder5.add(skeletonHelper.bones[14].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandThumb2 z');
+				folder5.add(skeletonHelper.bones[15].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandThumb3 x');
+                folder5.add(skeletonHelper.bones[15].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandThumb3 y');
+                folder5.add(skeletonHelper.bones[15].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandThumb3 z');
+				folder5.add(skeletonHelper.bones[16].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandThumb4 x');
+                folder5.add(skeletonHelper.bones[16].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandThumb4 y');
+                folder5.add(skeletonHelper.bones[16].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandThumb4 z');
+				folder5.add(skeletonHelper.bones[17].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandIndex1 x');
+                folder5.add(skeletonHelper.bones[17].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandIndex1 y');
+                folder5.add(skeletonHelper.bones[17].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandIndex1 z');
+				folder5.add(skeletonHelper.bones[18].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandIndex2 x');
+                folder5.add(skeletonHelper.bones[18].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandIndex2 y');
+                folder5.add(skeletonHelper.bones[18].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandIndex2 z');
+				folder5.add(skeletonHelper.bones[19].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandIndex3 x');
+                folder5.add(skeletonHelper.bones[19].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandIndex3 y');
+                folder5.add(skeletonHelper.bones[19].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandIndex3 z');
+				folder5.add(skeletonHelper.bones[20].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandIndex4 x');
+                folder5.add(skeletonHelper.bones[20].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandIndex4 y');
+                folder5.add(skeletonHelper.bones[20].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandIndex4 z');
+				folder5.add(skeletonHelper.bones[21].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandMiddle1 x');
+                folder5.add(skeletonHelper.bones[21].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandMiddle1 y');
+                folder5.add(skeletonHelper.bones[21].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandMiddle1 z');
+				folder5.add(skeletonHelper.bones[22].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandMiddle2 x');
+                folder5.add(skeletonHelper.bones[22].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandMiddle2 y');
+                folder5.add(skeletonHelper.bones[22].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandMiddle2 z');
+				folder5.add(skeletonHelper.bones[23].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandMiddle3 x');
+                folder5.add(skeletonHelper.bones[23].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandMiddle3 y');
+                folder5.add(skeletonHelper.bones[23].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandMiddle3 z');
+				folder5.add(skeletonHelper.bones[24].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandMiddle4 x');
+                folder5.add(skeletonHelper.bones[24].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandMiddle4 y');
+                folder5.add(skeletonHelper.bones[24].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandMiddle4 z');
+				folder5.add(skeletonHelper.bones[25].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandRing1 x');
+                folder5.add(skeletonHelper.bones[25].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandRing1 y');
+                folder5.add(skeletonHelper.bones[25].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandRing1 z');
+				folder5.add(skeletonHelper.bones[26].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandRing2 x');
+                folder5.add(skeletonHelper.bones[26].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandRing2 y');
+                folder5.add(skeletonHelper.bones[26].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandRing2 z');
+				folder5.add(skeletonHelper.bones[27].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandRing3 x');
+                folder5.add(skeletonHelper.bones[27].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandRing3 y');
+                folder5.add(skeletonHelper.bones[27].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandRing3 z');
+				folder5.add(skeletonHelper.bones[28].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandRing4 x');
+                folder5.add(skeletonHelper.bones[28].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandRing4 y');
+                folder5.add(skeletonHelper.bones[28].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandRing4 z');
+				folder5.add(skeletonHelper.bones[29].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandPinky1 x');
+                folder5.add(skeletonHelper.bones[29].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandPinky1 y');
+                folder5.add(skeletonHelper.bones[29].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandPinky1 z');
+				folder5.add(skeletonHelper.bones[30].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandPinky2 x');
+                folder5.add(skeletonHelper.bones[30].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandPinky2 y');
+                folder5.add(skeletonHelper.bones[30].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandPinky2 z');
+				folder5.add(skeletonHelper.bones[31].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandPinky3 x');
+                folder5.add(skeletonHelper.bones[31].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandPinky3 y');
+                folder5.add(skeletonHelper.bones[31].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandPinky3 z');
+				folder5.add(skeletonHelper.bones[32].rotation, 'x', -3.141592653589793, Math.PI).name('LeftHandPinky4 x');
+                folder5.add(skeletonHelper.bones[32].rotation, 'y', -3.141592653589793, Math.PI).name('LeftHandPinky4 y');
+                folder5.add(skeletonHelper.bones[32].rotation, 'z', -3.141592653589793, Math.PI).name('LeftHandPinky4 z');
+				folder5.add(skeletonHelper.bones[33].rotation, 'x', -3.141592653589793, Math.PI).name('RightShoulder x');
+                folder5.add(skeletonHelper.bones[33].rotation, 'y', -3.141592653589793, Math.PI).name('RightShoulder y');
+                folder5.add(skeletonHelper.bones[33].rotation, 'z', -3.141592653589793, Math.PI).name('RightShoulder z');
+				folder5.add(skeletonHelper.bones[34].rotation, 'x', -3.141592653589793, Math.PI).name('RightArm x');
+                folder5.add(skeletonHelper.bones[34].rotation, 'y', -3.141592653589793, Math.PI).name('RightArm y');
+                folder5.add(skeletonHelper.bones[34].rotation, 'z', -3.141592653589793, Math.PI).name('RightArm z');
+				folder5.add(skeletonHelper.bones[35].rotation, 'x', -3.141592653589793, Math.PI).name('RightForeArm x');
+                folder5.add(skeletonHelper.bones[35].rotation, 'y', -3.141592653589793, Math.PI).name('RightForeArm y');
+                folder5.add(skeletonHelper.bones[35].rotation, 'z', -3.141592653589793, Math.PI).name('RightForeArm z');
+				folder5.add(skeletonHelper.bones[36].rotation, 'x', -3.141592653589793, Math.PI).name('RightHand x');
+                folder5.add(skeletonHelper.bones[36].rotation, 'y', -3.141592653589793, Math.PI).name('RightHand y');
+                folder5.add(skeletonHelper.bones[36].rotation, 'z', -3.141592653589793, Math.PI).name('RightHand z');
+				folder5.add(skeletonHelper.bones[37].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandPinky1 x');
+                folder5.add(skeletonHelper.bones[37].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandPinky1 y');
+                folder5.add(skeletonHelper.bones[37].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandPinky1 z');
+				folder5.add(skeletonHelper.bones[38].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandPinky2 x');
+                folder5.add(skeletonHelper.bones[38].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandPinky2 y');
+                folder5.add(skeletonHelper.bones[38].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandPinky2 z');
+				folder5.add(skeletonHelper.bones[39].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandPinky3 x');
+                folder5.add(skeletonHelper.bones[39].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandPinky3 y');
+                folder5.add(skeletonHelper.bones[39].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandPinky3 z');
+				folder5.add(skeletonHelper.bones[40].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandPinky4 x');
+                folder5.add(skeletonHelper.bones[40].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandPinky4 y');
+                folder5.add(skeletonHelper.bones[40].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandPinky4 z');
+				folder5.add(skeletonHelper.bones[41].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandRing1 x');
+                folder5.add(skeletonHelper.bones[41].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandRing1 y');
+                folder5.add(skeletonHelper.bones[41].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandRing1 z');
+				folder5.add(skeletonHelper.bones[42].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandRing2 x');
+                folder5.add(skeletonHelper.bones[42].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandRing2 y');
+                folder5.add(skeletonHelper.bones[42].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandRing2 z');
+				folder5.add(skeletonHelper.bones[43].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandRing3 x');
+                folder5.add(skeletonHelper.bones[43].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandRing3 y');
+                folder5.add(skeletonHelper.bones[43].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandRing3 z');
+				folder5.add(skeletonHelper.bones[44].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandRing4 x');
+                folder5.add(skeletonHelper.bones[44].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandRing4 y');
+                folder5.add(skeletonHelper.bones[44].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandRing4 z');
+				folder5.add(skeletonHelper.bones[45].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandMiddle1 x');
+                folder5.add(skeletonHelper.bones[45].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandMiddle1 y');
+                folder5.add(skeletonHelper.bones[45].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandMiddle1 z');
+				folder5.add(skeletonHelper.bones[46].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandMiddle2 x');
+                folder5.add(skeletonHelper.bones[46].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandMiddle2 y');
+                folder5.add(skeletonHelper.bones[46].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandMiddle2 z');
+				folder5.add(skeletonHelper.bones[47].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandMiddle3 x');
+                folder5.add(skeletonHelper.bones[47].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandMiddle3 y');
+                folder5.add(skeletonHelper.bones[47].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandMiddle3 z');
+				folder5.add(skeletonHelper.bones[48].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandMiddle4 x');
+                folder5.add(skeletonHelper.bones[48].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandMiddle4 y');
+                folder5.add(skeletonHelper.bones[48].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandMiddle4 z');
+				folder5.add(skeletonHelper.bones[49].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandIndex1 x');
+                folder5.add(skeletonHelper.bones[49].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandIndex1 y');
+                folder5.add(skeletonHelper.bones[49].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandIndex1 z');
+				folder5.add(skeletonHelper.bones[50].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandIndex2 x');
+                folder5.add(skeletonHelper.bones[50].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandIndex2 y');
+                folder5.add(skeletonHelper.bones[50].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandIndex2 z');
+				folder5.add(skeletonHelper.bones[51].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandIndex3 x');
+                folder5.add(skeletonHelper.bones[51].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandIndex3 y');
+                folder5.add(skeletonHelper.bones[51].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandIndex3 z');
+				folder5.add(skeletonHelper.bones[52].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandIndex4 x');
+                folder5.add(skeletonHelper.bones[52].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandIndex4 y');
+                folder5.add(skeletonHelper.bones[52].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandIndex4 z');
+				folder5.add(skeletonHelper.bones[53].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandThumb1 x');
+                folder5.add(skeletonHelper.bones[53].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandThumb1 y');
+                folder5.add(skeletonHelper.bones[53].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandThumb1 z');
+				folder5.add(skeletonHelper.bones[54].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandThumb2 x');
+                folder5.add(skeletonHelper.bones[54].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandThumb2 y');
+                folder5.add(skeletonHelper.bones[54].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandThumb2 z');
+				folder5.add(skeletonHelper.bones[55].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandThumb3 x');
+                folder5.add(skeletonHelper.bones[55].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandThumb3 y');
+                folder5.add(skeletonHelper.bones[55].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandThumb3 z');
+				folder5.add(skeletonHelper.bones[56].rotation, 'x', -3.141592653589793, Math.PI).name('RightHandThumb4 x');
+                folder5.add(skeletonHelper.bones[56].rotation, 'y', -3.141592653589793, Math.PI).name('RightHandThumb4 y');
+                folder5.add(skeletonHelper.bones[56].rotation, 'z', -3.141592653589793, Math.PI).name('RightHandThumb4 z');
+				folder5.add(skeletonHelper.bones[57].rotation, 'x', -3.141592653589793, Math.PI).name('LeftUpLeg x');
+                folder5.add(skeletonHelper.bones[57].rotation, 'y', -3.141592653589793, Math.PI).name('LeftUpLeg y');
+                folder5.add(skeletonHelper.bones[57].rotation, 'z', -3.141592653589793, Math.PI).name('LeftUpLeg z');
+				folder5.add(skeletonHelper.bones[58].rotation, 'x', -3.141592653589793, Math.PI).name('LeftLeg x');
+                folder5.add(skeletonHelper.bones[58].rotation, 'y', -3.141592653589793, Math.PI).name('LeftLeg y');
+                folder5.add(skeletonHelper.bones[58].rotation, 'z', -3.141592653589793, Math.PI).name('LeftLeg z');
+				folder5.add(skeletonHelper.bones[59].rotation, 'x', -3.141592653589793, Math.PI).name('LeftFoot x');
+                folder5.add(skeletonHelper.bones[59].rotation, 'y', -3.141592653589793, Math.PI).name('LeftFoot y');
+                folder5.add(skeletonHelper.bones[59].rotation, 'z', -3.141592653589793, Math.PI).name('LeftFoot z');
+				folder5.add(skeletonHelper.bones[60].rotation, 'x', -3.141592653589793, Math.PI).name('LeftToeBase x');
+                folder5.add(skeletonHelper.bones[60].rotation, 'y', -3.141592653589793, Math.PI).name('LeftToeBase y');
+                folder5.add(skeletonHelper.bones[60].rotation, 'z', -3.141592653589793, Math.PI).name('LeftToeBase z');
+				folder5.add(skeletonHelper.bones[61].rotation, 'x', -3.141592653589793, Math.PI).name('LeftToe_End x');
+                folder5.add(skeletonHelper.bones[61].rotation, 'y', -3.141592653589793, Math.PI).name('LeftToe_End y');
+                folder5.add(skeletonHelper.bones[61].rotation, 'z', -3.141592653589793, Math.PI).name('LeftToe_End z');
+				folder5.add(skeletonHelper.bones[62].rotation, 'x', -3.141592653589793, Math.PI).name('RightUpLeg x');
+                folder5.add(skeletonHelper.bones[62].rotation, 'y', -3.141592653589793, Math.PI).name('RightUpLeg y');
+                folder5.add(skeletonHelper.bones[62].rotation, 'z', -3.141592653589793, Math.PI).name('RightUpLeg z');
+				folder5.add(skeletonHelper.bones[63].rotation, 'x', -3.141592653589793, Math.PI).name('RightLeg x');
+                folder5.add(skeletonHelper.bones[63].rotation, 'y', -3.141592653589793, Math.PI).name('RightLeg y');
+                folder5.add(skeletonHelper.bones[63].rotation, 'z', -3.141592653589793, Math.PI).name('RightLeg z');
+				folder5.add(skeletonHelper.bones[64].rotation, 'x', -3.141592653589793, Math.PI).name('RightFoot x');
+                folder5.add(skeletonHelper.bones[64].rotation, 'y', -3.141592653589793, Math.PI).name('RightFoot y');
+                folder5.add(skeletonHelper.bones[64].rotation, 'z', -3.141592653589793, Math.PI).name('RightFoot z');
+				folder5.add(skeletonHelper.bones[65].rotation, 'x', -3.141592653589793, Math.PI).name('RightToeBase x');
+                folder5.add(skeletonHelper.bones[65].rotation, 'y', -3.141592653589793, Math.PI).name('RightToeBase y');
+                folder5.add(skeletonHelper.bones[65].rotation, 'z', -3.141592653589793, Math.PI).name('RightToeBase z');
+				folder5.add(skeletonHelper.bones[66].rotation, 'x', -3.141592653589793, Math.PI).name('RightToe_End x');
+                folder5.add(skeletonHelper.bones[66].rotation, 'y', -3.141592653589793, Math.PI).name('RightToe_End y');
+                folder5.add(skeletonHelper.bones[66].rotation, 'z', -3.141592653589793, Math.PI).name('RightToe_End z');
+				
+                folder1.open();
+				folder2.open();
+				folder3.open();
+				folder4.open();
+                folder5.open();
+
+				crossFadeControls.forEach( function ( control ) {
+
+					control.setInactive = function () {
+
+						control.domElement.classList.add( 'control-inactive' );
+
+					};
+
+					control.setActive = function () {
+
+						control.domElement.classList.remove( 'control-inactive' );
+
+					};
+
+					const settings = baseActions[ control.property ];
+
+					if ( ! settings || ! settings.weight ) {
+
+						control.setInactive();
+
+					}
+
+				} );
+
+			}
+
+			function activateAction( action ) {
+
+				const clip = action.getClip();
+				const settings = baseActions[ clip.name ] || additiveActions[ clip.name ];
+				setWeight( action, settings.weight );
+				action.play();
+
+			}
+
+			function modifyTimeScale( speed ) {
+
+				mixer.timeScale = speed;
+
+			}
+
+			function prepareCrossFade( startAction, endAction, duration ) {
+
+				// If the current action is 'idle', execute the crossfade immediately;
+				// else wait until the current action has finished its current loop
+
+				if ( currentBaseAction === 'idle' || ! startAction || ! endAction ) {
+
+					executeCrossFade( startAction, endAction, duration );
+
+				} else {
+
+					synchronizeCrossFade( startAction, endAction, duration );
+
+				}
+
+				// Update control colors
+
+				if ( endAction ) {
+
+					const clip = endAction.getClip();
+					currentBaseAction = clip.name;
+
+				} else {
+
+					currentBaseAction = 'None';
+
+				}
+
+				crossFadeControls.forEach( function ( control ) {
+
+					const name = control.property;
+
+					if ( name === currentBaseAction ) {
+
+						control.setActive();
+
+					} else {
+
+						control.setInactive();
+
+					}
+
+				} );
+
+			}
+
+			function synchronizeCrossFade( startAction, endAction, duration ) {
+
+				mixer.addEventListener( 'loop', onLoopFinished );
+
+				function onLoopFinished( event ) {
+
+					if ( event.action === startAction ) {
+
+						mixer.removeEventListener( 'loop', onLoopFinished );
+
+						executeCrossFade( startAction, endAction, duration );
+
+					}
+
+				}
+
+			}
+
+			function executeCrossFade( startAction, endAction, duration ) {
+
+				// Not only the start action, but also the end action must get a weight of 1 before fading
+				// (concerning the start action this is already guaranteed in this place)
+
+				if ( endAction ) {
+
+					setWeight( endAction, 1 );
+					endAction.time = 0;
+
+					if ( startAction ) {
+
+						// Crossfade with warping
+
+						startAction.crossFadeTo( endAction, duration, true );
+
+					} else {
+
+						// Fade in
+
+						endAction.fadeIn( duration );
+
+					}
+
+				} else {
+
+					// Fade out
+
+					startAction.fadeOut( duration );
+
+				}
+
+			}
+
+			// This function is needed, since animationAction.crossFadeTo() disables its start action and sets
+			// the start action's timeScale to ((start animation's duration) / (end animation's duration))
+
+			function setWeight( action, weight ) {
+
+				action.enabled = true;
+				action.setEffectiveTimeScale( 1 );
+				action.setEffectiveWeight( weight );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+            function logAllBones(skeleton) {
+    skeleton.traverse(function (bone) {
+        if (bone.isBone) {
+            console.log(bone.name); // Log the name of each bone
+        }
+    });
+}
+            function animate() {
+
+				// Render loop
+
+				for ( let i = 0; i !== numAnimations; ++ i ) {
+
+					const action = allActions[ i ];
+					const clip = action.getClip();
+					const settings = baseActions[ clip.name ] || additiveActions[ clip.name ];
+					settings.weight = action.getEffectiveWeight();
+
+				}
+
+				// Get the time elapsed since the last frame, used for mixer update
+
+				const mixerUpdateDelta = clock.getDelta();
+
+				// Update the animation mixer, the stats panel, and render this frame
+
+				mixer.update( mixerUpdateDelta );
+
+				renderer.render( scene, camera );
+
+				stats.update();
+
+			}
+           
+		</script>
+
+<script src="/assets/js/app.js"></script>
+<script src="/assets/js/tracker.js"></script>
+<script>
+
+    let source = 'camera'; // camera|video|stream		
+    let sourceVideo = '';
+    let defaultVideo = 'mp4/whatislove.mp4';
+    let defaultStream = 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8';
+    let model = 'MoveNetSinglePoseLightning';
+    /*
+        ^^^ available pre-defined models:
+            
+            - MoveNetSinglePoseLightning				
+            - MoveNetSinglePoseThunder
+            - MoveNetMultiPoseLightning
+            - PoseNetMobileNetV1
+            - PoseNetResNet50
+            - BlazePoseLite
+            - BlazePoseHeavy
+            - BlazePoseFull
+     */
+
+    // initialize app
+    app.init();
+    
+    // initialize AI tracker model
+    tracker.setModel(model);
+    tracker.autofit = true; // enable auto resize/fit
+
+    // set-up hooks
+    tracker.on('statuschange', function(msg) {
+        app.updateStatus(msg);
+    });
+    tracker.on('beforeupdate', function(poses) {
+        app.updateDebug(poses);
+        app.updateCounter(poses);
+    });
+
+    // config		
+    tracker.elCanvas = '#canvas';
+    tracker.elVideo = '#video';
+    tracker.el3D = '#view_3d';
+    tracker.pointWidth = 6;
+    tracker.pointRadius = 8;
+
+    // run predictions
+    tracker.run(source);
+</script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9LZ7CG7YSD"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() {
+        dataLayer.push(arguments);
+    }
+    gtag('js', new Date());
+    gtag('config', 'G-9LZ7CG7YSD');
+</script>
+	</body>
+</html>
