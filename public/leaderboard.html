@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .leaderboard-card {
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .table-leaderboard th, .table-leaderboard td {
+            vertical-align: middle;
+        }
+        .table-leaderboard th {
+            background-color: #007bff;
+            color: white;
+        }
+        .rank {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="leaderboard-card bg-white">
+            <h2 class="text-center mb-4">Leaderboard</h2>
+            <table class="table table-striped table-leaderboard">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>Name</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="rank">1</td>
+                        <td>John Doe</td>
+                        <td>1500</td>
+                    </tr>
+                    <tr>
+                        <td class="rank">2</td>
+                        <td>Jane Smith</td>
+                        <td>1400</td>
+                    </tr>
+                    <tr>
+                        <td class="rank">3</td>
+                        <td>Mark Johnson</td>
+                        <td>1350</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>Emily Davis</td>
+                        <td>1300</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>Michael Brown</td>
+                        <td>1250</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
