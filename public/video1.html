@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inline Video Example</title>
+</head>
+<body>
+
+    <video id="myVideo" width="600" height="400" playsinline controls>
+        <source src="/assets/video/10.mp4" type="video/mp4">
+        Your browser does not support HTML5 video.
+    </video>
+
+    <script>
+        // Ensure the video is ready to be played inline on iOS
+        const video = document.getElementById('myVideo');
+        video.addEventListener('loadedmetadata', function() {
+            video.setAttribute('playsinline', 'true');
+            video.setAttribute('webkit-playsinline', 'true'); // Specific to older iOS versions
+        });
+    </script>
+
+</body>
+</html>
