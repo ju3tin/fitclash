@@ -39,13 +39,25 @@
     </style>
 </head>
 <body>
-
+    <select name="model" id="model_select" class="form-control d-inline-block">
+        <option value="MoveNetSinglePoseLightning">2D only (FAST) singlepose (faster) / MoveNet </option>
+        <option value="MoveNetSinglePoseThunder">2D only (FAST) singlepose (slower) / MoveNet </option>
+        <option value="MoveNetMultiPoseLightning">2D only (FAST) multipose / MoveNet</option>
+        <option value="PoseNetMobileNetV1">2D only (SLOW) singlepose (faster) / PoseNet-MobileNetV1 </option>
+        <option value="PoseNetResNet50">2D only (SLOW) singlepose (slower) / PoseNet-ResNet50</option>
+    </select>
+    <div class="col-md-6">
+        <button type="button" id="source-camera" class="source-select btn btn-primary" data-source="camera" >WEBCAM</button>  
+        <button type="button" id="source-video" class="source-select btn btn-primary" data-source="video" >VIDEO</button>  
+    </div>
     <div class="video-container">
         <video id="myVideo" playsinline muted>
             <!-- The source will be dynamically set via JavaScript -->
             Your browser does not support HTML5 video.
         </video>
         <canvas id="videoCanvas"></canvas>
+        <canvas id="tracker1"></canvas>
+        <canvas id="tracker2"></canvas>
     </div>
 
     <script>
@@ -178,6 +190,62 @@
         });
 
     </script>
+
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+
+	<script src="/js/app.js"></script>
+	<script src="/js/tracker.js"></script>
+
+    <script>
+
+		let source = 'camera'; // camera|video|stream		
+		let sourceVideo = '';
+		let defaultVideo = '/media/whatislove.mp4';
+		let defaultStream = 'https://multiplatform-f.akamaihd.net/i/multi/will/bunny/big_buck_bunny_,640x360_400,640x360_700,640x360_1000,950x540_1500,.f4v.csmil/master.m3u8';
+		let model = 'MoveNetSinglePoseLightning';
+		/*
+			^^^ available pre-defined models:
+				
+				- MoveNetSinglePoseLightning				
+				- MoveNetSinglePoseThunder
+				- MoveNetMultiPoseLightning
+				- PoseNetMobileNetV1
+				- PoseNetResNet50
+				- BlazePoseLite
+				- BlazePoseHeavy
+				- BlazePoseFull
+		 */
+
+		// initialize app
+		app.init();
+		
+		// initialize AI tracker model
+		tracker.setModel(model);
+		tracker.autofit = true; // enable auto resize/fit
+
+		// set-up hooks
+		tracker.on('statuschange', function(msg) {
+			app.updateStatus(msg);
+        });
+		tracker.on('beforeupdate', function(poses) {
+			app.updateDebug(poses);
+			app.updateCounter(poses);
+		});
+
+		// config		
+	    tracker.elCanvas = '#canvas';
+	    tracker.elVideo = '#video';
+	    tracker.el3D = '#view_3d';
+	    tracker.pointWidth = 6;
+    	tracker.pointRadius = 8;
+
+		// run predictions
+		tracker.run(source);
+	</script>
+
 
 </body>
 </html>
