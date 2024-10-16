@@ -49,6 +49,17 @@
     <script>
         // Function to get query parameter values from the URL
         let countdown = 3; // Countdown starting from 3 seconds
+
+        
+
+        function playVideoBriefly() {
+            video.play();  // Play the video briefly
+            setTimeout(() => {
+                video.pause(); // Pause the video immediately after 0.001 seconds
+                startCountdown(); // Start countdown
+            }, 1); // 1 millisecond
+        }
+
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
@@ -149,11 +160,19 @@
                 canvas.style.display = 'block';  // Show the canvas when paused
             }
         }
+        function playVideoBriefly() {
+            video.play();  // Play the video briefly
+            setTimeout(() => {
+                video.pause(); // Pause the video immediately after 0.001 seconds
+                startCountdown(); // Start countdown
+            }, 1); // 1 millisecond
+        }
 
         // Resize canvas and draw play button on load and window resize
         window.addEventListener('load', () => {
             resizeCanvas();
             drawPlayButton();  // Initially display the play button
+            playVideoBriefly();
         });
 
         window.addEventListener('resize', resizeCanvas);
