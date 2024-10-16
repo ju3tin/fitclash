@@ -3,29 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inline Video Example with Full-Screen Height</title>
+    <title>Video with Canvas Overlay</title>
     <style>
-        /* Ensure the body takes full height and centers the video horizontally */
+        /* Ensure the body takes the full screen height */
         html, body {
             height: 100%;
             margin: 0;
             display: flex;
-            justify-content: center; /* Centers the video horizontally */
-            align-items: flex-start; /* Aligns to the top */
+            justify-content: center;
+            align-items: center;
+            background-color: black;
         }
 
-        /* Style the container to center video horizontally */
+        /* Style to wrap and center the video and canvas */
         .video-container {
+            position: relative;
             width: 100%;
-            display: flex;
-            justify-content: center; /* Horizontally centers the video */
+            max-width: 800px;  /* Set a maximum width for the video */
         }
 
-        /* Make the video take full screen height */
         video {
-            height: 100vh;  /* Set video height to 100% of the viewport height */
-            width: auto;    /* Maintain aspect ratio by adjusting width automatically */
+            width: 100%;
+            height: auto;
+            display: block;
         }
+
+        /* Style for the canvas overlay */
         canvas {
             position: absolute;
             top: 0;
@@ -39,42 +42,17 @@
 <body>
 
     <div class="video-container">
-        <video id="myVideo" playsinline controls>
-            <!-- The source will be dynamically set via JavaScript -->
-            Your browser does not support HTML5 video.
+        <video id="myVideo" playsinline>
+            <!-- Video source will be dynamically set -->
+            <source id="videoSource" src="your-video-file.mp4" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
+
+        <!-- Canvas overlay for play button -->
         <canvas id="videoCanvas"></canvas>
     </div>
 
     <script>
-        // Function to get query parameter values from the URL
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // Get the video URL from the 'video' parameter in the address bar
-        const videoUrl = getQueryParam('video');
-
-        // Check if a video URL is provided
-        if (videoUrl) {
-            // Get the video element
-            const video = document.getElementById('myVideo');
-
-            // Create a source element
-            const source = document.createElement('source');
-            source.setAttribute('src', videoUrl);
-            source.setAttribute('type', 'video/mp4');
-
-            // Append the source element to the video element
-            video.appendChild(source);
-
-            // Ensure the video is ready to be played inline on iOS
-            video.setAttribute('playsinline', 'true');
-            video.setAttribute('webkit-playsinline', 'true'); // For older iOS versions
-        } else {
-            alert("No video URL specified in the address bar!");
-        }
         const video = document.getElementById('myVideo');
         const canvas = document.getElementById('videoCanvas');
         const ctx = canvas.getContext('2d');
@@ -136,6 +114,7 @@
             drawPlayButton();
             canvas.style.display = 'block';
         });
+
     </script>
 
 </body>
