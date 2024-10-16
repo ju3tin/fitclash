@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inline Video Example with Full-Screen Height</title>
+    <title>Video with Countdown Timer</title>
     <style>
         /* Ensure the body takes full height and centers the video horizontally */
         html, body {
@@ -19,6 +19,7 @@
             width: 100%;
             display: flex;
             justify-content: center; /* Horizontally centers the video */
+            position: relative; /* For canvas absolute positioning */
         }
 
         /* Make the video take full screen height */
@@ -26,6 +27,7 @@
             height: 100vh;  /* Set video height to 100% of the viewport height */
             width: auto;    /* Maintain aspect ratio by adjusting width automatically */
         }
+
         canvas {
             position: absolute;
             top: 0;
@@ -56,17 +58,19 @@
         // Get the video URL from the 'video' parameter in the address bar
         const videoUrl = getQueryParam('video');
 
+        // Get the video and canvas elements
+        const video = document.getElementById('myVideo');
+        const canvas = document.getElementById('videoCanvas');
+        const ctx = canvas.getContext('2d');
+        const playIconSize = 100; // Size of the play icon
+        let countdown = 4; // Countdown starting from 3 seconds
+
         // Check if a video URL is provided
         if (videoUrl) {
-            // Get the video element
-            const video = document.getElementById('myVideo');
-
-            // Create a source element
+            // Set the video source
             const source = document.createElement('source');
             source.setAttribute('src', videoUrl);
             source.setAttribute('type', 'video/mp4');
-
-            // Append the source element to the video element
             video.appendChild(source);
 
             // Ensure the video is ready to be played inline on iOS
@@ -75,10 +79,6 @@
         } else {
             alert("No video URL specified in the address bar!");
         }
-        const video = document.getElementById('myVideo');
-        const canvas = document.getElementById('videoCanvas');
-        const ctx = canvas.getContext('2d');
-        const playIconSize = 100; // Size of the play icon
 
         // Resize the canvas to match the video dimensions
         function resizeCanvas() {
@@ -86,56 +86,44 @@
             canvas.height = video.clientHeight;
         }
 
-        // Draw play button on canvas
-        function drawPlayButton() {
+        // Draw the countdown on canvas
+        function drawCountdown() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);  // Clear the canvas
             ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';  // Semi-transparent background
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            ctx.fillStyle = '#FFFFFF';  // White play icon
-            ctx.beginPath();
-            const centerX = canvas.width / 2;
-            const centerY = canvas.height / 2;
-            const trianglePath = [
-                {x: centerX - playIconSize / 3, y: centerY - playIconSize / 2},
-                {x: centerX + playIconSize / 2, y: centerY},
-                {x: centerX - playIconSize / 3, y: centerY + playIconSize / 2}
-            ];
-            ctx.moveTo(trianglePath[0].x, trianglePath[0].y);
-            ctx.lineTo(trianglePath[1].x, trianglePath[1].y);
-            ctx.lineTo(trianglePath[2].x, trianglePath[2].y);
-            ctx.closePath();
-            ctx.fill();
+            ctx.fillStyle = '#FFFFFF';  // White countdown text
+            ctx.font = '100px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(countdown, canvas.width / 2, canvas.height / 2); // Draw the countdown number
         }
 
         // Handle play/pause of the video
-        function togglePlayPause() {
-            if (video.paused) {
-                video.play();
-                canvas.style.display = 'none';  // Hide the canvas when video plays
-            } else {
-                video.pause();
-                drawPlayButton();  // Show the play button again
-                canvas.style.display = 'block';  // Show the canvas when paused
-            }
+        function startCountdown() {
+            const countdownInterval = setInterval(() => {
+                drawCountdown();  // Draw the current countdown number
+                countdown--;
+
+                if (countdown < 0) {
+                    clearInterval(countdownInterval);  // Stop the countdown
+
+                    // Start the video playback
+                    video.play();
+                    canvas.style.display = 'none';  // Hide the canvas when video starts playing
+                }
+            }, 1000);  // Update every 1 second
         }
 
         // Resize canvas and draw play button on load and window resize
         window.addEventListener('load', () => {
             resizeCanvas();
-            drawPlayButton();  // Initially display the play button
+            drawCountdown();  // Initially display the countdown
+            startCountdown();  // Start the countdown immediately after the page loads
         });
 
         window.addEventListener('resize', resizeCanvas);
 
-        // Handle canvas click to toggle play/pause
-        canvas.addEventListener('click', togglePlayPause);
-
-        // Handle video end event to show the play button again
-        video.addEventListener('ended', () => {
-            drawPlayButton();
-            canvas.style.display = 'block';
-        });
     </script>
 
 </body>
