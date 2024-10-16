@@ -144,7 +144,9 @@
             video.play();  // Play the video briefly
             setTimeout(() => {
                 video.pause(); // Pause the video immediately after 0.001 seconds
-                startCountdown(); // Start countdown
+                //startCountdown(); // Start countdown
+                drawPlayButton(); // Draw play button initially
+
             }, 1); // 1 millisecond
         }
 
@@ -159,8 +161,9 @@
         // Handle play/pause of the video on canvas click
         canvas.addEventListener('click', () => {
             if (video.paused) {
-                video.play();
-                canvas.style.display = 'none';  // Hide the canvas when video plays
+              //  video.play();
+              startCountdown();
+             //   canvas.style.display = 'none';  // Hide the canvas when video plays
             } else {
                 video.pause();
                 drawPlayButton();  // Show the play button again
