@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dino Game with Obstacles, Power-Ups, and Lives</title>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <style>
           #video {
             position: absolute;
@@ -183,6 +184,25 @@
     <audio id="levelup-sound" src="/sounds/levelup.wav"></audio>
     <audio id="losing-sound" src="/sounds/losing.wav"></audio>
     <div class="game-container">
+        <div id="ton-connect"></div>
+        <script>
+            const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'https://<YOUR_APP_URL>/tonconnect-manifest.json',
+                buttonRootId: 'ton-connect'
+            });
+        </script>
+        <script>
+            async function connectToWallet() {
+                const connectedWallet = await tonConnectUI.connectWallet();
+                // Do something with connectedWallet if needed
+                console.log(connectedWallet);
+            }
+        
+            // Call the function
+            connectToWallet().catch(error => {
+                console.error("Error connecting to wallet:", error);
+            });
+        </script>
         <video id="video" playsinline autoplay muted></video>
         <canvas id="canvas"></canvas>
         <div id="scoreboard" class="scoreboard">Score: 0</div>
