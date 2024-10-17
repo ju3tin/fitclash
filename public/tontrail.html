@@ -185,27 +185,7 @@
     <audio id="losing-sound" src="/sounds/losing.wav"></audio>
     <div class="game-container">
         <div id="ton-connect"></div>
-        <script>
-            const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: 'https://fitclash.vercel.app/tonconnect-manifest.json',
-                buttonRootId: 'ton-connect'
-            });
-            tonConnectUI.uiOptions = {
-      twaReturnUrl: 'https://t.me/DuckJump_bot/Ducktrail'
-  };
-        </script>
-        <script>
-            async function connectToWallet() {
-                const connectedWallet = await tonConnectUI.connectWallet();
-                // Do something with connectedWallet if needed
-                console.log(connectedWallet);
-            }
-        
-            // Call the function
-            connectToWallet().catch(error => {
-                console.error("Error connecting to wallet:", error);
-            });
-        </script>
+       
         <video id="video" playsinline autoplay muted></video>
         <canvas id="canvas"></canvas>
         <div id="scoreboard" class="scoreboard">Score: 0</div>
@@ -221,6 +201,27 @@
     <script src="/js/game.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
+<script>
+    const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+        manifestUrl: 'https://fitclash.vercel.app/tonconnect-manifest.json',
+        buttonRootId: 'ton-connect'
+    });
+    tonConnectUI.uiOptions = {
+twaReturnUrl: 'https://t.me/DuckJump_bot/Ducktrail'
+};
+</script>
+<script>
+    async function connectToWallet() {
+        const connectedWallet = await tonConnectUI.connectWallet();
+        // Do something with connectedWallet if needed
+        console.log(connectedWallet);
+    }
+
+    // Call the function
+    connectToWallet().catch(error => {
+        console.error("Error connecting to wallet:", error);
+    });
+</script>
 <script>
     async function setup() {
         try {
