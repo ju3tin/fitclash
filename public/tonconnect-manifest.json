@@ -2,6 +2,6 @@
     "url": "https://fitclash.vercel.app",                        
     "name": "DuckJump",                      
     "iconUrl": "https://fitclash.vercel.app/img/logo1.png",               
-    "termsOfUseUrl": "<terms-of-use-url>",     
-    "privacyPolicyUrl": "<privacy-policy-url>" 
+    "termsOfUseUrl": "https://fitclash.vercel.app/duck/term.html",     
+    "privacyPolicyUrl": "https://fitclash.vercel.app/duck/privacy.html" 
 }
