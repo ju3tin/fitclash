@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TON Leaderboard</title>
+    <script src="https://unpkg.com/tonweb@0.0.40/dist/tonweb.min.js"></script>
+</head>
+<body>
+    <h1>Leaderboard</h1>
+    
+    <!-- Leaderboard Table -->
+    <table id="leaderboard-table">
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Player Address</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Leaderboard data will be inserted here dynamically -->
+        </tbody>
+    </table>
+    
+    <br>
+
+    <!-- Form to Register Player -->
+    <h2>Register Player</h2>
+    <form id="register-form">
+        <input type="text" id="playerAddress" placeholder="Player Address" required />
+        <button type="submit">Register</button>
+    </form>
+
+    <!-- Form to Update Player Score -->
+    <h2>Update Player Score</h2>
+    <form id="update-form">
+        <input type="text" id="updatePlayerAddress" placeholder="Player Address" required />
+        <input type="number" id="newScore" placeholder="New Score" required />
+        <button type="submit">Update Score</button>
+    </form>
+
+    <script>
+        // TON Blockchain Setup
+        const tonweb = new TonWeb();
+        const contractAddress = 'YOUR_SMART_CONTRACT_ADDRESS'; // Replace with your contract address
+        const contractABI = {}; // Load your ABI here
+
+        // Contract instance
+        const contract = new tonweb.Contract(contractABI, contractAddress);
+
+        // Get Leaderboard Data from Smart Contract
+        async function getLeaderboard() {
+            const leaderboard = await contract.methods.getLeaderboard().call();
+            const leaderboardTable = document.getElementById('leaderboard-table').getElementsByTagName('tbody')[0];
+            
+            // Clear existing leaderboard
+            leaderboardTable.innerHTML = '';
+
+            leaderboard.addresses.forEach((playerAddress, index) => {
+                const score = leaderboard.scores[index];
+
+                // Insert row into leaderboard table
+                const row = leaderboardTable.insertRow();
+                const cellRank = row.insertCell(0);
+                const cellAddress = row.insertCell(1);
+                const cellScore = row.insertCell(2);
+
+                cellRank.textContent = index + 1;
+                cellAddress.textContent = playerAddress;
+                cellScore.textContent = score;
+            });
+        }
+
+        // Register New Player
+        document.getElementById('register-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const playerAddress = document.getElementById('playerAddress').value;
+
+            await contract.methods.registerPlayer().send({
+                from: playerAddress,
+                gas: 1000000 // Gas limit
+            });
+
+            alert('Player Registered!');
+            getLeaderboard(); // Update leaderboard after registration
+        });
+
+        // Update Player Score
+        document.getElementById('update-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const playerAddress = document.getElementById('updatePlayerAddress').value;
+            const newScore = document.getElementById('newScore').value;
+
+            await contract.methods.updateScore(playerAddress, newScore).send({
+                from: 'ADMIN_ADDRESS', // Replace with the admin address
+                gas: 1000000 // Gas limit
+            });
+
+            alert('Score Updated!');
+            getLeaderboard(); // Update leaderboard after score update
+        });
+
+        // Initial Load of Leaderboard
+        getLeaderboard();
+    </script>
+</body>
+</html>
