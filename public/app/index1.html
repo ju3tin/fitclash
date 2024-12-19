@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peer-to-Peer Video Chat</title>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        video {
+            width: 45%;
+            margin: 10px;
+            border: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>Peer-to-Peer Video Chat</h1>
+    <video id="localVideo" autoplay muted></video>
+    <video id="remoteVideo" autoplay></video>
+    <p><button id="startCall">Start Call</button></p>
+
+    <script>
+        const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
+        const localVideo = document.getElementById('localVideo');
+        const remoteVideo = document.getElementById('remoteVideo');
+        const startCallButton = document.getElementById('startCall');
+
+        let localStream;
+        let peerConnection;
+        const servers = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] }; // Public STUN server
+        const room = "default-room"; // Change this to create separate rooms
+        const peers = {};
+
+        // Get local video and audio stream
+        async function getLocalStream() {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+            localVideo.srcObject = localStream;
+        }
+
+        // Handle signaling messages
+        socket.on('signal', async ({ from, signal }) => {
+            if (!peers[from]) createPeerConnection(from);
+
+            if (signal.type === "offer") {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+                const answer = await peerConnection.createAnswer();
+                await peerConnection.setLocalDescription(answer);
+                socket.emit('signal', { to: from, signal: answer });
+            } else if (signal.type === "answer") {
+                await peerConnection.setRemoteDescription(new RTCSessionDescription(signal));
+            } else if (signal.candidate) {
+                await peerConnection.addIceCandidate(new RTCIceCandidate(signal.candidate));
+            }
+        });
+
+        // Create a new RTCPeerConnection
+        function createPeerConnection(peerId) {
+            peerConnection = new RTCPeerConnection(servers);
+            peers[peerId] = peerConnection;
+
+            // Add local stream tracks to the connection
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+            // Handle remote stream
+            peerConnection.ontrack = (event) => {
+                remoteVideo.srcObject = event.streams[0];
+            };
+
+            // Handle ICE candidates
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate) {
+                    socket.emit('signal', { to: peerId, signal: { candidate: event.candidate } });
+                }
+            };
+        }
+
+        // Start the call
+        startCallButton.addEventListener('click', async () => {
+            getLocalStream(); // Ensure local stream is available
+            const offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+            socket.emit('signal', { to: null, signal: offer }); // Broadcast offer
+        });
+
+        // Initialize on load
+        getLocalStream();
+    </script>
+</body>
+</html>

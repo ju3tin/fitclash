@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket.IO Chat</title>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #messages {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-width: 600px;
+            height: 300px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        #input {
+            display: flex;
+        }
+        #input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        #input button {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Socket.IO Chat</h1>
+    <div id="messages"></div>
+    <div id="input">
+        <input type="text" id="messageInput" placeholder="Type a message...">
+        <button id="sendButton">Send</button>
+    </div> 
+
+    <script>
+        // Connect to the Socket.IO server
+        const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
+
+        const messagesDiv = document.getElementById('messages');
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+
+        // Handle receiving messages
+        socket.on('message', (msg) => {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = msg;
+            messagesDiv.appendChild(messageElement);
+        });
+
+        // Handle sending messages
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                socket.emit('message', message); // Send to the server
+                messageInput.value = ''; // Clear input
+            }
+        });
+
+        // Optional: Handle connection status
+        socket.on('connect', () => {
+            console.log('Connected to Socket.IO server');
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Disconnected from Socket.IO server');
+        });
+    </script>
+</body>
+</html>
