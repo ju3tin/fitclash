@@ -108,7 +108,11 @@ socket.on('room_created', async () => {
   isRoomCreator = true
   if (player === 'player1') {
     console.log('Player 1 has joined the room');
-    copyaddress1.style.display = "block";
+    copyaddress1.style.display = "flex";
+    copyaddress1.style.justifyContent = "center";
+    copyaddress1.style.alignItems = "center";
+    copyaddress1.style.textAlign = "center";
+    copyaddress1.style.minHeight = "100vh";
     } else {
     console.log(`this is the dude ${player}`);
   }
