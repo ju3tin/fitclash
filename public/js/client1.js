@@ -8,6 +8,7 @@ const addressmyInput = document.getElementById('addressmyInput')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
+let selectedCountry = null;
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
@@ -16,7 +17,6 @@ const roomdude34 = roomInput.value;
 addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
 
 
-let selectedCountry = null;
 
 // Fetch the JSON file
 fetch('/js/countries.json')
@@ -36,6 +36,7 @@ fetch('/js/countries.json')
                 selectedCountry = country.name; // Update global variable
                 dropdownButton.innerHTML = `<img src="${country.flag}" width="20" height="15"> ${country.name}`;
                 console.log("Selected Country:", selectedCountry); // Debug
+                connectButton.style.display = "block"
             });
 
             dropdownList.appendChild(listItem);
