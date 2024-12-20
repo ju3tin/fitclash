@@ -2,14 +2,36 @@
 const roomSelectionContainer = document.getElementById('room-selection-container')
 const roomInput = document.getElementById('room-input')
 const connectButton = document.getElementById('connect-button')
+const copyaddress1 = document.getElementById('copyaddress1')
+const addressmyInput = document.getElementById('addressmyInput')
 
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
+
+const roomdude34 = roomInput.value;
+
+addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
  
 console.log("this is the player 1 roomid "+roomInput.value);
+
+
+function copytext() {
+  // Get the text field
+  var copyText = document.getElementById("addressmyInput");
+
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  alert("Copied the text: " + copyText.value);
+}
 
 // Variables.
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
@@ -55,6 +77,12 @@ socket.on('room_created', async () => {
 
   await setLocalStream(mediaConstraints)
   isRoomCreator = true
+  if (player === 'player1') {
+    console.log('Player 1 has joined the room');
+    copyaddress1.style.display = "block";
+    } else {
+    console.log(`this is the dude ${player}`);
+  }
 })
 
 socket.on('room_joined', async () => {
