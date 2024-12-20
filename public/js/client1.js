@@ -14,6 +14,34 @@ roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 const roomdude34 = roomInput.value;
 
 addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
+
+
+let selectedCountry = null;
+
+// Fetch the JSON file
+fetch('/js/countries.json')
+    .then(response => response.json())
+    .then(data => {
+        const dropdownList = document.getElementById('dropdown-list');
+        const dropdownButton = document.getElementById('dropdownMenuButton');
+
+        // Generate the dropdown items
+        data.forEach(country => {
+            const listItem = document.createElement('li');
+            listItem.className = 'dropdown-item';
+            listItem.innerHTML = `<img src="${country.flag}" width="20" height="15"> ${country.name}`;
+            
+            // Add click event to update button and global variable
+            listItem.addEventListener('click', () => {
+                selectedCountry = country.name; // Update global variable
+                dropdownButton.innerHTML = `<img src="${country.flag}" width="20" height="15"> ${country.name}`;
+                console.log("Selected Country:", selectedCountry); // Debug
+            });
+
+            dropdownList.appendChild(listItem);
+        });
+    }).catch(error => console.error('Error loading the JSON file:', error));
+ 
  
 console.log("this is the player 1 roomid "+roomInput.value);
 
