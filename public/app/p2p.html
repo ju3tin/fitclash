@@ -95,10 +95,10 @@
 }
 
 video {
-  width: auto; /* Adjust width dynamically */
-  height: 50%; /* Each video takes half the height of the screen */
-  margin: auto; /* Center the video horizontally and vertically */
-  object-fit: cover; /* Ensure video fills its container without distortion */
+  width: auto !important; /* Adjust width dynamically */
+  height: 50% !important; /* Each video takes half the height of the screen */
+  margin: auto !important; /* Center the video horizontally and vertically */
+  object-fit: cover !important; /* Ensure video fills its container without distortion */
 }
       #local-video {
         position: absolute;
@@ -109,8 +109,10 @@ video {
       }
 
       #remote-video {
-        height: 100%;
-        width: 100%;
+        position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0px;
       }
       #loading-screen {
             position: fixed;
