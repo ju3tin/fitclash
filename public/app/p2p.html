@@ -220,6 +220,10 @@ canvas.output_canvas {
   </div>
   <div id="login"><div class="loader1">Welcome to Fitclash</div><br /><br /><br /><br /><div class="loader1">Log in to get started.<br />
 
+    <div id="login-id">
+        <button id="google-sign-in-button">Login with Google</button>
+      </div>
+
 <div id="g_id_onload"
      data-client_id="333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com"
      data-context="signin"
@@ -280,6 +284,43 @@ canvas.output_canvas {
     <script>
   const connectButton1 = document.getElementById('connectButton1');
       const walletAddressDiv = document.getElementById('walletAddress');
+
+
+      function onSignIn(googleUser) {
+      // Get the Google User ID token
+      const id_token = googleUser.getAuthResponse().id_token;
+      console.log("ID Token: " + id_token); // You can send this token to your server if needed
+
+      // Remove the login ID element
+      const loginElement = document.getElementById('login-id');
+      if (loginElement) {
+        loginElement.remove(); // Remove the login button/element after successful login
+      }
+
+      // Optionally, handle user information
+      const profile = googleUser.getBasicProfile();
+      console.log('Full Name: ' + profile.getName());
+      console.log('Email: ' + profile.getEmail());
+    }
+
+    // Google Sign-In Button Render function
+    function renderButton() {
+      gapi.signin2.render('google-sign-in-button', {
+        'scope': 'profile email',
+        'width': 200,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSignIn // Call the onSignIn function when successful
+      });
+    }
+
+    // Ensure gapi is loaded before calling renderButton
+    gapi.load('auth2', function() {
+      gapi.auth2.init().then(function() {
+        renderButton();
+      });
+    });
 
       async function connectPhantom() {
           // Check if Phantom is installed
