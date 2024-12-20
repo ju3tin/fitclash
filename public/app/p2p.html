@@ -87,29 +87,62 @@
       }
 
 
-      .video-container {
-  display: flex;
-  flex-direction: column; /* Stack the videos vertically */
-  width: 100vw; /* Full screen width */
-  height: 100vh; /* Full screen height */
+   /* The container should occupy full screen or a specific size */
+#video-chat-container {
+    display: flex;
+    flex-direction: column; /* Stack videos vertically */
+    justify-content: center; /* Center videos vertically within the container */
+    align-items: center; /* Center videos horizontally within the container */
+    width: 100vw; /* Full width of the viewport */
+    height: 100vh; /* Full height of the viewport */
+    position: relative;
+    overflow: hidden; /* Prevent anything from overflowing */
+    background-color: #000; /* Optional: give a background color */
 }
 
+/* Style the video elements to prevent them from going beyond the container */
 video {
-  width: auto !important; /* Adjust width dynamically */
-  height: 50% !important; /* Each video takes half the height of the screen */
-  margin: auto !important; /* Center the video horizontally and vertically */
-  object-fit: cover !important; /* Ensure video fills its container without distortion */
+    width: 100%; /* Full width of the container */
+    height: 50%; /* Each video takes up half the height of the container */
+    object-fit: contain; /* Ensure videos maintain their aspect ratio */
+    margin-bottom: 10px; /* Space between the two video elements */
+}
+
+/* Style the canvas element */
+canvas.output_canvas {
+    max-width: 90%; /* Make sure canvas does not exceed the width of the container */
+    height: auto; /* Maintain aspect ratio for the canvas */
+    margin-bottom: 10px; /* Space between canvas and video */
+    position: absolute;
+}
+
+/* Style the input and button */
+#message-container, #message-input, #send-message-button {
+    z-index: 200;
+    position: relative;
+    margin-top: 10px; /* Add spacing between elements */
+}
+
+#message-container {
+    position: absolute;
+    bottom: 10px; /* Keep the message container near the bottom */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+#message-input, #send-message-button {
+    width: 90%; /* Full width but with some margin */
+    max-width: 400px; /* Limit the width to 400px */
+    margin-top: 5px;
 }
       #local-video {
-        position: absolute;
      /*   height: 30%;
         width: 30%; */
         bottom: 0px;
-        left: 0px;
+       
       }
 
       #remote-video {
-        position: absolute;
   /*  height: 100%;
     width: 100%;*/
     top: 0px;
@@ -228,12 +261,12 @@ video {
      
 
     <div id="video-chat-container" class="video-container" style="display: none">
-      <video id="local-video" autoplay="autoplay" muted="muted" playsinline></video>
-      <canvas class="output_canvas" width="400px" height="300px"></canvas>
-      <video id="remote-video" autoplay="autoplay" playsinline></video>
-      <div style="bottom:34; z-index: 200; position: relative;" id="message-container"></div>
-<input style="bottom:34; z-index: 200; position: relative;" type="text" id="message-input" placeholder="Type a message..." />
-<button style="bottom:34; z-index: 200; position: relative;" id="send-message-button">Send</button>
+        <video id="local-video" autoplay="autoplay" muted="muted" playsinline></video>
+        <canvas class="output_canvas" width="400px" height="300px"></canvas>
+        <video id="remote-video" autoplay="autoplay" playsinline></video>
+        <div style="bottom:34; z-index: 200; position: relative;" id="message-container"></div>
+        <input style="bottom:34; z-index: 200; position: relative;" type="text" id="message-input" placeholder="Type a message..." />
+        <button style="bottom:34; z-index: 200; position: relative;" id="send-message-button">Send</button>
     </div>
     <button id="sendButton" onclick="timer3();closeNav();">Start demo</button>
 
