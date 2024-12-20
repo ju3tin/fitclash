@@ -122,7 +122,7 @@ socket.on('room_created', async () => {
 
 socket.on('room_joined', async () => {
   console.log('Socket event callback: room_joined')
-  copyaddress1.remove();
+  copyaddress1.style.display = "none";
 
   await setLocalStream(mediaConstraints)
   socket.emit('start_call', roomId)
@@ -136,8 +136,10 @@ socket.on('full_room', () => {
 
 socket.on('start_call', async () => {
   console.log('Socket event callback: start_call')
+  copyaddress1.style.display = "none";
 
   if (isRoomCreator) {
+    copyaddress1.style.display = "none";
     rtcPeerConnection = new RTCPeerConnection(iceServers)
     addLocalTracks(rtcPeerConnection)
     rtcPeerConnection.ontrack = setRemoteStream
