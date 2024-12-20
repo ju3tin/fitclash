@@ -212,9 +212,9 @@
      
 
     <div id="video-chat-container" class="video-position" style="display: none">
-      <video id="local-video" autoplay="autoplay" muted="muted"></video>
+      <video id="local-video" autoplay="autoplay" muted="muted" playsinline></video>
       <canvas class="output_canvas" width="400px" height="300px"></canvas>
-      <video id="remote-video" autoplay="autoplay"></video>
+      <video id="remote-video" autoplay="autoplay" playsinline></video>
       <div style="bottom:34; z-index: 200; position: relative;" id="message-container"></div>
 <input style="bottom:34; z-index: 200; position: relative;" type="text" id="message-input" placeholder="Type a message..." />
 <button style="bottom:34; z-index: 200; position: relative;" id="send-message-button">Send</button>
