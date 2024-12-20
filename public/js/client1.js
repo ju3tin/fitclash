@@ -113,6 +113,8 @@ socket.on('room_created', async () => {
     copyaddress1.style.alignItems = "center";
     copyaddress1.style.textAlign = "center";
     copyaddress1.style.minHeight = "100vh";
+    copyaddress1.style.position = "absolute";
+    copyaddress1.style.zIndex = "3000";
     } else {
     console.log(`this is the dude ${player}`);
   }
