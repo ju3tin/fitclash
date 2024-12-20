@@ -165,7 +165,7 @@
     <div id="room-selection-container" class="centered">
       <h1>WebRTC video conference</h1>
       <label>Enter the number of the room you want to connect</label>
-      <input id="room-input" type="text" />
+      <input id="room-input" value="" type="text" style="display: none;" />
       <button id="connect-button">CONNECT</button>
     </div>
 
@@ -187,7 +187,7 @@
     <!-- Add this to your HTML file -->
 
     <script>
-      const connectButton1 = document.getElementById('connectButton1');
+  const connectButton1 = document.getElementById('connectButton1');
       const walletAddressDiv = document.getElementById('walletAddress');
 
       async function connectPhantom() {

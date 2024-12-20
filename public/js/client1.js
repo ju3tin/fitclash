@@ -6,6 +6,10 @@ const connectButton = document.getElementById('connect-button')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
+//var roomidpalyer1
+roomInput.value = Math.floor(Math.random() * 90000) + 10000;
+ 
+console.log("this is the player 1 roomid "+roomInput.value);
 
 // Variables.
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
