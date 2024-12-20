@@ -122,6 +122,7 @@ socket.on('room_created', async () => {
 
 socket.on('room_joined', async () => {
   console.log('Socket event callback: room_joined')
+  copyaddress1.remove();
 
   await setLocalStream(mediaConstraints)
   socket.emit('start_call', roomId)
