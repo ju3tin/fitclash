@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head><script src="/assets/js/color-modes.js"></script>
@@ -8,7 +9,34 @@
 <meta name="Cross-Origin-Opener-Policy" content="same-origin-allow-popups">
 
     <title>WebRTC</title>
-  
+    <link rel="stylesheet" href=
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+            integrity=
+    "sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+            crossorigin="anonymous">
+    
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, 
+            then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+            integrity=
+    "sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+            crossorigin="anonymous">
+        </script>
+        
+        <script src=
+    "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+            integrity=
+    "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+            crossorigin="anonymous">
+        </script>
+        
+        <script src=
+    "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+            integrity=
+    "sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+            crossorigin="anonymous">
+        </script>
 
    
 
@@ -16,179 +44,182 @@
 
 <link href="/assets/dist/css/bootstrap.min.css" rel="stylesheet">
 
-<style type="text/css">
-    body {
-      margin: 0;
-      font-size: 20px;
-    }
+    <style type="text/css">
+      body {
+        margin: 0;
+        font-size: 20px;
+      }
 
-    .centered {
-      position: absolute;
-      top: 40%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .google, .wallet {
-  align-items: center;
-  background: linear-gradient(90deg, #79fff9, #54ceea);
-  border: 0;
-  border-radius: 12px;
-  color: var(--color-bg);
-  cursor: pointer;
-  display: flex
+      .centered {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .google, .wallet {
+    align-items: center;
+    background: linear-gradient(90deg, #79fff9, #54ceea);
+    border: 0;
+    border-radius: 12px;
+    color: var(--color-bg);
+    cursor: pointer;
+    display: flex
 ;
-  font-family: Termina Test, sans-serif;
-  font-size: 16px;
-  font-weight: 600;
-  justify-content: center;
-  padding: 10px 20px;
-  text-align: center;
-  transition: all .3s ease-in-out;
-  width: 180px;
+    font-family: Termina Test, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    padding: 10px 20px;
+    text-align: center;
+    transition: all .3s ease-in-out;
+    width: 180px;
 }
 
-    .video-position {
-      position: absolute;
-      top: 35%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+      .video-position {
+        position: absolute;
+        top: 35%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
 
-    #video-chat-container {
-      width: 100%;
-      background-color: black;
-    }
+      #video-chat-container {
+        width: 100%;
+        background-color: black;
+      }
 
 
- /* The container should occupy full screen or a specific size */
+   /* The container should occupy full screen or a specific size */
 #video-chat-container {
-  display: flex;
-  flex-direction: column; /* Stack videos vertically */
-  justify-content: center; /* Center videos vertically within the container */
-  align-items: center; /* Center videos horizontally within the container */
-  width: 100vw; /* Full width of the viewport */
-  height: 100vh; /* Full height of the viewport */
-  position: relative;
-  overflow: hidden; /* Prevent anything from overflowing */
-  background-color: #000; /* Optional: give a background color */
+    display: flex;
+    flex-direction: column; /* Stack videos vertically */
+    justify-content: center; /* Center videos vertically within the container */
+    align-items: center; /* Center videos horizontally within the container */
+    width: 100vw; /* Full width of the viewport */
+    height: 100vh; /* Full height of the viewport */
+    position: relative;
+    overflow: hidden; /* Prevent anything from overflowing */
+    background-color: #000; /* Optional: give a background color */
 }
 
 /* Style the video elements to prevent them from going beyond the container */
 video {
-  width: 100%; /* Full width of the container */
-  height: 50%; /* Each video takes up half the height of the container */
-  object-fit: contain; /* Ensure videos maintain their aspect ratio */
-  margin-bottom: 10px; /* Space between the two video elements */
+    width: 100%; /* Full width of the container */
+    height: 50%; /* Each video takes up half the height of the container */
+    object-fit: contain; /* Ensure videos maintain their aspect ratio */
+    margin-bottom: 10px; /* Space between the two video elements */
 }
 
 /* Style the canvas element */
 canvas.output_canvas {
-  max-width: 90%; /* Make sure canvas does not exceed the width of the container */
-  height: auto; /* Maintain aspect ratio for the canvas */
-  margin-bottom: 10px; /* Space between canvas and video */
-  position: absolute;
+    max-width: 90%; /* Make sure canvas does not exceed the width of the container */
+    height: auto; /* Maintain aspect ratio for the canvas */
+    margin-bottom: 10px; /* Space between canvas and video */
+    position: absolute;
 }
 
 /* Style the input and button */
 #message-container, #message-input, #send-message-button {
-  z-index: 200;
-  position: relative;
-  margin-top: 10px; /* Add spacing between elements */
+    z-index: 200;
+    position: relative;
+    margin-top: 10px; /* Add spacing between elements */
 }
 
 #message-container {
-  position: absolute;
-  bottom: 10px; /* Keep the message container near the bottom */
-  left: 50%;
-  transform: translateX(-50%);
+    position: absolute;
+    bottom: 10px; /* Keep the message container near the bottom */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 #message-input, #send-message-button {
-  width: 90%; /* Full width but with some margin */
-  max-width: 400px; /* Limit the width to 400px */
-  margin-top: 5px;
+    width: 90%; /* Full width but with some margin */
+    max-width: 400px; /* Limit the width to 400px */
+    margin-top: 5px;
 }
-    #local-video {
-   /*   height: 30%;
-      width: 30%; */
-      bottom: 0px;
-     
-    }
-
-    #remote-video {
-/*  height: 100%;
-  width: 100%;*/
-  top: 0px;
-    }
-    #loading-screen {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(255, 255, 255, 0.8);
-          display: none; /* Hidden by default */
-          justify-content: center;
-          align-items: center;
-          z-index: 9999; /* Ensure it is on top */
-      }
-
-      #login {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          background-color: rgba(255, 255, 255, 1);
-          display: none; /* Hidden by default */
-          justify-content: center;
-          align-items: center;
-          z-index: 10000; /* Ensure it is on top */
-      }
-
-      .loader {
-          border: 8px solid #f3f3f3; /* Light grey */
-          border-top: 8px solid #3498db; /* Blue */
-          border-radius: 50%;
-          width: 60px;
-          height: 60px;
-          animation: spin 2s linear infinite;
-      }
-
-      .loader1 {
+      #local-video {
+        position: absolute;
+     /*   height: 30%;
+        width: 30%; */
+        bottom: 0px;
        
-          
       }
-      @media (max-width: 768px) {
-  .login-container {
-      min-width: 0;
-      min-width: auto;
-      width: auto;
-  }
+
+      #remote-video {
+        position: absolute;
+  /*  height: 100%;
+    width: 100%;*/
+    top: 0px;
+      }
+      #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Ensure it is on top */
+        }
+
+        #login {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 1);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 10000; /* Ensure it is on top */
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+        }
+
+        .loader1 {
+         
+            
+        }
+        @media (max-width: 768px) {
+    .login-container {
+        min-width: 0;
+        min-width: auto;
+        width: auto;
+    }
 }
 
 .login-container {
-  align-items: center;
-  background-image: url(/static/media/steps-bg.7663f27….png);
-  background-size: cover;
-  border-radius: 22px;
-  display: flex
+    align-items: center;
+    background-image: url(/static/media/steps-bg.7663f27….png);
+    background-size: cover;
+    border-radius: 22px;
+    display: flex
 ;
-  justify-content: center;
-  min-width: 520px;
-  padding: 30px;
+    justify-content: center;
+    min-width: 520px;
+    padding: 30px;
 }
-      @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-      }
-  </style>
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
   </head>
 
   <body  onload="fetchData()">
    
     <div id="loading-screen">
       <div class="loader"></div>
+      <div class="loaderinfo">Loading Server Please Wait</div>
   </div>
   <div id="login"><div class="loader1">Welcome to Fitclash</div><br /><br /><br /><br /><div class="loader1">Log in to get started.<br />
 
@@ -212,13 +243,26 @@ canvas.output_canvas {
     <button class="google"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22.253" height="22.262" viewBox="0 0 22.253 22.262"><defs><clipPath id="clip-path"><rect id="Rectangle_181" data-name="Rectangle 181" width="22.253" height="22.262" fill="#3f3f3f"></rect></clipPath></defs>
       <g id="google-icon" transform="translate(0 0)"><g id="Group_403" data-name="Group 403" transform="translate(0 0)" clip-path="url(#clip-path)"><path id="Path_319" data-name="Path 319" d="M11.057,0h.156a.383.383,0,0,0,.052.009c.388.023.777.028,1.163.074.405.048.81.121,1.209.209A10.665,10.665,0,0,1,16.61,1.444a11.177,11.177,0,0,1,4.6,4.965,10.958,10.958,0,0,1,1.02,3.927c.005.071.014.142.021.213v1.169c-.007.069-.016.138-.02.208a10.641,10.641,0,0,1-.178,1.355,10.871,10.871,0,0,1-.921,2.743A11.093,11.093,0,0,1,17.9,19.972a10.982,10.982,0,0,1-3.371,1.764,10.42,10.42,0,0,1-2.049.444c-.305.033-.611.067-.918.075a10.188,10.188,0,0,1-1.686-.064c-.358-.051-.717-.1-1.07-.172a10.8,10.8,0,0,1-2.816-1.011,10.906,10.906,0,0,1-2.738-2.018c-.3-.3-.579-.626-.848-.956a10.447,10.447,0,0,1-1.316-2.1,11.054,11.054,0,0,1-1.068-4.2,9.446,9.446,0,0,1,.044-1.7c.052-.411.108-.823.19-1.229A10.609,10.609,0,0,1,1.4,5.734,11.143,11.143,0,0,1,9.321.154,10.4,10.4,0,0,1,11,.009.289.289,0,0,0,11.057,0M14.8,9.727v0H11.911c-.167,0-.334,0-.5,0a.126.126,0,0,0-.142.136c0,.062,0,.125,0,.188,0,.3,0,.6,0,.9q0,.777,0,1.553c0,.106.027.135.132.145a.546.546,0,0,0,.055,0l3.489,0c.092,0,.185,0,.277,0a.094.094,0,0,1,.092.132c-.025.1-.053.2-.084.292a3.444,3.444,0,0,1-1.751,2.078,4.692,4.692,0,0,1-2.494.493A4.221,4.221,0,0,1,9.7,15.364a4.593,4.593,0,0,1-1.688-1.189A4.487,4.487,0,0,1,6.92,10.262,4.491,4.491,0,0,1,8.539,7.586a4.267,4.267,0,0,1,3.451-.931,3.93,3.93,0,0,1,2.037.952c.142.124.144.124.277-.008l1.852-1.847c.1-.1.107-.165-.009-.255-.3-.232-.593-.476-.91-.684a6.881,6.881,0,0,0-3.624-1.137,8.209,8.209,0,0,0-1.171.05,7.67,7.67,0,0,0-1.416.287A7.459,7.459,0,0,0,5.451,6.472a7.122,7.122,0,0,0-.922,1.494,7.051,7.051,0,0,0-.69,2.66,10.534,10.534,0,0,0,.008,1.06,6.875,6.875,0,0,0,.216,1.351,7.357,7.357,0,0,0,.636,1.6,6.952,6.952,0,0,0,1.286,1.759,7.915,7.915,0,0,0,2.1,1.482,7.114,7.114,0,0,0,2.89.717,7.957,7.957,0,0,0,1.3-.061,8.656,8.656,0,0,0,1.7-.381,6.456,6.456,0,0,0,2.833-1.96,6.544,6.544,0,0,0,1.117-1.933,7.784,7.784,0,0,0,.511-3.2c-.017-.388-.063-.774-.1-1.161-.012-.13-.059-.167-.187-.167H14.8" transform="translate(0 0)" fill="#3f3f3f"></path></g></g></svg>Google</button>or<button id="connectButton1" class="wallet"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29.766" height="28.395" viewBox="0 0 29.766 28.395"><defs><clipPath id="clip-path"><rect id="Rectangle_182" data-name="Rectangle 182" width="23.835" height="21.542" fill="#3f3f3f"></rect></clipPath></defs><g id="wallet-icon" transform="translate(7.368 0) rotate(20)"><g id="Group_405" data-name="Group 405" transform="translate(0 0)" clip-path="url(#clip-path)"><path id="Path_320" data-name="Path 320" d="M15.406,3.395H10.151a3.2,3.2,0,0,1-.4-.011c-.052-.006-.129-.062-.135-.1a.2.2,0,0,1,.091-.149,1.082,1.082,0,0,1,.228-.1c2.418-.952,4.831-1.919,7.257-2.85a2.906,2.906,0,0,1,3.745,1.837c.073.221.123.45.183.675.187.7.187.7-.559.7H15.406" transform="translate(-3.252 0)" fill="#3f3f3f"></path><path id="Path_321" data-name="Path 321" d="M25.362,19.379a.857.857,0,1,1-1.712,0,.856.856,0,1,1,1.712,0" transform="translate(-7.998 -6.26)" fill="#3f3f3f"></path><path id="Path_322" data-name="Path 322" d="M14.025,19.97A2.668,2.668,0,0,1,11.359,17.3V13.821a2.668,2.668,0,0,1,2.665-2.664h8.13c0-.285,0-.57,0-.855a2.976,2.976,0,0,0-3.119-3.157q-3.98-.006-7.96,0t-7.96,0A2.94,2.94,0,0,0,0,10.245q-.01,5.281,0,10.561a2.972,2.972,0,0,0,3.181,3.148q7.859,0,15.718,0a3.018,3.018,0,0,0,3.257-3.242c0-.248,0-.5,0-.743Z" transform="translate(0 -2.415)" fill="#3f3f3f"></path><path id="Path_323" data-name="Path 323" d="M19.141,16.541v3.483A1.357,1.357,0,0,0,20.5,21.381H28.69a1.618,1.618,0,0,0,1.618-1.619l0-2.961a1.618,1.618,0,0,0-1.618-1.617H20.5a1.357,1.357,0,0,0-1.357,1.357m3.836-.464a2.162,2.162,0,0,1,2.173,2.154,2.168,2.168,0,1,1-4.335.058,2.164,2.164,0,0,1,2.162-2.212" transform="translate(-6.473 -5.135)" fill="#3f3f3f"></path></g></g></svg>Wallet</button><div id="walletAddress">sdf</div></div></div>
     <div id="room-selection-container" class="centered">
-      <h1>WebRTC video conference</h1>
-      <label>Enter the number of the room you want to connect</label>
-      <input id="room-input" type="text" />
-      <button id="connect-button">CONNECT</button>
+      <h1>Choose your Game</h1>
+      <label>Choose The Game You want to play the press load</label>
+      <div class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" 
+                id="dropdownMenuButton" data-toggle="dropdown" 
+                aria-haspopup="true" aria-expanded="false">
+            Choose Your Game
+        </button>
+
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-list">
+            <!-- Dynamic list will be loaded here -->
+        </ul>
     </div>
 
-    
+      <input id="room-input" value="" type="text" style="display: none;" />
+      <button id="connect-button" style="display: none;">Load Game</button>
+    </div>
+    <div id="copyaddress1" style="display: none;"><input type="text" value="" id="addressmyInput"><button onclick="copytext()">Copy Link</button></div>
+     
+
     <div id="video-chat-container" class="video-container" style="display: none">
         <video id="local-video" autoplay="autoplay" muted="muted" playsinline></video>
         <canvas class="output_canvas" width="400px" height="300px"></canvas>
@@ -237,7 +281,7 @@ canvas.output_canvas {
     <!-- Add this to your HTML file -->
 
     <script>
-      const connectButton1 = document.getElementById('connectButton1');
+  const connectButton1 = document.getElementById('connectButton1');
       const walletAddressDiv = document.getElementById('walletAddress');
 
       async function connectPhantom() {
@@ -331,6 +375,6 @@ document.getElementById('connect-button').addEventListener('click', fetchData);
 </script>
 
     <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script>
-    <script type="text/javascript" src="/js/client2.js"></script>
+    <script type="text/javascript" src="/js/client1.js"></script>
   </body>
 </html>
