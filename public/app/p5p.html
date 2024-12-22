@@ -3,71 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="google-signin-client_id" content="333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com">
-  <title>Google Auth Example</title>
+  <title>Google Identity Services</title>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-   <style>
-    #success-message {
-      display: none;
-      margin-top: 20px;
-      padding: 10px;
-      background-color: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      border-radius: 5px;
-    }
-    .center {
-      text-align: center;
-      margin-top: 50px;
-    }
-  </style>
 </head>
 <body>
-  <div class="center">
-    <div id="login-container">
-      <div id="google-sign-in-button"></div>
-    </div>
-    <div id="success-message">You have successfully logged in with Google!</div>
-  </div>
-
   <div id="button-container"></div>
-<script>
-  function handleCredentialResponse(response) {
-    const jwtPayload = parseJwt(response.credential);
-    console.log('User ID:', jwtPayload.sub);
-    console.log('Full Name:', jwtPayload.name);
-    console.log('Email:', jwtPayload.email);
+  <script>
+    function handleCredentialResponse(response) {
+      console.log('Encoded JWT ID token: ' + response.credential);
+    }
 
-    // Update the UI
-    document.getElementById('button-container').innerHTML = `<p>Welcome, ${jwtPayload.name}</p>`;
-  }
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com', // Replace this
+        callback: handleCredentialResponse,
+      });
 
-  function parseJwt(token) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`)
-        .join('')
-    );
-    return JSON.parse(jsonPayload);
-  }
-
-  // Initialize Google Identity Services
-  window.onload = function () {
-    google.accounts.id.initialize({
-      client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com"',
-      callback: handleCredentialResponse,
-    });
-
-    google.accounts.id.renderButton(
-      document.getElementById('button-container'),
-      { theme: 'outline', size: 'large' }
-    );
-
-    google.accounts.id.prompt(); // Optional: Show one-tap sign-in
-  };
-</script>
+      google.accounts.id.renderButton(
+        document.getElementById('button-container'),
+        { theme: 'outline', size: 'large' }
+      );
+    };
+  </script>
 </body>
-</html>
+</html> 
