@@ -9,13 +9,44 @@
 <body>
   <div id="button-container"></div>
   <script>
-    function handleCredentialResponse(response) {
-      console.log('Encoded JWT ID token: ' + response.credential);
+    // Function to decode the JWT token
+    function parseJwt(token) {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
     }
 
+    // Callback function for handling the sign-in response
+    function handleCredentialResponse(response) {
+      const userPayload = parseJwt(response.credential);
+
+      // Access the name and image fields
+      const userName = userPayload.name;
+      const userImage = userPayload.picture;
+
+      // Log the user's name and image URL
+      console.log('Name:', userName);
+      console.log('Image:', userImage);
+
+      // Optionally, display the name and image on the page
+      document.body.innerHTML += `
+        <p>Welcome, ${userName}</p>
+        <img src="${userImage}" alt="User Image" style="border-radius: 50%;">
+      `;
+    }
+
+    // Initialize Google Identity Services on page load
     window.onload = function () {
       google.accounts.id.initialize({
-        client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com', // Replace this
+        client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com',
         callback: handleCredentialResponse,
       });
 
@@ -23,7 +54,9 @@
         document.getElementById('button-container'),
         { theme: 'outline', size: 'large' }
       );
+
+      google.accounts.id.prompt(); // Optional: Show one-tap sign-in
     };
   </script>
 </body>
-</html> 
+</html>
