@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+  <title>Google Auth Example</title>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
+  <style>
+    #success-message {
+      display: none;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      border-radius: 5px;
+    }
+    .center {
+      text-align: center;
+      margin-top: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="center">
+    <div id="login-container">
+      <div id="google-sign-in-button"></div>
+    </div>
+    <div id="success-message">You have successfully logged in with Google!</div>
+  </div>
+
+  <script>
+    // Success callback for Google Sign-In
+    function onSignIn(googleUser) {
+      const profile = googleUser.getBasicProfile();
+      console.log('Name: ' + profile.getName());
+      console.log('Email: ' + profile.getEmail());
+
+      // Remove login button
+      document.getElementById('login-container').remove();
+
+      // Show success message
+      document.getElementById('success-message').style.display = 'block';
+    }
+
+    // Render the Google Sign-In button
+    function renderButton() {
+      gapi.signin2.render('google-sign-in-button', {
+        'scope': 'profile email',
+        'width': 200,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSignIn
+      });
+    }
+
+    // Initialize Google Auth
+    gapi.load('auth2', function() {
+      gapi.auth2.init({
+        client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com'
+      }).then(function() {
+        renderButton();
+      });
+    });
+  </script>
+</body>
+</html>
