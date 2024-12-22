@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="google-signin-client_id" content="333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com">
   <title>Google Auth Example</title>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>    
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
    <style>
     #success-message {
       display: none;
@@ -30,40 +30,44 @@
     <div id="success-message">You have successfully logged in with Google!</div>
   </div>
 
-  <script>
-    // Success callback for Google Sign-In
-    function onSignIn(googleUser) {
-      const profile = googleUser.getBasicProfile();
-      console.log('Name: ' + profile.getName());
-      console.log('Email: ' + profile.getEmail());
+  <div id="button-container"></div>
+<script>
+  function handleCredentialResponse(response) {
+    const jwtPayload = parseJwt(response.credential);
+    console.log('User ID:', jwtPayload.sub);
+    console.log('Full Name:', jwtPayload.name);
+    console.log('Email:', jwtPayload.email);
 
-      // Remove login button
-      document.getElementById('login-container').remove();
+    // Update the UI
+    document.getElementById('button-container').innerHTML = `<p>Welcome, ${jwtPayload.name}</p>`;
+  }
 
-      // Show success message
-      document.getElementById('success-message').style.display = 'block';
-    }
+  function parseJwt(token) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map((c) => `%${('00' + c.charCodeAt(0).toString(16)).slice(-2)}`)
+        .join('')
+    );
+    return JSON.parse(jsonPayload);
+  }
 
-    // Render the Google Sign-In button
-    function renderButton() {
-      gapi.signin2.render('google-sign-in-button', {
-        'scope': 'profile email',
-        'width': 200,
-        'height': 50,
-        'longtitle': true,
-        'theme': 'dark',
-        'onsuccess': onSignIn
-      });
-    }
-
-    // Initialize Google Auth
-    gapi.load('auth2', function() {
-      gapi.auth2.init({
-        client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com'
-      }).then(function() {
-        renderButton();
-      });
+  // Initialize Google Identity Services
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+      callback: handleCredentialResponse,
     });
-  </script>
+
+    google.accounts.id.renderButton(
+      document.getElementById('button-container'),
+      { theme: 'outline', size: 'large' }
+    );
+
+    google.accounts.id.prompt(); // Optional: Show one-tap sign-in
+  };
+</script>
 </body>
 </html>
