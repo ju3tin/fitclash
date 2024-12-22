@@ -223,6 +223,8 @@ canvas.output_canvas {
   </div>
   <div id="login"><div class="loader1">Welcome to Fitclash</div><br /><br /><br /><br /><div class="loader1">Log in to get started.<br />
 
+    <div id="google-button"></div>
+
 <div id="g_id_onload"
      data-client_id="333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com"
      data-context="signin"
@@ -279,9 +281,15 @@ canvas.output_canvas {
     </footer>
 
     <!-- Add this to your HTML file -->
-
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <script>
-  const connectButton1 = document.getElementById('connectButton1');
+        var container = document.getElementsByClassName('container')[0];
+        var img = document.getElementsByClassName('img')[0];
+        var getName = document.getElementsByClassName(name)[0];
+        var id = document.getElementsByClassName('id')[0];
+        var email = document.getElementsByClassName('email')[0];
+
+      const connectButton1 = document.getElementById('connectButton1');
       const walletAddressDiv = document.getElementById('walletAddress');
 
       async function connectPhantom() {
@@ -308,6 +316,39 @@ canvas.output_canvas {
 
       // Attach event listener to the button
       connectButton1.addEventListener('click', connectPhantom);
+
+      function renderButton(){
+        gapi.signin2.render('my-signin2',{
+            'scope':'profile email',
+            'width':240,
+            'height': 50,
+            'theme': 'dark',
+            'onsuccess':onSuccess,
+            'onfailure':onfailure
+
+        })
+      }
+
+function onSuccess(googleUser){
+    var profile = googleUser.getBasicProfile();
+    img.src = profile.getImageurl();
+    getName.innerHTML = profile.getName();
+    id.innerHTML = profile.getId();
+    email.innerHTML = profile.getEmail();
+    console.log('Access Token:' + googleUser.getAuthResponse());
+
+}
+
+      function signOut(){
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function(){
+        location.reload();
+        });
+        auth2.disconnect();
+      }
+      function onFailure(error){
+        console.log(error)
+      }
 
   // Example function to fetch data from the API
 function fetchData() {
@@ -366,6 +407,25 @@ xhr.send();
 
 // Call fetchData when needed, e.g., on button click
 document.getElementById('connect-button').addEventListener('click', fetchData);
+
+window.onload = function () {
+            google.accounts.id.initialize({
+                // replace your client id below
+                client_id: "333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com",
+                callback: handleCredentialResponse,
+                auto_select: true,
+                auto: true
+            });
+            google.accounts.id.renderButton(
+                document.getElementById("google-button"),
+                { theme: "filled_blue", size: "medium", width: '200' }  // customization attributes
+            );
+            // also display the One Tap dialog on right side
+            // important for auto login
+            google.accounts.id.prompt(); 
+        }
+
+
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <script>
