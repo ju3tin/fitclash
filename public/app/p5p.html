@@ -7,6 +7,9 @@
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+
+  <button id="custom-button">Sign in with Google</button>
+
   <div id="button-container"></div>
   <script>
     // Function to decode the JWT token
@@ -50,6 +53,10 @@
         callback: handleCredentialResponse,
       });
 
+
+      document.getElementById('custom-button').addEventListener('click', function () {
+        google.accounts.id.prompt(); // Show Google Sign-In prompt when button is clicked
+      });
       google.accounts.id.renderButton(
         document.getElementById('button-container'),
         { theme: 'outline', size: 'large' }
