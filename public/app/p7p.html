@@ -68,6 +68,8 @@ function signOut() {
     // Callback function for handling the sign-in response
     function handleCredentialResponse(response) {
       const userPayload = parseJwt(response.credential);
+      const buttoncontainer = document.getElementById('button-container');
+      buttoncontainer.style.display = 'none';
 
       // Access the name and image fields
       const userName = userPayload.name;
