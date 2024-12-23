@@ -20,6 +20,34 @@
 
   <div id="button-container"></div>
   <script>
+
+
+// Ensure you have the Google API loaded
+function initGoogleAuth() {
+    gapi.load('auth2', function() {
+        gapi.auth2.init({
+            client_id: '333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com' // Replace with your Client ID
+        });
+    });
+}
+
+// Sign out function
+function signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+        // Optionally redirect to a different page after sign out
+        window.location.href = 'home.html'; // Change to your desired page
+    });
+}
+
+// Add event listener to the sign-out button
+document.getElementById('sign-out-button').addEventListener('click', signOut);
+
+// Call the init function when the page loads
+window.onload = initGoogleAuth;
+
+
 document.getElementById('google-signin-button').addEventListener('click', () => {
     const auth2 = gapi.auth2.getAuthInstance();
     auth2.signIn().then(onSignIn);
@@ -41,12 +69,6 @@ function onSignIn(googleUser) {
 }
 
 // Optional: Sign out function
-function signOut() {
-    const auth2 = gapi.auth2.getAuthInstance();
-    auth2.signOut().then(function () {
-        console.log('User signed out.');
-    });
-}
 
 // ... existing code ...
     // Function to decode the JWT token
@@ -80,6 +102,7 @@ function signOut() {
       document.body.innerHTML += `
         <p>Welcome, ${userName}</p>
         <img src="${userImage}" alt="User Image" style="border-radius: 50%;">
+        <button id="sign-out-button">Sign Out</button>
       `;
     }
 
