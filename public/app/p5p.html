@@ -4,14 +4,51 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Identity Services</title>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+
+    <div id="g_id_onload"
+     data-client_id="333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com"
+     data-callback="onSignIn">
+</div>
+<button id="google-signin-button">Sign in with Google</button>
+<div class="g_id_signin" data-type="standard"></div>
 
   <button id="custom-button">Sign in with Google</button>
 
   <div id="button-container"></div>
   <script>
+document.getElementById('google-signin-button').addEventListener('click', () => {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signIn().then(onSignIn);
+});
+    // ... existing code ...
+
+function onSignIn(googleUser) {
+    const profile = googleUser.getBasicProfile();
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail());
+
+    // You can also send the ID token to your server for verification
+    const id_token = googleUser.getAuthResponse().id_token;
+    console.log('ID Token: ' + id_token);
+
+    // Here you can handle the user data as needed
+}
+
+// Optional: Sign out function
+function signOut() {
+    const auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+}
+
+// ... existing code ...
     // Function to decode the JWT token
     function parseJwt(token) {
       const base64Url = token.split('.')[1];
