@@ -8,7 +8,7 @@ const addressmyInput = document.getElementById('addressmyInput')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
-let selectedCountry = null;
+let Gameoption = null;
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
@@ -19,23 +19,23 @@ addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
 
 
 // Fetch the JSON file
-fetch('/js/countries.json')
+fetch('/js/gameoptions.json')
     .then(response => response.json())
     .then(data => {
         const dropdownList = document.getElementById('dropdown-list');
         const dropdownButton = document.getElementById('dropdownMenuButton');
 
         // Generate the dropdown items
-        data.forEach(country => {
+        data.forEach(gameoption => {
             const listItem = document.createElement('li');
             listItem.className = 'dropdown-item';
-            listItem.innerHTML = `<img src="${country.flag}" width="20" height="15"> ${country.name}`;
+            listItem.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
             
             // Add click event to update button and global variable
             listItem.addEventListener('click', () => {
-                selectedCountry = country.name; // Update global variable
-                dropdownButton.innerHTML = `<img src="${country.flag}" width="20" height="15"> ${country.name}`;
-                console.log("Selected Country:", selectedCountry); // Debug
+                Gameoption = gameoption.name; // Update global variable
+                dropdownButton.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
+                console.log("Selected Country:", Gameoption); // Debug
                 connectButton.style.display = "block"
             });
 
