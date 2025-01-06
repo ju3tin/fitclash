@@ -1,18 +1,18 @@
 [
     {
       "name": "pushups",
-      "flag": "https://media.geeksforgeeks.org/wp-content/uploads/20200630132503/iflag.jpg"
+      "flag": "/images/pushups.gif"
     },
     {
       "name": "Star-jumps",
-      "flag": "https://media.geeksforgeeks.org/wp-content/uploads/20200630132504/uflag.jpg"
+      "flag": "/images/starjumps.gif"
     },
     {
       "name": "Sit-ups",
-      "flag": "https://media.geeksforgeeks.org/wp-content/uploads/20200630132502/eflag.jpg"
+      "flag": "/images/situp.gif"
     },
     {
       "name": "Boxing",
-      "flag": "https://media.geeksforgeeks.org/wp-content/uploads/20200630132500/bflag.jpg"
+      "flag": "/images/boxing1.gif"
     }
   ]
