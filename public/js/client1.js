@@ -14,8 +14,6 @@ roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
 const roomdude34 = roomInput.value;
 
-addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
-
 
 
 // Fetch the JSON file
@@ -35,15 +33,20 @@ fetch('/js/gameoptions.json')
             listItem.addEventListener('click', () => {
                 Gameoption = gameoption.name; // Update global variable
                 dropdownButton.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
-                console.log("Selected Country:", Gameoption); // Debug
+                console.log("Selected Game:", Gameoption); // Debug
                 connectButton.style.display = "block"
+
+addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${Gameoption}`;
             });
 
             dropdownList.appendChild(listItem);
+
+
+ 
         });
     }).catch(error => console.error('Error loading the JSON file:', error));
  
- 
+
 console.log("this is the player 1 roomid "+roomInput.value);
 
 
