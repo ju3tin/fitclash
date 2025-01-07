@@ -200,7 +200,17 @@ function showVideoConference() {
 async function setLocalStream(mediaConstraints) {
   try {
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
-    localVideoComponent.srcObject = localStream
+    localVideoComponent.srcObject = localStream;
+    const canvas = document.createElement('canvas'); // Create a new canvas element
+    videoChatContainer.appendChild(canvas); // Append the canvas after localVideoComponent
+    canvas.style.position = 'absolute';
+    canvas.style.bottom = '0px';
+    canvas.style.width = '100%';
+    canvas.style.height = '50%';
+    canvas.style.marginBottom = '10px';
+    canvas.style.left = '0';
+    //canvas.insertAdjacentElement("beforebegin", localVideoComponent);
+
   } catch (error) {
     console.error('Could not get user media', error)
   }

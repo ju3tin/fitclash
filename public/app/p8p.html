@@ -5,6 +5,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Google Identity Services</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+<script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
         <script src="https://apis.google.com/js/platform.js" async defer></script>
         <script src="https://accounts.google.com/gsi/client" async defer></script>
         <script src="/assets/js/color-modes.js"></script>
@@ -278,6 +281,8 @@
           <div id="video-chat-container" class="video-container" style="display: none">
               <video id="local-video" autoplay="autoplay" muted="muted" playsinline></video>
               <canvas class="output_canvas" width="400px" height="300px"></canvas>
+             
+             
               <video id="remote-video" autoplay="autoplay" playsinline></video>
               <div style="bottom:34; z-index: 200; position: relative;" id="message-container"></div>
               <input style="bottom:34; z-index: 200; position: relative;" type="text" id="message-input" placeholder="Type a message..." />
