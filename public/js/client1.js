@@ -209,7 +209,7 @@ async function setLocalStream(mediaConstraints) {
     canvas.style.height = '50%';
     canvas.style.marginBottom = '10px';
     canvas.style.left = '0';
-    //canvas.insertAdjacentElement("beforebegin", localVideoComponent);
+    canvas.insertAdjacentElement("beforebegin", localVideoComponent);
 
   } catch (error) {
     console.error('Could not get user media', error)
