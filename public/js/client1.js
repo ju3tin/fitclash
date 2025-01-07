@@ -286,8 +286,8 @@ async function startMoveNet(canvas, video) {
         ctx.beginPath();
         ctx.moveTo(kp1.x, kp1.y);
         ctx.lineTo(kp2.x, kp2.y);
-        ctx.strokeStyle = 'green';
-        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'yellow';
+        ctx.lineWidth = 5;
         ctx.stroke();
       }
     });
