@@ -199,22 +199,107 @@ function showVideoConference() {
 
 async function setLocalStream(mediaConstraints) {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+    // Access the local video stream
+    const localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints);
     localVideoComponent.srcObject = localStream;
-    const canvas = document.createElement('canvas'); // Create a new canvas element
-    videoChatContainer.appendChild(canvas); // Append the canvas after localVideoComponent
+
+    // Create a new canvas element for MoveNet
+    const canvas = document.createElement('canvas');
+    videoChatContainer.appendChild(canvas);
     canvas.style.position = 'absolute';
     canvas.style.bottom = '0px';
     canvas.style.width = '100%';
     canvas.style.height = '50%';
     canvas.style.marginBottom = '10px';
     canvas.style.left = '0';
-    canvas.insertAdjacentElement("beforebegin", localVideoComponent);
 
+    // Start MoveNet once the video is ready
+    localVideoComponent.onloadedmetadata = () => {
+      localVideoComponent.play();
+      startMoveNet(canvas, localVideoComponent);
+    };
   } catch (error) {
-    console.error('Could not get user media', error)
+    console.error('Error accessing local media devices:', error);
   }
 }
+
+async function startMoveNet(canvas, video) {
+  // Load MoveNet model
+  const detector = await poseDetection.createDetector(
+    poseDetection.SupportedModels.MoveNet,
+    {
+      modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+    }
+  );
+
+  const ctx = canvas.getContext('2d');
+
+  // Set canvas dimensions to match video
+  canvas.width = video.videoWidth || 640;
+  canvas.height = video.videoHeight || 480;
+
+  // Function to detect poses
+  async function detectPose() {
+    // Clear the canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Detect poses
+    const poses = await detector.estimatePoses(video, {
+      maxPoses: 1,
+      flipHorizontal: false,
+    });
+
+    // Draw the video frame onto the canvas
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Draw keypoints and skeleton
+    poses.forEach((pose) => {
+      drawKeypoints(pose.keypoints, ctx);
+      drawSkeleton(pose.keypoints, ctx);
+    });
+
+    // Request the next frame
+    requestAnimationFrame(detectPose);
+  }
+
+  // Function to draw keypoints
+  function drawKeypoints(keypoints, ctx) {
+    keypoints.forEach((keypoint) => {
+      if (keypoint.score > 0.5) {
+        const { x, y } = keypoint;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = 'red';
+        ctx.fill();
+      }
+    });
+  }
+
+  // Function to draw skeleton
+  function drawSkeleton(keypoints, ctx) {
+    const adjacentPairs = poseDetection.util.getAdjacentPairs(poseDetection.SupportedModels.MoveNet);
+    adjacentPairs.forEach(([i, j]) => {
+      const kp1 = keypoints[i];
+      const kp2 = keypoints[j];
+
+      if (kp1.score > 0.5 && kp2.score > 0.5) {
+        ctx.beginPath();
+        ctx.moveTo(kp1.x, kp1.y);
+        ctx.lineTo(kp2.x, kp2.y);
+        ctx.strokeStyle = 'green';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    });
+  }
+
+  // Start detecting poses
+  detectPose();
+}
+
+// Example usage
+//const mediaConstraints = { video: true, audio: false };
+setLocalStream(mediaConstraints);
 
 function addLocalTracks(rtcPeerConnection) {
   localStream.getTracks().forEach((track) => {
