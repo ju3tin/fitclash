@@ -79,6 +79,7 @@ const loadSearch = function() {
 export default function Page() {
   return (
     <main>
+      <PreloadResources />
      <Masthead />
             <FrontContent />
             <SearchContent />
