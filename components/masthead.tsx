@@ -13,7 +13,8 @@ const masthead = () => {
           <img src="/images/logo1.png" width="50vh" alt="Use your body as a controller"/>
        
         </a>
-        <ul className="visible-links"><li className="masthead__menu-item">
+        <ul className="visible-links">
+            <li className="masthead__menu-item">
               <a href="/games/">Games</a>
             </li><li className="masthead__menu-item">
               <a

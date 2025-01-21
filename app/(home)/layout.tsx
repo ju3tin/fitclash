@@ -1,6 +1,7 @@
 'use client';
 import './style.css';
-import React from 'react'
+import React from 'react';
+import Masthead from '../../components/masthead';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 
@@ -11,7 +12,10 @@ export default function RootLayout({
   }) {
     return (
       <html lang="en">
-        <body>{children}</body>
+        <body>
+            <Masthead />
+            {children}
+        </body>
       </html>
     )
   }
