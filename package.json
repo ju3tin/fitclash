@@ -8,10 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
-  "author": "baoanh1310",
+  "author": "justin",
   "license": "ISC",
   "dependencies": {
-    "@headlessui/react": "^2.2.0",
     "@mediapipe/camera_utils": "^0.3.1620247984",
     "@mediapipe/control_utils": "^0.3.1620248228",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
