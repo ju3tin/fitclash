@@ -4,25 +4,30 @@ import React from 'react';
 
 const Nav = () => {
   return (
-    <nav className="bg-gray-800 text-white p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold">
-          FitClash
-        </Link>
+    <nav id="site-nav" className="greedy-nav">
         
-        <div className="space-x-4">
-          <Link href="/" className="hover:text-gray-300">
-            Home
-          </Link>
-          <Link href="/workouts" className="hover:text-gray-300">
-            Workouts
-          </Link>
-          <Link href="/profile" className="hover:text-gray-300">
-            Profile
-          </Link>
-        </div>
-      </div>
-    </nav>
+    <a className="site-title" href="/">
+      <img src="/images/logo1.png" width="50vh" alt="Use your body as a controller" />
+   
+    </a>
+    <ul className="visible-links"><li className="masthead__menu-item">
+          <a href="/games/">Games</a>
+        </li><li className="masthead__menu-item">
+          <a href="/faq/">FAQ</a>
+        </li><li className="masthead__menu-item">
+          <a href="/how-to-play/">How To Play</a>
+        </li><li className="masthead__menu-item">
+          <a href="/app/">Launch App</a>
+        </li></ul>
+    
+ 
+    
+    <button className="greedy-nav__toggle hidden" type="button" data-count="0">
+      <span className="visually-hidden">Toggle menu</span>
+      <div className="navicon"></div>
+    </button>
+    <ul className="hidden-links hidden"></ul>
+  </nav>
   );
 };
 
