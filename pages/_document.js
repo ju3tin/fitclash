@@ -15,9 +15,11 @@ class MyDocument extends Document {
             href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@latest/css/all.min.css"
             as="style"
             onLoad={(e) => {
-              const el = e.currentTarget as HTMLLinkElement;
-              el.onload = null;
-              el.rel = 'stylesheet';
+              const el = e.currentTarget;
+              if (el instanceof HTMLLinkElement) {
+                el.onload = null;
+                el.rel = 'stylesheet';
+              }
             }}
           />
           <noscript>
