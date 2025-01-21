@@ -6,6 +6,7 @@ import Masthead from '../../components/masthead'
 import FrontContent from '../../components/frontcontent'
 import SearchContent from '../../components/searchcontent'
 import instantsearch from 'instantsearch.js'
+import { Analytics } from "@vercel/analytics/react"
 
 // Including InstantSearch.js library and styling
 const loadSearch = function() {
@@ -85,6 +86,7 @@ export default function Page() {
             <SearchContent />
      
       <Footer />
+      <Analytics/>
     </main>
   )
 }
