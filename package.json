@@ -2,7 +2,6 @@
   "name": "pose",
   "version": "1.0.0",
   "description": "human pose estimation",
-  "main": "index.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
