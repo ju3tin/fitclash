@@ -47,6 +47,7 @@
     "cors": "^2.8.5",
     "ethers": "^6.13.5",
     "framer-motion": "^11.15.0",
+    "instantsearch.js": "^4.7.0",
     "io": "^1.5.3",
     "js-confetti": "^0.12.0",
     "jsonwebtoken": "^9.0.0",
