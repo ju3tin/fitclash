@@ -13,8 +13,26 @@
     },
     {
       "id": 3,
-      "image": "https://example.com/images/game3.jpg",
-      "link": "/game/game3",
-      "title": "Game 3"
+      "image": "https://fitclash.vercel.app/images/pushups.gif",
+      "link": "/pushups.html",
+      "title": "Pushups"
+    },
+    {
+      "id": 4,
+      "image": "https://fitclash.vercel.app/images/situp.gif",
+      "link": "/pushups.html",
+      "title": "Situps"
+    },
+    {
+      "id": 5,
+      "image": "https://fitclash.vercel.app/images/starjumps1.gif",
+      "link": "/pushups.html",
+      "title": "Starjumps"
+    },
+    {
+      "id": 6,
+      "image": "https://fitclash.vercel.app/images/taichi.gif",
+      "link": "/pushups.html",
+      "title": "Situps"
     }
   ]
