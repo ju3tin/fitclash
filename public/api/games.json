@@ -1,15 +1,15 @@
 [
     {
       "id": 1,
-      "image": "https://example.com/images/game1.jpg",
-      "link": "/game/game1",
-      "title": "Game 1"
+      "image": "https://fitclash.vercel.app/images/dinogame.jpg",
+      "link": "/game/dinogame",
+      "title": "Dino Game"
     },
     {
       "id": 2,
-      "image": "https://example.com/images/game2.jpg",
-      "link": "/game/game2",
-      "title": "Game 2"
+      "image": "https://fitclash.vercel.app/images/boxing1.jpg",
+      "link": "/game/boxing",
+      "title": "Boxing"
     },
     {
       "id": 3,
