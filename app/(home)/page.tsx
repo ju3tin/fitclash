@@ -5,8 +5,10 @@ import { PreloadResources } from '../../components/externalstyle'
 import Masthead from '../../components/masthead'
 import FrontContent from '../../components/frontcontent'
 import SearchContent from '../../components/searchcontent'
-import instantsearch from 'instantsearch.js'
+import { hits, searchBox } from 'instantsearch.js/es/widgets'
 import { Analytics } from "@vercel/analytics/react"
+import { algoliasearch } from 'algoliasearch'
+import instantsearch from 'instantsearch.js'
 
 
 // Including InstantSearch.js library and styling
@@ -26,11 +28,11 @@ const loadSearch = function() {
   script.addEventListener("load", function() {
     // Instantiating InstantSearch.js with Algolia credentials
     const search = instantsearch({
-      appId: 'QB6HVGBSBA',
-      apiKey: '9d5014e5bbc77372547bce778dfa5663',
+      searchClient: algoliasearch('QB6HVGBSBA', '9d5014e5bbc77372547bce778dfa5663'),
       indexName: 'minimal_mistakes',
-      searchParameters: {
-        restrictSearchableAttributes: ['title', 'content']
+      searchFunction: function(helper) {
+        helper.setQueryParameter('restrictSearchableAttributes', ['title', 'content']);
+        helper.search();
       }
     });
 
@@ -52,14 +54,13 @@ const loadSearch = function() {
 
     // Adding searchbar and results widgets
     search.addWidget(
-      instantsearch.widgets.searchBox({
+      searchBox({
         container: '.search-searchbar',
-        poweredBy: true,
         placeholder: 'Enter your search term...'
       })
     );
     search.addWidget(
-      instantsearch.widgets.hits({
+      hits({
         container: '.search-hits',
         templates: {
           item: hitTemplate,
