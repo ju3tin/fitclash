@@ -50,7 +50,7 @@ export default function Page() {
     <main>
       <PreloadResources />
       <div style={styles.container}>
-      <h1>Game Gallery</h1>
+      <h1>Available Games</h1>
       <div style={styles.grid}>
         {games.map((game) => (
           <div key={game.id} style={styles.card}>
