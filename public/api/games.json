@@ -14,7 +14,7 @@
     {
       "id": 3,
       "image": "/images/pushups.gif",
-      "link": "/pushups.html",
+      "link": "/push_up.html",
       "title": "Pushups"
     },
     {
@@ -26,7 +26,7 @@
     {
       "id": 5,
       "image": "/images/starjumps1.gif",
-      "link": "/pushups.html",
+      "link": "/push_up.html",
       "title": "Starjumps"
     },
     {
@@ -44,7 +44,7 @@
     {
       "id": 8,
       "image": "/images/squidgames.png",
-      "link": "/ninja/index.html",
+      "link": "/squidgame/index.html",
       "title": "Squid Games"
     }
   ]
