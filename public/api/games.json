@@ -1,44 +1,50 @@
 [
     {
       "id": 1,
-      "image": "https://fitclash.vercel.app/images/dinogame.jpg",
+      "image": "/images/dinogame.jpg",
       "link": "/examples/dinogame/index.html",
       "title": "Dino Game"
     },
     {
       "id": 2,
-      "image": "https://fitclash.vercel.app/images/boxing1.jpg",
+      "image": "/images/boxing1.jpg",
       "link": "/boxing.html",
       "title": "Boxing"
     },
     {
       "id": 3,
-      "image": "https://fitclash.vercel.app/images/pushups.gif",
+      "image": "/images/pushups.gif",
       "link": "/pushups.html",
       "title": "Pushups"
     },
     {
       "id": 4,
-      "image": "https://fitclash.vercel.app/images/situp.gif",
+      "image": "/images/situp.gif",
       "link": "/pushups.html",
       "title": "Situps"
     },
     {
       "id": 5,
-      "image": "https://fitclash.vercel.app/images/starjumps1.gif",
+      "image": "/images/starjumps1.gif",
       "link": "/pushups.html",
       "title": "Starjumps"
     },
     {
       "id": 6,
-      "image": "https://fitclash.vercel.app/images/taichi.gif",
+      "image": "/images/taichi.gif",
       "link": "/pushups.html",
       "title": "Tai Chi"
     },
     {
       "id": 7,
-      "image": "https://fitclash.vercel.app/images/ninja.jpg",
+      "image": "/images/ninja.jpg",
       "link": "/ninja/index.html",
       "title": "Ninja"
+    },
+    {
+      "id": 8,
+      "image": "/images/squidgames.png",
+      "link": "/ninja/index.html",
+      "title": "Squid Games"
     }
   ]
