@@ -4,6 +4,21 @@
  * Free for personal and commercial use under the MIT license
  * https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE
  */
+
+ @tailwind base;
+@tailwind components;
+@tailwind utilities;
+h1 {
+  color: green;
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.faq-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 1.5rem;
+}
  .fullscreen-video-container {
     position: relative;
     height: 100vh; 
