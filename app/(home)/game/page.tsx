@@ -1,3 +1,4 @@
+"use client"
 import Footer from '../../../components/footer'
 import { useEffect, useState } from "react";
 import Video from '../../../components/video'
@@ -54,10 +55,8 @@ export default function Page() {
         {games.map((game) => (
           <div key={game.id} style={styles.card}>
             <Link href={game.link}>
-              <a>
-                <img src={game.image} alt={game.title} style={styles.image} />
-                <h3>{game.title}</h3>
-              </a>
+              <img src={game.image} alt={game.title} style={styles.image} />
+              <h3>{game.title}</h3>
             </Link>
           </div>
         ))}
