@@ -1,12 +1,13 @@
-import Footer from '../../components/footer'
-import Video from '../../components/video'
-import Selection from '../../components/selection'
-import { PreloadResources } from '../../components/externalstyle'
-import Masthead from '../../components/masthead'
-import FrontContent from '../../components/frontcontent'
-import SearchContent from '../../components/searchcontent'
-import instantsearch from 'instantsearch.js'
+import Footer from '../../../components/footer'
+import Video from '../../../components/video'
+import Selection from '../../../components/selection'
+import { PreloadResources } from '../../../components/externalstyle'
+import Masthead from '../../../components/masthead'
+import FrontContent from '../../../components/frontcontent'
+import SearchContent from '../../../components/searchcontent'
+import { searchBox, hits } from 'instantsearch.js/es/widgets'
 import { Analytics } from "@vercel/analytics/react"
+import algoliasearch from 'algoliasearch/lite'
 
 
 // Including InstantSearch.js library and styling
@@ -25,14 +26,17 @@ const loadSearch = function() {
   script.setAttribute("src", "https://cdn.jsdelivr.net/npm/instantsearch.js@2.3.3/dist/instantsearch.min.js");
   script.addEventListener("load", function() {
     // Instantiating InstantSearch.js with Algolia credentials
-    const search = instantsearch({
-      appId: 'QB6HVGBSBA',
-      apiKey: '9d5014e5bbc77372547bce778dfa5663',
-      indexName: 'minimal_mistakes',
-      searchParameters: {
-        restrictSearchableAttributes: ['title', 'content']
-      }
-    });
+            const searchClient = algoliasearch(
+              process.env.NEXT_PUBLIC_ALGOLIA_APP_ID!,
+              process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_KEY!
+            );
+            const search = (window as any).instantsearch({
+              searchClient,
+              indexName: 'minimal_mistakes',
+              configure: {
+                restrictSearchableAttributes: ['title', 'content']
+              }
+            });
 
     const hitTemplate = function(hit) {
       const url = hit.url;
@@ -52,14 +56,14 @@ const loadSearch = function() {
 
     // Adding searchbar and results widgets
     search.addWidget(
-      instantsearch.widgets.searchBox({
+      searchBox({
         container: '.search-searchbar',
-        poweredBy: true,
+      //  poweredBy: true,
         placeholder: 'Enter your search term...'
       })
     );
     search.addWidget(
-      instantsearch.widgets.hits({
+      hits({
         container: '.search-hits',
         templates: {
           item: hitTemplate,

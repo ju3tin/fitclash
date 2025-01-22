@@ -2,6 +2,8 @@
 import './style.css';
 import React from 'react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
+import axios from "axios";
+import axiosInstance from '../../lib/axiosInstance';
 
 
 export default function RootLayout({
