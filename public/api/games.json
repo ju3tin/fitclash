@@ -34,5 +34,11 @@
       "image": "https://fitclash.vercel.app/images/taichi.gif",
       "link": "/pushups.html",
       "title": "Tai Chi"
+    },
+    {
+      "id": 7,
+      "image": "https://fitclash.vercel.app/images/ninja.jpg",
+      "link": "/ninja/index.html",
+      "title": "Ninja"
     }
   ]

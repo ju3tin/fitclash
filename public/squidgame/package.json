@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "squid-game-tfjs",
+  "version": "0.0.1",
+  "author": {
+    "name": "Charlie Gerard",
+    "email": "charlie.a.gerard@gmail.com",
+    "url": "https://charliegerard.dev"
+  },
+  "license": "MIT",
+  "scripts": {}
+}
