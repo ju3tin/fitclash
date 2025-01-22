@@ -18,7 +18,7 @@ const masthead = () => {
               <a href="/games/">Games</a>
             </li><li className="masthead__menu-item">
               <a
-                href="/faq/"
+                href="/faq"
                 
                 
               >FAQ</a>
@@ -30,7 +30,7 @@ const masthead = () => {
               >How To Play</a>
             </li><li className="masthead__menu-item">
               <a
-                href="/app/"
+                href="/app/index.html"
                 
                 
               >Launch App</a>

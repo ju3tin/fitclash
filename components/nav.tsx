@@ -11,13 +11,13 @@ const Nav = () => {
    
     </a>
     <ul className="visible-links"><li className="masthead__menu-item">
-          <a href="/games/">Games</a>
+          <a href="/games">Games</a>
         </li><li className="masthead__menu-item">
-          <a href="/faq/">FAQ</a>
+          <a href="/faq">FAQ</a>
         </li><li className="masthead__menu-item">
           <a href="/how-to-play/">How To Play</a>
         </li><li className="masthead__menu-item">
-          <a href="/app/">Launch App</a>
+          <a href="/app/index.html">Launch App</a>
         </li></ul>
     
  
