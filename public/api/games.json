@@ -2,13 +2,13 @@
     {
       "id": 1,
       "image": "https://fitclash.vercel.app/images/dinogame.jpg",
-      "link": "/game/dinogame",
+      "link": "/examples/dinogame/index.html",
       "title": "Dino Game"
     },
     {
       "id": 2,
       "image": "https://fitclash.vercel.app/images/boxing1.jpg",
-      "link": "/game/boxing",
+      "link": "/boxing.html",
       "title": "Boxing"
     },
     {
