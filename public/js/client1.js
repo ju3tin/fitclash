@@ -159,9 +159,9 @@ videoChatContainer.appendChild(readyButton);
 
 // Create a new canvas element for the "Ready" state
 const readyCanvas = document.createElement('canvas');
+readyCanvas.id = 'readyCanvas';
 readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
 readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
-readyCanvas.id = 'readyCanvas';
 readyCanvas.style.position = 'absolute';
 readyCanvas.style.bottom = '0px';
 readyCanvas.style.width = '100%';
@@ -175,6 +175,18 @@ videoChatContainer.appendChild(readyCanvas);
 
 // ... existing code ...
 
+readyButton.addEventListener('click', () => {
+ 
+// Draw the text "Read" on the readyCanvas
+const ctx = readyCanvas.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
+readyButton.remove(); // Remove the button from the DOM
+  })
+  
 
 
 })
