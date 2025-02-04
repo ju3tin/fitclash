@@ -161,6 +161,7 @@ videoChatContainer.appendChild(readyButton);
 const readyCanvas = document.createElement('canvas');
 readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
 readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas.id = 'readyCanvas';
 readyCanvas.style.position = 'absolute';
 readyCanvas.style.bottom = '0px';
 readyCanvas.style.width = '100%';
