@@ -211,12 +211,40 @@ async function setLocalStream(mediaConstraints) {
   try {
     localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
     localVideoComponent.srcObject = localStream
+
+
+
+    // Create a new canvas element for MoveNet
+   // const canvas = document.createElement('canvas');
+    canvas.width = localVideoComponent.clientWidth; // Set canvas width
+    canvas.height = localVideoComponent.clientHeight; // Set canvas height
+    videoChatContainer.appendChild(canvas);
+    canvas.style.position = 'absolute';
+    canvas.style.bottom = '0px';
+    canvas.style.width = '100%';
+    canvas.style.height = '50%';
+    canvas.style.marginBottom = '0px';
+    canvas.style.left = '0';
+    canvas.style.objectFit = 'contain';
+    localVideoComponent.onloadedmetadata = () => {
+      localVideoComponent.play();
+      startMoveNet(canvas, localVideoComponent);
+    };
     
   } catch (error) {
     console.error('Could not get user media', error)
   }
 }
 
+
+
+
+setLocalStream(mediaConstraints);
+
+
+async function name(canvas, video) {
+  
+}
 
 function addLocalTracks(rtcPeerConnection) {
   localStream.getTracks().forEach((track) => {
