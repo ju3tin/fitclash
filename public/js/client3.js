@@ -12,6 +12,21 @@ const remoteVideoComponent = document.getElementById('remote-video')
 console.log("Local Video Component - Width:", localVideoComponent.clientWidth, "Height:", localVideoComponent.clientHeight);
 
 
+  const localVideo = document.getElementById('local-video');
+  const canvas = document.querySelector('.output_canvas');
+
+  // Get the width and height of the local video
+  const videoWidth = localVideo.videoWidth || localVideo.clientWidth;
+  const videoHeight = localVideo.videoHeight || localVideo.clientHeight;
+
+  // Set the canvas size based on the video dimensions
+  canvas.width = videoWidth;
+  canvas.height = videoHeight;
+
+  console.log(`Local Video Size - Width: ${videoWidth}, Height: ${videoHeight}`);
+
+
+
 let Gameoption = null;
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
@@ -73,7 +88,7 @@ function copytext() {
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
 const mediaConstraints = {
   audio: true,
-  video: { width: 1280, height: 720 },
+  video: { width: localVideoComponent.clientWidth, height: localVideoComponent.clientHeight },
 }
 let localStream
 let remoteStream
@@ -218,6 +233,7 @@ async function setLocalStream(mediaConstraints) {
     canvas.style.height = '50%';
     canvas.style.marginBottom = '10px';
     canvas.style.left = '0';
+    canvas.style.objectFit = 'contain';
 
     // Start MoveNet once the video is ready
     localVideoComponent.onloadedmetadata = () => {
