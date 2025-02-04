@@ -14,7 +14,7 @@ roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
 const roomdude34 = roomInput.value;
 
-addressmyInput.value = `${window.location.href}?roomId=${roomdude34}`;
+addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${gameoption}`;
 
 const canvas = document.createElement('canvas');
 canvas.width = localVideoComponent.clientWidth; // Set canvas width
