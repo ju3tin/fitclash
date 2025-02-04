@@ -8,6 +8,10 @@ const addressmyInput = document.getElementById('addressmyInput')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
+
+console.log("Local Video Component - Width:", localVideoComponent.clientWidth, "Height:", localVideoComponent.clientHeight);
+
+
 let Gameoption = null;
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;

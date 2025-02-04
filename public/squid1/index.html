@@ -1,0 +1,636 @@
+
+<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+  <meta charset="UTF-8">
+  
+
+    <link rel="apple-touch-icon" type="image/png" href="https://cpwebassets.codepen.io/assets/favicon/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+
+    <meta name="apple-mobile-web-app-title" content="CodePen">
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/favicon-aec34940fbc1a6e787974dcd360f2c6b63348d4b1f4e06c77743096d55480f33.ico" />
+
+    <link rel="mask-icon" type="image/x-icon" href="https://cpwebassets.codepen.io/assets/favicon/logo-pin-b4b4269c16397ad2f0f7a01bcdf513a1994f4c94b8af2f191c09eb0d601762b1.svg" color="#111" />
+
+
+
+  
+    <script src="https://cpwebassets.codepen.io/assets/common/stopExecutionOnTimeout-2c7831bb44f98c1391d6a4ffda0e1fd302503391ca806e7fcc7b9b87197aec26.js"></script>
+
+
+  <title>Red Light, Green Light - Squid Game </title>
+
+    <link rel="canonical" href="https://codepen.io/Mamboleoo/pen/abydvaG">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> 
+
+
+  
+  
+  
+<style>
+@font-face {
+  font-family: "Digital";
+  src: url("https://assets.codepen.io/127738/digital-7+%28mono%29.ttf") format("truetype");
+}
+.timer {
+  font-family: Digital, monospace;
+  font-size: min(max(14px, 7vw), 46px);
+  color: #d7213c;
+  border: 5px outset #8b8b8b;
+  background: black;
+  text-align: center;
+  padding: 0 20px;
+  position: absolute;
+  bottom: 1.5vw;
+  left: 1.5vw;
+}
+
+.distance {
+  font-family: Digital, monospace;
+  font-size: min(max(14px, 7vw), 46px);
+  color: #d7213c;
+  border: 5px outset #8b8b8b;
+  background: black;
+  text-align: center;
+  padding: 0 20px;
+  position: absolute;
+  top: 1.5vw;
+  left: 1.5vw;
+}
+
+.movement {
+  font-family: Digital, monospace;
+  font-size: min(max(14px, 7vw), 46px);
+  color: #d7213c;
+  border: 5px outset #8b8b8b;
+  background: black;
+  text-align: center;
+  padding: 0 20px;
+  position: absolute;
+  bottom: 1.5vw;
+  right: 1.5vw;
+}
+
+.container {
+  height: 100vh;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(#58abc2 50%, #d7327a 50%);
+  filter: brightness(0.7);
+  transition: 0.4s ease-out;
+}
+.container.is-playing {
+  filter: brightness(1);
+}
+
+.info {
+  font-size: 30px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background: white;
+  z-index: 19;
+}
+
+body {
+  margin: 0;
+}
+
+.game {
+  background: url(https://assets.codepen.io/127738/Squid_Game_Doll_bg.jpg);
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  font-size: 0;
+  border-radius: 10px;
+}
+
+.webcam {
+  position: absolute;
+  top: 1.5vw;
+  right: 1.5vw;
+  width: 25%;
+}
+
+.ui {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 620px;
+  width: 90%;
+  background: black;
+  color: white;
+  z-index: 50;
+  text-align: center;
+  font-family: "Quicksand", sans-serif;
+  font-weight: 400;
+  border-radius: 20px;
+  box-shadow: 0 0 20px 2px #00000059;
+  padding: 20px 60px;
+  max-height: 90vh;
+  overflow: auto;
+  box-sizing: border-box;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.8);
+  transition: 0.3s ease-out;
+}
+.ui.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+}
+.ui svg {
+  position: absolute;
+  top: 10%;
+  left: 10%;
+  opacity: 0.15;
+  width: 80%;
+  height: 80%;
+  pointer-events: none;
+}
+.ui h1 {
+  font-size: 600;
+  font-size: 26px;
+}
+.ui .note {
+  font-size: 0.8em;
+}
+.ui p {
+  font-size: 18px;
+  margin-bottom: 0;
+}
+.ui p + p {
+  margin-top: 10px;
+}
+
+.cta {
+  pointer-events: none;
+  background: white;
+  border-radius: 0;
+  border: none;
+  font: inherit;
+  font-size: 24px;
+  font-weight: 600;
+  margin-top: 30px;
+  cursor: pointer;
+  padding: 10px 20px;
+}
+.cta::before {
+  content: "Loading...";
+}
+.cta.is-ready {
+  pointer-events: unset;
+}
+.cta.is-ready::before {
+  content: "Start";
+}
+
+.win .cta::before,
+.dead .cta::before {
+  content: none;
+}
+</style>
+
+  <script>
+  window.console = window.console || function(t) {};
+</script>
+
+  
+  
+</head>
+
+<body translate="no">
+  <!-- "Squid Game - Giant Doll" (https://skfb.ly/o7OMD) by Rzyas is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/). -->
+<!-- Doll audio from https://www.youtube.com/watch?v=Nk8V30AIuP4 -->
+<!-- Shotgun Audio from https://soundbible.com/1919-Shotgun-Blast.html -->
+<!-- Sigh audio from https://soundbible.com/773-Sigh.html -->
+
+<div class="container">
+  <div class="game">
+    <canvas class="webcam" width=640 height=480></canvas>
+    <div class="timer"><span class="time">01:00</span></div>
+    <div class="distance"><span class="total">000</span> /<span>100</span></div>
+    <div class="movement"><span class="total">00%</span></div>
+  </div>
+</div>
+
+<div class="howto ui is-visible">
+  <svg viewBox="0 0 191.99 60.82">
+    <path d="M28.3,10.23A22.3,22.3,0,1,1,6,32.53a22.29,22.29,0,0,1,22.3-22.3m0-6a28.3,28.3,0,1,0,28.29,28.3A28.33,28.33,0,0,0,28.3,4.23Z" fill="#fff"/>
+    <path d="M186,10.57V54.49H142.06V10.57H186m6-6H136.06V60.49H192V4.57Z" fill="#fff"/>
+    <path d="M93.18,12l23.7,41.05H69.48l23.7-41m0-12L88,9,64.28,50.05l-5.19,9h68.19l-5.2-9L98.38,9l-5.2-9Z" fill="#fff"/>
+  </svg>
+  <h1>Red Light, Green Light</h1>
+  <p>
+    You have 60 seconds to reach the end of the field.
+  </p>
+  <p>
+    When the doll is not watching, move your head to move forward and make the top left counter reach 100m.
+  </p>
+  <p>
+    But watch out to not move when the doll is watching you. If the movement sensor reaches 100% on the bottom right, you are eliminated.
+  </p>
+  <p class="note">This demo requires access to your webcam.<br>It currently doesn't work on iOs Safari.</p>
+  <button class="cta start"></button>
+</div>
+<div class="dead ui">
+  <svg viewBox="0 0 191.99 60.82">
+    <path d="M28.3,10.23A22.3,22.3,0,1,1,6,32.53a22.29,22.29,0,0,1,22.3-22.3m0-6a28.3,28.3,0,1,0,28.29,28.3A28.33,28.33,0,0,0,28.3,4.23Z" fill="#fff"/>
+    <path d="M186,10.57V54.49H142.06V10.57H186m6-6H136.06V60.49H192V4.57Z" fill="#fff"/>
+    <path d="M93.18,12l23.7,41.05H69.48l23.7-41m0-12L88,9,64.28,50.05l-5.19,9h68.19l-5.2-9L98.38,9l-5.2-9Z" fill="#fff"/>
+  </svg>
+  <h1>You died!</h1>
+  <p>
+    Oops, it looks like you were moving too much or your reached the timeout...
+  </p>
+  <button class="cta replay replay1 is-ready">Replay</button>
+</div>
+<div class="win ui">
+  <svg viewBox="0 0 191.99 60.82">
+    <path d="M28.3,10.23A22.3,22.3,0,1,1,6,32.53a22.29,22.29,0,0,1,22.3-22.3m0-6a28.3,28.3,0,1,0,28.29,28.3A28.33,28.33,0,0,0,28.3,4.23Z" fill="#fff"/>
+    <path d="M186,10.57V54.49H142.06V10.57H186m6-6H136.06V60.49H192V4.57Z" fill="#fff"/>
+    <path d="M93.18,12l23.7,41.05H69.48l23.7-41m0-12L88,9,64.28,50.05l-5.19,9h68.19l-5.2-9L98.38,9l-5.2-9Z" fill="#fff"/>
+  </svg>
+  <h1>You won!</h1>
+  <p>
+    Well done, you survived... for now.
+  </p>
+  <button class="cta replay replay2 is-ready">Replay</button>
+</div>
+  <script src='https://assets.codepen.io/127738/camvas.js'></script>
+<script src='https://assets.codepen.io/127738/pico.js'></script>
+<script src='https://unpkg.co/gsap@3/dist/gsap.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/three@0.133.1/build/three.min.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/three@0.133.1/examples/js/loaders/GLTFLoader.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/three@0.133.1/examples/js/controls/OrbitControls.js'></script>
+      <script id="rendered-js" >
+/* Face recognition from : https://nenadmarkus.com/p/picojs-intro/demo/ */
+
+console.clear();
+let distance = 0;
+let isWatching = true;
+let pos = {
+  x: -1,
+  y: -1 };
+
+let prev_pos = {
+  x: 0,
+  y: 0 };
+
+let distanceSinceWatching = 0;
+const elDistance = document.querySelector('.distance .total');
+const elStart = document.querySelector('.start');
+const elHowTo = document.querySelector('.howto');
+const elGame = document.querySelector('.game');
+const elContainer = document.querySelector('.container');
+const elTime = document.querySelector('.timer .time');
+const elMovement = document.querySelector('.movement');
+const elReplay1 = document.querySelector('.replay1');
+const elReplay2 = document.querySelector('.replay2');
+const elDead = document.querySelector('.dead');
+const elWin = document.querySelector('.win');
+const audioDoll = new Audio('https://assets.codepen.io/127738/squid-game-sound.mp3');
+const audioDollDuration = 5.433469;
+const shotGun = new Audio('https://assets.codepen.io/127738/shotgun.mp3');
+shotGun.volume = 0.2;
+const sigh = new Audio('https://assets.codepen.io/127738/sigh.mp3');
+
+const MAX_TIME = 60;
+const FINISH_DISTANCE = 100;
+const IN_GAME_MAX_DISTANCE = 4000;
+const MAX_MOVEMENT = 180;
+
+let playing = false;
+
+var mycamvas;
+
+function init() {
+
+  var initialized = false;
+  if (initialized) return;
+  /*
+    (1) prepare the pico.js face detector
+  */
+  var update_memory = pico.instantiate_detection_memory(5); // we will use the detecions of the last 5 frames
+  var facefinder_classify_region = function (r, c, s, pixels, ldim) {
+    return -1.0;
+  };
+  var cascadeurl = "https://raw.githubusercontent.com/nenadmarkus/pico/c2e81f9d23cc11d1a612fd21e4f9de0921a5d0d9/rnt/cascades/facefinder";
+  fetch(cascadeurl).then(function (response) {
+    response.arrayBuffer().then(function (buffer) {
+      var bytes = new Int8Array(buffer);
+      facefinder_classify_region = pico.unpack_cascade(bytes);
+      console.log("* cascade loaded");
+    });
+  });
+  /*
+    (2) get the drawing context on the canvas and define a function to transform an RGBA image to grayscale
+  */
+  var ctx = document.querySelector(".webcam").getContext("2d");
+  ctx.lineWidth = 4;
+  ctx.strokeStyle = "#d7327a";
+  function rgba_to_grayscale(rgba, nrows, ncols) {
+    var gray = new Uint8Array(nrows * ncols);
+    for (var r = 0; r < nrows; ++r) {if (window.CP.shouldStopExecution(0)) break;
+      for (var c = 0; c < ncols; ++c) {if (window.CP.shouldStopExecution(1)) break;
+        // gray = 0.2*red + 0.7*green + 0.1*blue
+        gray[r * ncols + c] =
+        (2 * rgba[r * 4 * ncols + 4 * c + 0] +
+        7 * rgba[r * 4 * ncols + 4 * c + 1] +
+        1 * rgba[r * 4 * ncols + 4 * c + 2]) /
+        10;}window.CP.exitedLoop(1);}window.CP.exitedLoop(0);
+    return gray;
+  }
+  /*
+    (3) this function is called each time a video frame becomes available
+  */
+  var processfn = function (video, dt) {
+    // render the video frame to the canvas element and extract RGBA pixel data
+    ctx.drawImage(video, 0, 0);
+    var rgba = ctx.getImageData(0, 0, 640, 480).data;
+    // prepare input to `run_cascade`
+    image = {
+      pixels: rgba_to_grayscale(rgba, 480, 640),
+      nrows: 480,
+      ncols: 640,
+      ldim: 640 };
+
+    params = {
+      shiftfactor: 0.1, // move the detection window by 10% of its size
+      minsize: 100, // minimum size of a face
+      maxsize: 1000, // maximum size of a face
+      scalefactor: 1.1 // for multiscale processing: resize the detection window by 10% when moving to the higher scale
+    };
+    // run the cascade over the frame and cluster the obtained detections
+    // dets is an array that contains (r, c, s, q) quadruplets
+    // (representing row, column, scale and detection score)
+    dets = pico.run_cascade(image, facefinder_classify_region, params);
+    dets = update_memory(dets);
+    dets = pico.cluster_detections(dets, 0.2); // set IoU threshold to 0.2
+    // draw detections
+    if (dets.length) {
+      const det = dets[0];
+      // check the detection score
+      // if it's above the threshold, draw it
+      // (the constant 50.0 is empirical: other cascades might require a different one)
+      if (det[3] > 50.0) {
+        prev_pos.x = pos.x;
+        prev_pos.y = pos.y;
+        pos.x = det[1];
+        pos.y = det[0];
+        let _dist = Math.hypot(pos.x - prev_pos.x, pos.y - prev_pos.y);
+        // If not watching, increase the distance from the face position
+        if (prev_pos.x === -1) {
+          _dist = 0;
+        }
+        if (!isWatching) {
+          distance += _dist;
+          /* If user reached the end */
+          if (distance > IN_GAME_MAX_DISTANCE) {
+            reachedEnd();
+          }
+        } else {
+          distanceSinceWatching += _dist;
+          if (distanceSinceWatching > MAX_MOVEMENT) {
+            dead();
+          }
+        }
+        let formattedDistance = '' + Math.round(distance / IN_GAME_MAX_DISTANCE * FINISH_DISTANCE);
+        if (formattedDistance.length === 1) {
+          formattedDistance = '00' + formattedDistance;
+        } else if (formattedDistance.length == 2) {
+          formattedDistance = '0' + formattedDistance;
+        }
+        elDistance.innerHTML = formattedDistance;
+        let movingDistance = Math.floor(distanceSinceWatching / MAX_MOVEMENT * 100);
+        movingDistance = '' + Math.min(100, movingDistance);
+        if (movingDistance.length === 1) {
+          movingDistance = '0' + movingDistance;
+        }
+        elMovement.innerHTML = `${movingDistance}%`;
+
+
+        ctx.beginPath();
+        ctx.arc(det[1], det[0], det[2] / 2, 0, 2 * Math.PI, false);
+        ctx.stroke();
+      }
+    }
+    updateTimer(MAX_TIME - (Date.now() - mycamvas.startTime) / 1000);
+
+    /* Check if reached timeout */
+    if ((Date.now() - mycamvas.startTime) / 1000 > MAX_TIME) {
+      timeOut();
+    }
+
+  };
+  /*
+    (4) instantiate camera handling (see https://github.com/cbrandolino/camvas)
+  */
+  mycamvas = new camvas(ctx, processfn, () => {
+    playing = true;
+    updateWatching();
+  });
+  /*
+    (5) it seems that everything went well
+  */
+  initialized = true;
+}
+
+elStart.addEventListener('click', () => {
+  init();
+
+  elContainer.classList.add('is-playing');
+  elHowTo.classList.remove('is-visible');
+});
+
+function reachedEnd() {
+  watchingTween.kill();
+  sigh.currentTime = 0;
+  sigh.play();
+  audioDoll.pause();
+  mycamvas.stop();
+  playing = false;
+  elWin.classList.add('is-visible');
+  elContainer.classList.remove('is-playing');
+}
+
+function timeOut() {
+  watchingTween.kill();
+  audioDoll.pause();
+  shotGun.currentTime = 0;
+  shotGun.play();
+  mycamvas.stop();
+  playing = false;
+  elDead.classList.add('is-visible');
+  elContainer.classList.remove('is-playing');
+}
+
+function dead() {
+  watchingTween.kill();
+  audioDoll.pause();
+  shotGun.currentTime = 0;
+  shotGun.play();
+  mycamvas.stop();
+  playing = false;
+  elDead.classList.add('is-visible');
+  elContainer.classList.remove('is-playing');
+}
+
+let watchingTween = null;
+function updateWatching() {
+  if (!playing) return;
+
+  isWatching = !isWatching;
+
+  let duration = Math.random() * 3.5 + 2.5;
+  if (isWatching) {
+    duration = Math.random() * 2 + 2;
+  }
+  if (!isWatching) {
+    audioDoll.currentTime = 0;
+    audioDoll.playbackRate = (audioDollDuration - 0.5) / duration;
+    audioDoll.play();
+  }
+  gsap.to(head.rotation, {
+    y: isWatching ? 0 : -Math.PI,
+    duration: 0.4 });
+
+  watchingTween = gsap.to({}, {
+    duration: duration,
+    onComplete: updateWatching });
+
+
+  if (!isWatching) {
+    distanceSinceWatching = 0;
+  }
+}
+
+function updateTimer(timeLeft) {
+  let min = '' + Math.floor(timeLeft / 60);
+  if (min.length === 1) {
+    min = '0' + min;
+  }
+  let sec = '' + Math.floor(timeLeft % 60);
+  if (sec.length === 1) {
+    sec = '0' + sec;
+  }
+  if (timeLeft < 0) {
+    min = '00';
+    sec = '00';
+  }
+  elTime.innerHTML = `${min}:${sec}`;
+}
+
+/* THREEJS PART */
+const scene = new THREE.Scene();
+let sceneWidth = 0;
+if (window.innerWidth / window.innerHeight > 1.9) {
+  sceneWidth = window.innerWidth * 0.6;
+} else {
+  sceneWidth = window.innerWidth * 0.95;
+}
+let sceneHeight = sceneWidth / 2;
+const camera = new THREE.PerspectiveCamera(75, sceneWidth / sceneHeight, 0.1, 1000);
+
+const renderer = new THREE.WebGLRenderer({
+  alpha: true,
+  antialias: true });
+
+renderer.setSize(sceneWidth, sceneHeight);
+elGame.appendChild(renderer.domElement);
+
+camera.position.y = 2.8;
+camera.position.z = 11;
+// camera.lookAt(new THREE.Vector3(0, -2, 0));
+
+const light = new THREE.HemisphereLight(0xffffbb, 0x080820, 1);
+scene.add(light);
+const light2 = new THREE.AmbientLight(0x404040, 1.2);
+scene.add(light2);
+const spotLight = new THREE.SpotLight(0xffffff);
+spotLight.position.set(100, 1000, 100);
+scene.add(spotLight);
+
+let head = new THREE.Group();
+scene.add(head);
+const loader = new THREE.GLTFLoader();
+loader.load(
+'https://assets.codepen.io/127738/Squid_game_doll.gltf',
+function (gltf) {
+  scene.add(gltf.scene);
+  head.add(gltf.scene.children[0].children[0].children[0].children[1]);
+  head.add(gltf.scene.children[0].children[0].children[0].children[1]);
+  head.add(gltf.scene.children[0].children[0].children[0].children[2]);
+  head.children[0].position.y = -8;
+  head.children[1].position.y = -8;
+  head.children[2].position.y = -8;
+  head.children[0].position.z = 1;
+  head.children[1].position.z = 1;
+  head.children[2].position.z = 1;
+  head.children[0].scale.setScalar(1);
+  head.children[1].scale.setScalar(1);
+  head.children[2].scale.setScalar(1);
+  head.position.y = 8;
+  head.position.z = -1;
+
+  elStart.classList.add('is-ready');
+},
+function (xhr) {console.log(xhr.loaded / xhr.total * 100 + '% loaded');},
+function (error) {console.log('An error happened', error);});
+
+
+renderer.setAnimationLoop(renderWebGL);
+
+function renderWebGL() {
+  renderer.render(scene, camera);
+}
+
+
+/* On Resize */
+function onWindowResize() {
+  if (window.innerWidth / window.innerHeight > 1.9) {
+    sceneWidth = window.innerWidth * 0.6;
+  } else {
+    sceneWidth = window.innerWidth * 0.95;
+  }
+  sceneHeight = sceneWidth / 2;
+  camera.aspect = sceneWidth / sceneHeight;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sceneWidth, sceneHeight);
+}
+window.addEventListener('resize', onWindowResize, false);
+onWindowResize();
+
+function replay() {
+  elContainer.classList.add('is-playing');
+  elDead.classList.remove('is-visible');
+  elWin.classList.remove('is-visible');
+  distance = 0;
+  isWatching = true;
+  distanceSinceWatching = 0;
+  playing = true;
+  updateWatching();
+  mycamvas.startTime = Date.now();
+  mycamvas.play();
+}
+elReplay1.addEventListener('click', () => {
+  replay();
+});
+elReplay2.addEventListener('click', () => {
+  replay();
+});
+//# sourceURL=pen.js
+    </script>
+
+  
+</body>
+
+</html>
