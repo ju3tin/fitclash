@@ -14,8 +14,6 @@ roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
 const roomdude34 = roomInput.value;
 
-addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${gameoption}`;
-
 const canvas = document.createElement('canvas');
 canvas.width = localVideoComponent.clientWidth; // Set canvas width
 canvas.height = localVideoComponent.clientHeight; // Set canvas height
@@ -24,7 +22,7 @@ canvas.style.position = 'absolute';
 canvas.style.bottom = '0px';
 canvas.style.width = '100%';
 canvas.style.height = '50%';
-canvas.style.marginBottom = '10px';
+canvas.style.marginBottom = '0px';
 canvas.style.left = '0';
 canvas.style.objectFit = 'contain';
 
@@ -49,7 +47,10 @@ fetch('/js/gameoptions.json')
                 Gameoption = gameoption.name; // Update global variable
                 dropdownButton.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
                 console.log("Selected Game:", Gameoption); // Debug
-                connectButton.style.display = "block"
+                connectButton.style.display = "block";
+
+                // Update addressmyInput value after Gameoption is set
+                addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${Gameoption}`;
             });
 
             dropdownList.appendChild(listItem);
@@ -138,7 +139,43 @@ socket.on('room_joined', async () => {
   copyaddress1.style.display = "none";
 
   await setLocalStream(mediaConstraints)
-  socket.emit('start_call', roomId)
+  socket.emit('start_call', roomId);
+
+
+
+// ... existing code ...
+
+// Create a canvas element and a button
+const readyButton = document.createElement('button');
+readyButton.innerText = 'Ready';
+readyButton.style.position = 'absolute';
+readyButton.style.bottom = '60px'; // Position above the canvas
+readyButton.style.left = '50%';
+readyButton.style.transform = 'translateX(-50%)'; // Center the button
+readyButton.style.zIndex = '3000'; // Ensure it appears above other elements
+
+// Append the button to the video chat container
+videoChatContainer.appendChild(readyButton);
+
+// Create a new canvas element for the "Ready" state
+const readyCanvas = document.createElement('canvas');
+readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas.style.position = 'absolute';
+readyCanvas.style.bottom = '0px';
+readyCanvas.style.width = '100%';
+readyCanvas.style.height = '50%';
+readyCanvas.style.marginBottom = '0px';
+readyCanvas.style.left = '0';
+readyCanvas.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas);
+
+// ... existing code ...
+
+
+
 })
 
 socket.on('full_room', () => {
@@ -150,6 +187,7 @@ socket.on('full_room', () => {
 socket.on('start_call', async () => {
   console.log('Socket event callback: start_call')
   copyaddress1.style.display = "none";
+
 
   if (isRoomCreator) {
     copyaddress1.style.display = "none";
