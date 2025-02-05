@@ -8,9 +8,14 @@ const addressmyInput = document.getElementById('addressmyInput')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
-const googlebutton1 = document.getElementById('googlebutton1')
+
 let Gameoption = null;
 //var roomidpalyer1
+
+let player1Ready = false;
+let player2Ready = false;
+
+
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
 
 const roomdude34 = roomInput.value;
@@ -26,6 +31,16 @@ canvas.style.height = '50%';
 canvas.style.marginBottom = '0px';
 canvas.style.left = '0';
 canvas.style.objectFit = 'contain';
+
+
+document.getElementById('send-message-button').onclick = function() {
+  const message = document.getElementById('message-input').value;
+  if (message) {
+      socket.emit('send_message', { roomId, message }); // Send message to the server
+      displayMessage(`You: ${message}`); // Display your own message
+      document.getElementById('message-input').value = ''; // Clear the input field
+  }
+};
 
 
 // Fetch the JSON file
@@ -174,7 +189,7 @@ videoChatContainer.appendChild(readyCanvas);
 
 // ... existing code ...
 
-readyButton.addEventListener('click', () => {
+readyButton.addEventListener('click', (data) => {
  
 // Draw the text "Read" on the readyCanvas
 const ctx = readyCanvas.getContext('2d');
@@ -185,8 +200,19 @@ ctx.textBaseline = 'middle'; // Align text vertically
 ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
 readyButton.remove(); // Remove the button from the DOM
 let message = `ready to start ${player}`;
+console.log("Received message:", message); // Log the received message
 socket.emit('send_message', { roomId, message }); // Send message to the server
 displayMessage(`You: ${message}`); 
+if (message === 'ready to start player1') {
+  player1Ready = true; // Set player1 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+  console.log('player1 clicked ready 123');
+}
+if (message === 'ready to start player2') {
+  player2Ready = true; // Set player2 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+  console.log('player2 clicked ready 123');
+}
 })
   
 
@@ -422,7 +448,9 @@ sendMessageButton.addEventListener('click', () => {
 socket.on('receive_message', (data) => {
     displayMessage(`${data.sender}: ${data.message}`); // Display received message
     if (data.message == 'ready to start player1'){
-      
+      player1Ready = true; // Set player1 as ready
+      checkBothPlayersReady(); // Check if both players are ready
+
 // Create a new canvas element for the "Ready" state
 const readyCanvas1 = document.createElement('canvas');
 readyCanvas1.id = 'readyCanvas';
@@ -452,7 +480,9 @@ ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw 
       console.log('what the fuck 1');
     };
     if (data.message == 'ready to start player2'){
-           
+      player2Ready = true; // Set player2 as ready
+      checkBothPlayersReady(); // Check if both players are ready
+    
 // Create a new canvas element for the "Ready" state
 const readyCanvas1 = document.createElement('canvas');
 readyCanvas1.id = 'readyCanvas';
@@ -483,6 +513,39 @@ ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw 
       console.log('what the fuck 2')
     };
 });
+
+
+// Function to check if both players are ready
+function checkBothPlayersReady() {
+  if (player1Ready && player2Ready) {
+      startCountdown(5); // Start a 5-second countdown
+  }
+}
+
+// Countdown function
+function startCountdown(seconds) {
+  let timeLeft = seconds;
+  const countdownElement = document.createElement('div');
+  countdownElement.style.position = 'absolute';
+  countdownElement.style.top = '10px';
+  countdownElement.style.left = '50%';
+  countdownElement.style.transform = 'translateX(-50%)';
+  countdownElement.style.fontSize = '48px';
+  countdownElement.style.color = 'red';
+  videoChatContainer.appendChild(countdownElement);
+
+  const timerId = setInterval(() => {
+      countdownElement.innerText = timeLeft;
+      if (timeLeft <= 0) {
+          clearInterval(timerId);
+          countdownElement.innerText = 'Go!'; // Indicate the start
+          setTimeout(() => {
+              countdownElement.remove(); // Remove countdown element after a moment
+          }, 1000);
+      }
+      timeLeft--;
+  }, 1000);
+}
 
 // FUNCTION TO DISPLAY MESSAGES ============================================
 function displayMessage(message) {
@@ -598,5 +661,6 @@ function timer3(){
   }
   
   setLocalStream(mediaConstraints);
+
 
 // ... existing code ...
