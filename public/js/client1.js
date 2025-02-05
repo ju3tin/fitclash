@@ -200,18 +200,15 @@ ctx.textBaseline = 'middle'; // Align text vertically
 ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
 readyButton.remove(); // Remove the button from the DOM
 let message = `ready to start ${player}`;
-console.log("Received message:", message); // Log the received message
 socket.emit('send_message', { roomId, message }); // Send message to the server
 displayMessage(`You: ${message}`); 
-if (message === 'ready to start player1') {
+if (message == 'ready to start player1') {
   player1Ready = true; // Set player1 as ready
   checkBothPlayersReady(); // Check if both players are ready
-  console.log('player1 clicked ready 123');
 }
-if (message === 'ready to start player2') {
+if (message == 'ready to start player2') {
   player2Ready = true; // Set player2 as ready
   checkBothPlayersReady(); // Check if both players are ready
-  console.log('player2 clicked ready 123');
 }
 })
   
@@ -304,6 +301,14 @@ readyButton.remove(); // Remove the button from the DOM
 let message = `ready to start ${player}`;
 socket.emit('send_message', { roomId, message }); // Send message to the server
 displayMessage(`You: ${message}`); 
+if (message == 'ready to start player1') {
+  player1Ready = true; // Set player1 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
+if (message == 'ready to start player2') {
+  player2Ready = true; // Set player2 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
 })
   
 
@@ -541,6 +546,7 @@ function startCountdown(seconds) {
           countdownElement.innerText = 'Go!'; // Indicate the start
           setTimeout(() => {
               countdownElement.remove(); // Remove countdown element after a moment
+              timer3()
           }, 1000);
       }
       timeLeft--;
