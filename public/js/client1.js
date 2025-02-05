@@ -8,6 +8,7 @@ const addressmyInput = document.getElementById('addressmyInput')
 const videoChatContainer = document.getElementById('video-chat-container')
 const localVideoComponent = document.getElementById('local-video')
 const remoteVideoComponent = document.getElementById('remote-video')
+const googlebutton1 = document.getElementById('googlebutton1')
 let Gameoption = null;
 //var roomidpalyer1
 roomInput.value = Math.floor(Math.random() * 90000) + 10000;
@@ -25,8 +26,6 @@ canvas.style.height = '50%';
 canvas.style.marginBottom = '0px';
 canvas.style.left = '0';
 canvas.style.objectFit = 'contain';
-
-
 
 
 // Fetch the JSON file
