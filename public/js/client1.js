@@ -570,6 +570,7 @@ function timer3(){
   //document.getElementById('onctent2').id = 'onctent1';
   
   var timerId = setInterval(countdown, 1000);
+  countStarJumps(keypoints)
   
   function countdown(counter, results, value1) {
     if (timeLeft == 0) {
@@ -618,13 +619,30 @@ function timer3(){
         flipHorizontal: false,
       });
   
+      // Log the detected poses for debugging
+      console.log("Detected poses:", poses);
+  
       // Draw the video frame onto the canvas
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
   
       // Draw keypoints and skeleton
       poses.forEach((pose) => {
-        drawKeypoints(pose.keypoints, ctx);
-        drawSkeleton(pose.keypoints, ctx);
+        const keypoints = pose.keypoints;
+  
+        // Log the keypoints for debugging
+        console.log("Keypoints:", keypoints);
+  
+        // Check if keypoints are valid
+        if (!keypoints || keypoints.length < 17) {
+            console.error("Keypoints array is not defined or does not have enough elements.");
+            return; // Exit if keypoints are not valid
+        }
+  
+        drawKeypoints(keypoints, ctx);
+        drawSkeleton(keypoints, ctx);
+        
+        // Call countStarJumps with the keypoints of the detected pose
+        countStarJumps(keypoints);
       });
   
       // Request the next frame
@@ -665,8 +683,43 @@ function timer3(){
     // Start detecting poses
     detectPose();
   }
-  
+
   setLocalStream(mediaConstraints);
 
+
+
+  let jumpCount = 0; // Counter for star jumps
+  let lastState = "closed"; // Track the last state of the jump
+
+  function countStarJumps(keypoints) {
+    // Check if keypoints is defined and has enough elements
+    if (!keypoints || keypoints.length < 17) {
+        console.error("Keypoints array is not defined or does not have enough elements.");
+        return; // Exit the function if the check fails
+    }
+
+    // Extract relevant keypoints
+    const leftWrist = keypoints[9].y; // Left wrist
+    const rightWrist = keypoints[10].y; // Right wrist
+    const leftAnkle = keypoints[15].y; // Left ankle
+    const rightAnkle = keypoints[16].y; // Right ankle
+    const shoulderY = keypoints[5].y; // Shoulder Y position
+
+    // Conditions for a "star" position
+    const armsRaised = leftWrist < shoulderY && rightWrist < shoulderY; // Arms are raised above shoulders
+    const legsApart = Math.abs(leftAnkle - rightAnkle) > 100; // Legs are apart
+
+    // Check if the current state is a star jump
+    if (armsRaised && legsApart) {
+        if (lastState === "closed") {
+            jumpCount++; // Increment jump count
+            console.log("Star jump detected! Total jumps: " + jumpCount);
+        }
+        lastState = "open"; // Update state to open
+    } else {
+        lastState = "closed"; // Update state to closed
+    }
+  }
+  
 
 // ... existing code ...
