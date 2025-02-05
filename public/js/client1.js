@@ -185,7 +185,10 @@ ctx.textAlign = 'center'; // Center the text
 ctx.textBaseline = 'middle'; // Align text vertically
 ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
 readyButton.remove(); // Remove the button from the DOM
-  })
+let message = `ready to start ${player}`;
+socket.emit('send_message', { roomId, message }); // Send message to the server
+displayMessage(`You: ${message}`); 
+})
   
 
 
@@ -228,7 +231,59 @@ socket.on('webrtc_offer', async (event) => {
 socket.on('webrtc_answer', (event) => {
   console.log('Socket event callback: webrtc_answer')
 
-  rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event))
+  rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+
+
+// ... existing code ...
+
+// Create a canvas element and a button
+const readyButton = document.createElement('button');
+readyButton.innerText = 'Ready';
+readyButton.style.position = 'absolute';
+readyButton.style.bottom = '60px'; // Position above the canvas
+readyButton.style.left = '50%';
+readyButton.style.transform = 'translateX(-50%)'; // Center the button
+readyButton.style.zIndex = '3000'; // Ensure it appears above other elements
+
+// Append the button to the video chat container
+videoChatContainer.appendChild(readyButton);
+
+// Create a new canvas element for the "Ready" state
+const readyCanvas = document.createElement('canvas');
+readyCanvas.id = 'readyCanvas';
+readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas.style.position = 'absolute';
+readyCanvas.style.bottom = '0px';
+readyCanvas.style.width = '100%';
+readyCanvas.style.height = '50%';
+readyCanvas.style.marginBottom = '0px';
+readyCanvas.style.left = '0';
+readyCanvas.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas);
+
+// ... existing code ...
+
+readyButton.addEventListener('click', () => {
+ 
+// Draw the text "Read" on the readyCanvas
+const ctx = readyCanvas.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
+readyButton.remove(); // Remove the button from the DOM
+let message = `ready to start ${player}`;
+socket.emit('send_message', { roomId, message }); // Send message to the server
+displayMessage(`You: ${message}`); 
+})
+  
+
+
+
 })
 
 socket.on('webrtc_ice_candidate', (event) => {
@@ -367,6 +422,67 @@ sendMessageButton.addEventListener('click', () => {
 // SOCKET EVENT FOR RECEIVING MESSAGES =====================================
 socket.on('receive_message', (data) => {
     displayMessage(`${data.sender}: ${data.message}`); // Display received message
+    if (data.message == 'ready to start player1'){
+      
+// Create a new canvas element for the "Ready" state
+const readyCanvas1 = document.createElement('canvas');
+readyCanvas1.id = 'readyCanvas';
+readyCanvas1.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas1.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas1.style.position = 'absolute';
+readyCanvas1.style.top = '0px';
+readyCanvas1.style.width = '100%';
+readyCanvas1.style.height = '50%';
+readyCanvas1.style.marginBottom = '0px';
+readyCanvas1.style.left = '0';
+readyCanvas1.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas1);
+
+const ctx = readyCanvas1.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw the text in the center
+
+
+// ... existing code ...
+
+      console.log('what the fuck 1');
+    };
+    if (data.message == 'ready to start player2'){
+           
+// Create a new canvas element for the "Ready" state
+const readyCanvas1 = document.createElement('canvas');
+readyCanvas1.id = 'readyCanvas';
+readyCanvas1.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas1.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas1.style.position = 'absolute';
+readyCanvas1.style.top = '0px';
+readyCanvas1.style.width = '100%';
+readyCanvas1.style.height = '50%';
+readyCanvas1.style.marginBottom = '0px';
+readyCanvas1.style.left = '0';
+readyCanvas1.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas1);
+
+// ... existing code ...
+
+
+const ctx = readyCanvas1.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw the text in the center
+
+
+      console.log('what the fuck 2')
+    };
 });
 
 // FUNCTION TO DISPLAY MESSAGES ============================================
