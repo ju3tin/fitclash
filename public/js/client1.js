@@ -714,6 +714,7 @@ function timer3(){
         if (lastState === "closed") {
             jumpCount++; // Increment jump count
             console.log("Star jump detected! Total jumps: " + jumpCount);
+            socket.emit('send_message', { roomId, player, jumpCount, }); 
         }
         lastState = "open"; // Update state to open
     } else {
