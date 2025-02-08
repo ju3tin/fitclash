@@ -357,8 +357,8 @@ async function setLocalStream(mediaConstraints) {
     videoChatContainer.appendChild(canvas);
     canvas.style.position = 'absolute';
     canvas.style.bottom = '0px';
-    canvas.style.width = '100%';
-    canvas.style.height = '50%';
+    canvas.style.width = localVideoComponent.clientWidth;
+    canvas.style.height = localVideoComponent.clientHeight;
     canvas.style.marginBottom = '0px';
     canvas.style.left = '0';
     canvas.style.objectFit = 'contain';
