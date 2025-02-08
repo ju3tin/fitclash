@@ -352,8 +352,6 @@ async function setLocalStream(mediaConstraints) {
 
     // Create a new canvas element for MoveNet
    // const canvas = document.createElement('canvas');
-    canvas.width = localVideoComponent.clientWidth; // Set canvas width
-    canvas.height = localVideoComponent.clientHeight; // Set canvas height
     videoChatContainer.appendChild(canvas);
     canvas.style.position = 'absolute';
     canvas.style.bottom = '0px';
@@ -366,6 +364,8 @@ async function setLocalStream(mediaConstraints) {
       localVideoComponent.play();
       startMoveNet(canvas, localVideoComponent);
     };
+    canvas.style.width = localVideoComponent.clientWidth; // Set canvas width
+    canvas.style.height = localVideoComponent.clientHeight; // Set canvas height
     
   } catch (error) {
     console.error('Could not get user media', error)
