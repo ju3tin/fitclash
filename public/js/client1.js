@@ -94,7 +94,7 @@ function copytext() {
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
 const mediaConstraints = {
   audio: true,
-  video: { width: localVideoComponent.clientWidth, height: localVideoComponent.clientHeight },
+  video: { width: 1280, height: 720 },
 }
 let localStream
 let remoteStream
