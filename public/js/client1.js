@@ -537,6 +537,12 @@ function checkBothPlayersReady() {
   }
 }
 
+function resetScores() {
+  player1Score = 0; // Reset player 1 score
+  player2Score = 0; // Reset player 2 score
+  jumpCount = 0; // Reset jump counter
+}
+
 // Countdown function
 function startCountdown(seconds) {
   let timeLeft = seconds;
@@ -554,6 +560,7 @@ function startCountdown(seconds) {
       if (timeLeft <= 0) {
           clearInterval(timerId);
           countdownElement.innerText = 'Go!'; // Indicate the start
+resetScores();
           const readyCanvas = document.getElementById('readyCanvas');
           const readyCanvas1 = document.getElementById('readyCanvas1');
           const ctx = readyCanvas.getContext('2d');
