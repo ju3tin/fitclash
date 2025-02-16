@@ -429,6 +429,7 @@ window.onload = function() {
 
   // Example function to fetch data from the API
 function fetchData() {
+    checkNetwork();
     gapi.load('auth2', function() {
         // Initialize the Google Auth API
         gapi.auth2.init({
@@ -509,6 +510,21 @@ xhr.send();
 
 // Call fetchData when needed, e.g., on button click
 document.getElementById('connect-button').addEventListener('click', fetchData);
+
+function checkNetwork() {
+    if (navigator.connection) {
+        const type = navigator.connection.effectiveType;
+        
+        if (type !== "wifi") {
+            alert("For the best experience, please connect to WiFi. Mobile data may not work properly.");
+        }
+    } else {
+        console.warn("Network Information API not supported.");
+    }
+}
+
+// Run check when the page loads
+window.addEventListener("load", checkNetwork);
 
 </script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
