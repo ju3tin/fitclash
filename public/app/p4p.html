@@ -443,7 +443,9 @@ function fetchData() {
 
     // Other initialization code...
     document.getElementById('loading-screen').style.display = 'flex';
-    document.getElementById('login').style.display = 'flex';
+    //document.getElementById('login').style.display = 'flex';
+
+    document.getElementById('login').style.display = 'none';
 
     fetch('https://webrtcsocket.onrender.com/api/data') // Ensure this URL is correct
         .then(response => {
