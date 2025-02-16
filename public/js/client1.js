@@ -561,8 +561,9 @@ function displayMessage(message) {
 }
 
 
-function timer3(){
+function timer3(jumpCount){
 
+ // let jumpCount = 0;
   var timeLeft = 30;
   var elem = document.getElementById('Timer');
   
@@ -572,7 +573,7 @@ function timer3(){
   var timerId = setInterval(countdown, 1000);
   countStarJumps(keypoints)
   
-  function countdown(counter, results, value1, jumpCount) {
+ // function countdown(counter, results, value1, jumpCount) {
     if (timeLeft == 0) {
       clearTimeout(timerId);
    //   document.getElementById("onctent1").innerHTML = "";
@@ -587,7 +588,7 @@ function timer3(){
       elem.innerHTML = timeLeft + ' seconds remaining';
       timeLeft--;
     }
-  }
+ // }
   
   }
 
