@@ -11,7 +11,7 @@ const remoteVideoComponent = document.getElementById('remote-video')
 
 let Gameoption = null;
 //var roomidpalyer1
-let jumpCount = 0; // Counter for star jumps
+
 let player1Ready = false;
 let player2Ready = false;
 
@@ -561,7 +561,7 @@ function displayMessage(message) {
 }
 
 
-function timer3(jumpCount){
+function timer3(){
 
   var timeLeft = 30;
   var elem = document.getElementById('Timer');
@@ -580,9 +580,9 @@ function timer3(jumpCount){
     
    //   document.getElementById('onctent1').id = 'two';
    //   openNav();
- //  alert(`${jumpCount} timer done`);
+   alert(`${player1Score} + ${player2Score} timer done`);
    //   doSomething();
-   timerfinished(jumpCount);
+      
     } else {
       elem.innerHTML = timeLeft + ' seconds remaining';
       timeLeft--;
@@ -591,9 +591,7 @@ function timer3(jumpCount){
   
   }
 
-function timerfinished(jumpCount){
-  alert(`${jumpCount} timer done`);
-}
+
 
   async function startMoveNet(canvas, video) {
     // Load MoveNet model
@@ -690,6 +688,11 @@ function timerfinished(jumpCount){
 
 
 
+  let jumpCount = 0; // Counter for star jumps
+//  let jumpCount = 0; // Player's jump counter
+let player1Score = 0;
+let player2Score = 0;
+
   let lastState = "closed"; // Track the last state of the jump
 
   function countStarJumps(keypoints) {
@@ -715,6 +718,11 @@ function timerfinished(jumpCount){
         if (lastState === "closed") {
             jumpCount++; // Increment jump count
             console.log("Star jump detected! Total jumps: " + jumpCount);
+            if (player === 'player1') {
+                player1Score += jumpCount; // Update player1Score
+            } else if (player === 'player2') {
+                player2Score += jumpCount; // Update player2Score
+            }
             message = `${player} ${jumpCount}`;
             socket.emit('send_message', { roomId, message }); 
         }
