@@ -759,7 +759,8 @@ let player2Score = 0;
             console.log("Star jump detected! Total jumps: " + jumpCount);
             if (player === 'player1') {
                 player1Score = jumpCount; // Update player1Score
-            } else if (player === 'player2') {
+            } 
+            if (player === 'player2') {
                 player2Score = jumpCount; // Update player2Score
             }
             message = `${player} ${jumpCount}`;
