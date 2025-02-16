@@ -590,7 +590,15 @@ function timer3(){
     
    //   document.getElementById('onctent1').id = 'two';
    //   openNav();
-   alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'Player 1 wins!' : player1Score < player2Score ? 'Player 2 wins!' : 'It\'s a tie!'}`);
+   if(player == 'player1'){
+    alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Win Well Done!' : player1Score < player2Score ? 'You Lost, Better Luck Next Time!' : 'It\'s a tie!'}`);
+  
+   }
+   if(player == 'player2'){
+    alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Lost, Better Luck Next Time!' : player1Score < player2Score ? 'You Win Well Done!' : 'It\'s a tie!'}`);
+  
+   }
+
    //   doSomething();
       
     } else {
