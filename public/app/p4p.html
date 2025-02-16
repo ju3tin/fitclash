@@ -512,7 +512,7 @@ xhr.send();
 document.getElementById('connect-button').addEventListener('click', fetchData);
 
 function checkNetwork() {
-    if (navigator.connection) {
+   /* if (navigator.connection) {
         const type = navigator.connection.effectiveType;
         
         if (type !== "wifi") {
@@ -520,7 +520,7 @@ function checkNetwork() {
         }
     } else {
         console.warn("Network Information API not supported.");
-    }
+    } */
 }
 
 // Run check when the page loads
