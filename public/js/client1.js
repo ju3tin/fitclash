@@ -554,6 +554,15 @@ function startCountdown(seconds) {
       if (timeLeft <= 0) {
           clearInterval(timerId);
           countdownElement.innerText = 'Go!'; // Indicate the start
+          const readyCanvas = document.getElementById('readyCanvas');
+          const readyCanvas1 = document.getElementById('readyCanvas1');
+          const ctx = readyCanvas.getContext('2d');
+          ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+          ctx.fillText('0', readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+          const ctx1 = readyCanvas1.getContext('2d');
+          ctx1.clearRect(0, 0, readyCanvas1.width, readyCanvas1.height); // Clear previous text
+          ctx1.fillText('0', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw "0" in the center
+
 
           setTimeout(() => {
               countdownElement.remove(); // Remove countdown element after a moment
