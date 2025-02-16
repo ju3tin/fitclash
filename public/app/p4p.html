@@ -283,35 +283,22 @@ canvas.output_canvas {
 
     <!-- Add this to your HTML file -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/api.js" async defer></script>
     <script>
         function loadGapi() {
-            console.log('google auth loaded')
             gapi.load('auth2', function() {
                 // Initialize the Google Auth API
                 gapi.auth2.init({
                     client_id: "333779589841-4b820q5qsqjls8rfgembencg02ka32rd.apps.googleusercontent.com"
                 }).then(function() {
-                    // Set up the button click handler after the API is initialized
-                    googlebutton1.onclick = function() {
-                        const auth2 = gapi.auth2.getAuthInstance();
-                        if (auth2.isSignedIn.get()) {
-                            console.log('User is already signed in.');
-                        } else {
-                            console.log('User is not signed in. Prompting for sign-in...');
-                            auth2.signIn().then(function(googleUser) {
-                                console.log('User signed in:', googleUser.getBasicProfile().getName());
-                            }).catch(function(error) {
-                                console.error('Sign-in error:', error);
-                            });
-                        }
-                    };
+                    // Your logic after initialization
                 });
             });
         }
 
+        // Call loadGapi when the window loads
         window.onload = function() {
-            loadGapi(); // Call the function to load gapi
-            // Other initialization code...
+            loadGapi();
         };
     </script>
     <script>
