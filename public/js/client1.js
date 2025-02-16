@@ -490,7 +490,7 @@ ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw 
     
 // Create a new canvas element for the "Ready" state
 const readyCanvas1 = document.createElement('canvas');
-readyCanvas1.id = 'readyCanvas';
+readyCanvas1.id = 'readyCanvas1';
 readyCanvas1.width = localVideoComponent.clientWidth; // Set canvas width
 readyCanvas1.height = localVideoComponent.clientHeight; // Set canvas height
 readyCanvas1.style.position = 'absolute';
@@ -554,6 +554,7 @@ function startCountdown(seconds) {
       if (timeLeft <= 0) {
           clearInterval(timerId);
           countdownElement.innerText = 'Go!'; // Indicate the start
+
           setTimeout(() => {
               countdownElement.remove(); // Remove countdown element after a moment
               timer3()
