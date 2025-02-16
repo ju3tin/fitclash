@@ -37,7 +37,7 @@ document.getElementById('send-message-button').onclick = function() {
   const message = document.getElementById('message-input').value;
   if (message) {
       socket.emit('send_message', { roomId, message }); // Send message to the server
-      displayMessage(`You: ${message}`); // Display your own message
+  //    displayMessage(`You: ${message}`); // Display your own message
       document.getElementById('message-input').value = ''; // Clear the input field
   }
 };
@@ -201,7 +201,7 @@ ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw th
 readyButton.remove(); // Remove the button from the DOM
 let message = `ready to start ${player}`;
 socket.emit('send_message', { roomId, message }); // Send message to the server
-displayMessage(`You: ${message}`); 
+// displayMessage(`You: ${message}`); 
 if (message == 'ready to start player1') {
   player1Ready = true; // Set player1 as ready
   checkBothPlayersReady(); // Check if both players are ready
@@ -300,7 +300,7 @@ ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw th
 readyButton.remove(); // Remove the button from the DOM
 let message = `ready to start ${player}`;
 socket.emit('send_message', { roomId, message }); // Send message to the server
-displayMessage(`You: ${message}`); 
+// displayMessage(`You: ${message}`); 
 if (message == 'ready to start player1') {
   player1Ready = true; // Set player1 as ready
   checkBothPlayersReady(); // Check if both players are ready
@@ -444,14 +444,14 @@ sendMessageButton.addEventListener('click', () => {
     const message = messageInput.value;
     if (message) {
         socket.emit('send_message', { roomId, message }); // Send message to the server
-        displayMessage(`You: ${message}`); // Display your own message
+    //    displayMessage(`You: ${message}`); // Display your own message
         messageInput.value = ''; // Clear the input field
     }
 });
 
 // SOCKET EVENT FOR RECEIVING MESSAGES =====================================
 socket.on('receive_message', (data) => {
-    displayMessage(`${data.sender}: ${data.message}`); // Display received message
+ //   displayMessage(`${data.sender}: ${data.message}`); // Display received message
     if (data.message == 'ready to start player1'){
       player1Ready = true; // Set player1 as ready
       checkBothPlayersReady(); // Check if both players are ready
