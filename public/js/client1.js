@@ -517,6 +517,16 @@ ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw 
 
       console.log('what the fuck 2')
     };
+    if (player !== 'player1' && data.message.startsWith('player1')) {
+        const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
+        player1Score = scoreUpdate; // Update player1Score
+        console.log(`Updated player1Score: ${player1Score}`); // Log the updated score
+    }
+    if (player !== 'player2' && data.message.startsWith('player2')) {
+      const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
+      player2Score = scoreUpdate; // Update player1Score
+      console.log(`Updated player2Score: ${player2Score}`); // Log the updated score
+   }
 });
 
 
@@ -580,7 +590,7 @@ function timer3(){
     
    //   document.getElementById('onctent1').id = 'two';
    //   openNav();
-   alert(`${player1Score} + ${player2Score} timer done`);
+   alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'Player 1 wins!' : player1Score < player2Score ? 'Player 2 wins!' : 'It\'s a tie!'}`);
    //   doSomething();
       
     } else {
