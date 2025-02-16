@@ -521,11 +521,21 @@ ctx.fillText('Ready', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw 
         const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
         player1Score = scoreUpdate; // Update player1Score
         console.log(`Updated player1Score: ${player1Score}`); // Log the updated score
+        const readyCanvas = document.getElementById('readyCanvas1');
+        const ctx = readyCanvas.getContext('2d');
+        ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+        ctx.fillText(player1Score, readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+        
     }
     if (player !== 'player2' && data.message.startsWith('player2')) {
       const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
       player2Score = scoreUpdate; // Update player1Score
       console.log(`Updated player2Score: ${player2Score}`); // Log the updated score
+      const readyCanvas = document.getElementById('readyCanvas1');
+        const ctx = readyCanvas.getContext('2d');
+        ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+        ctx.fillText(player2Score, readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+ 
    }
 });
 
@@ -759,9 +769,19 @@ let player2Score = 0;
             console.log("Star jump detected! Total jumps: " + jumpCount);
             if (player === 'player1') {
                 player1Score = jumpCount; // Update player1Score
+                const readyCanvas = document.getElementById('readyCanvas');
+                const ctx = readyCanvas.getContext('2d');
+                ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+                ctx.fillText(player1Score, readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+          
             } 
             if (player === 'player2') {
                 player2Score = jumpCount; // Update player2Score
+                const readyCanvas = document.getElementById('readyCanvas');
+                const ctx = readyCanvas.getContext('2d');
+                ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+                ctx.fillText(player2Score, readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+          
             }
             message = `${player} ${jumpCount}`;
             socket.emit('send_message', { roomId, message }); 
