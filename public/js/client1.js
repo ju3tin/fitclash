@@ -1,4 +1,5 @@
 // DOM elements.
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
 const roomSelectionContainer = document.getElementById('room-selection-container')
 const roomInput = document.getElementById('room-input')
 const connectButton = document.getElementById('connect-button')
@@ -592,11 +593,15 @@ function timer3(){
    //   openNav();
    if(player == 'player1'){
     alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Win Well Done!' : player1Score < player2Score ? 'You Lost, Better Luck Next Time!' : 'It\'s a tie!'}`);
-  
+    if (player1Score > player2Score) {
+      confetti(); // Trigger confetti for Player 1
+  }
    }
    if(player == 'player2'){
     alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Lost, Better Luck Next Time!' : player1Score < player2Score ? 'You Win Well Done!' : 'It\'s a tie!'}`);
-  
+    if (player2Score > player1Score) {
+      confetti(); // Trigger confetti for Player 2
+  }
    }
 
    //   doSomething();
