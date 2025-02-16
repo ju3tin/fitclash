@@ -11,7 +11,7 @@ const remoteVideoComponent = document.getElementById('remote-video')
 
 let Gameoption = null;
 //var roomidpalyer1
-
+let jumpCount = 0; // Counter for star jumps
 let player1Ready = false;
 let player2Ready = false;
 
@@ -690,7 +690,6 @@ function timerfinished(jumpCount){
 
 
 
-  let jumpCount = 0; // Counter for star jumps
   let lastState = "closed"; // Track the last state of the jump
 
   function countStarJumps(keypoints) {
