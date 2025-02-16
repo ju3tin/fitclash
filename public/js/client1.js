@@ -458,7 +458,7 @@ socket.on('receive_message', (data) => {
 
 // Create a new canvas element for the "Ready" state
 const readyCanvas1 = document.createElement('canvas');
-readyCanvas1.id = 'readyCanvas';
+readyCanvas1.id = 'readyCanvas1';
 readyCanvas1.width = localVideoComponent.clientWidth; // Set canvas width
 readyCanvas1.height = localVideoComponent.clientHeight; // Set canvas height
 readyCanvas1.style.position = 'absolute';
