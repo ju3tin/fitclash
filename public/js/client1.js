@@ -572,7 +572,7 @@ function timer3(){
   var timerId = setInterval(countdown, 1000);
   countStarJumps(keypoints)
   
-  function countdown(counter, results, value1) {
+  function countdown(counter, results, value1, jumpCount) {
     if (timeLeft == 0) {
       clearTimeout(timerId);
    //   document.getElementById("onctent1").innerHTML = "";
@@ -580,7 +580,7 @@ function timer3(){
     
    //   document.getElementById('onctent1').id = 'two';
    //   openNav();
-   alert('timer done');
+   alert(`${jumpCount} timer done`);
    //   doSomething();
       
     } else {
