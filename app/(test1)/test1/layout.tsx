@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../../../app/globlas1.css";
+import "./globals1.css";
 import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = Geist({
