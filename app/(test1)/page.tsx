@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image";
-import Footer from "../../../components/footer1";
+import Footer from "../../components/footer1";
 import { useEffect } from 'react';
 
 export default function Home() {
