@@ -19,7 +19,7 @@ export default function Home() {
           <li className="mb-2">
            Get Started by Clicking  Play Now.
           </li>
-          <li>Or Read Our Docs.</li>
+          <li>Or Launch App</li>
         </ol>
 
         <div className="flex gap-4 items-center flex-col sm:flex-row">
