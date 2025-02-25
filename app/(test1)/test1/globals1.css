@@ -19,3 +19,26 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.button5 {
+  min-width: 11rem;
+  height: 3rem;
+  border-radius: 3rem;
+  color: white;
+  font-size: 1rem;
+  font-family: "Inter", sans-serif;
+}
+
+.border-gradient {
+  --c: #171717;
+  --p: 10%;
+  background: linear-gradient(var(--c), var(--c)) padding-box,
+    conic-gradient(
+        from var(--gradient-angle, 0deg),
+        transparent,
+        white var(--p),
+        transparent calc(var(--p) * 2)
+      )
+      border-box;
+  border: 1px solid transparent;
+}
