@@ -4,7 +4,7 @@ export default function footer() {
 <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
 <a
   className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-  href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+  href="https://github.com/fitclash"
   target="_blank"
   rel="noopener noreferrer"
 >
@@ -34,7 +34,7 @@ export default function footer() {
 </a>
 <a
   className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-  href="https://fitclash.vercel.app"
+  href="https://danceclash.vercel.app"
   target="_blank"
   rel="noopener noreferrer"
 >
@@ -45,7 +45,7 @@ export default function footer() {
     width={16}
     height={16}
   />
-  Go to fitclash →
+  Go to DanceClash →
 </a>
 </footer>
 )
