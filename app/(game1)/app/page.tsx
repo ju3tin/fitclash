@@ -1,15 +1,868 @@
 "use client"
 import Image from "next/image";
 import Footer from "../../../components/footer1";
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import { io } from 'socket.io-client'; // Import the io function
+import confetti from 'canvas-confetti'; // Import the confetti function
+import * as tf from '@tensorflow/tfjs'; // Import TensorFlow.js
+import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
+import { Pose } from '@mediapipe/pose'; // Import the Pose class
 
 export default function Home() {
+  // DOM elements.
+const roomSelectionContainer = document.getElementById('room-selection-container') as HTMLInputElement
+const roomInput = document.getElementById('room-input') as HTMLInputElement
+const connectButton = document.getElementById('connect-button') as HTMLInputElement
+const copyaddress1 = document.getElementById('copyaddress1') as HTMLInputElement
+const addressmyInput = document.getElementById('addressmyInput') as HTMLInputElement
+
+const videoChatContainer = document.getElementById('video-chat-container') as HTMLInputElement
+const localVideoComponent = document.getElementById('local-video') as HTMLVideoElement
+const remoteVideoComponent = document.getElementById('remote-video') as HTMLVideoElement
+
+let Gameoption = null;
+//var roomidpalyer1
+
+let player1Ready = false;
+let player2Ready = false;
+
+let player: string; // Declare player with type string
+
+// Declare roomdude34 in a higher scope
+let roomdude34: string;
+
+document.addEventListener('DOMContentLoaded', () => {
+    const roomInput = document.getElementById('room-input') as HTMLInputElement; // Cast to HTMLInputElement
+    if (roomInput) { // Check if roomInput is not null
+        roomInput.value = (Math.floor(Math.random() * 90000) + 10000).toString();
+        roomdude34 = roomInput.value; // Assign value to roomdude34
+        console.log(roomdude34); // Optional: Log the value for debugging
+    } else {
+        console.error('Element with ID "room-input" not found.');
+    }
+
+    // Ensure localVideoComponent is available before accessing its properties
+    const localVideoComponent = document.getElementById('local-video') as HTMLVideoElement;
+    if (localVideoComponent) {
+        const canvas = document.createElement('canvas');
+
+        // Set canvas dimensions after the video metadata is loaded
+        localVideoComponent.onloadedmetadata = () => {
+            canvas.width = localVideoComponent.clientWidth; // Set canvas width
+            canvas.height = localVideoComponent.clientHeight; // Set canvas height
+            canvas.style.position = 'absolute';
+            canvas.style.bottom = '0px';
+            canvas.style.width = localVideoComponent.clientWidth + 'px'; // Set canvas width
+            canvas.style.height = localVideoComponent.clientHeight + 'px'; // Set canvas height
+            canvas.style.marginBottom = '0px';
+            canvas.style.left = '0';
+            canvas.style.objectFit = 'contain';
+        };
+
+        // Append the canvas to the desired container
+        // videoChatContainer.appendChild(canvas); // Uncomment if needed
+    } else {
+        console.error('Element with ID "local-video" not found. Please ensure it exists in the DOM.');
+    }
+
+    // Ensure this code is inside the event listener where Gameoption is set
+    // Update addressmyInput value after Gameoption is set
+    addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${Gameoption}`;
+});
+
+//const roomdude34 = roomInput.value;
+
+const canvas = document.createElement('canvas');
+canvas.width = localVideoComponent.clientWidth; // Set canvas width
+canvas.height = localVideoComponent.clientHeight; // Set canvas height
+//videoChatContainer.appendChild(canvas);
+canvas.style.position = 'absolute';
+canvas.style.bottom = '0px';
+canvas.style.width = localVideoComponent.clientWidth + 'px'; // Set canvas width
+canvas.style.height = localVideoComponent.clientHeight + 'px'; // Set canvas height
+canvas.style.marginBottom = '0px';
+canvas.style.left = '0';
+canvas.style.objectFit = 'contain';
+
+
+document.getElementById('send-message-button').onclick = function() {
+  const messageInput = document.getElementById('message-input') as HTMLInputElement;
+  const message = messageInput.value;
+  if (message) {
+      socket.emit('send_message', { roomId, message }); // Send message to the server
+  //    displayMessage(`You: ${message}`); // Display your own message
+      messageInput.value = ''; // Clear the input field
+  }
+};
+
+
+// Fetch the JSON file
+fetch('/js/gameoptions.json')
+    .then(response => response.json())
+    .then(data => {
+        const dropdownList = document.getElementById('dropdown-list');
+        const dropdownButton = document.getElementById('dropdownMenuButton');
+
+        // Generate the dropdown items
+        data.forEach(gameoption => {
+            const listItem = document.createElement('li');
+            listItem.className = 'dropdown-item';
+            listItem.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
+            
+            // Add click event to update button and global variable
+            listItem.addEventListener('click', () => {
+                Gameoption = gameoption.name; // Update global variable
+                dropdownButton.innerHTML = `<img src="${gameoption.flag}" width="20" height="15"> ${gameoption.name}`;
+                console.log("Selected Game:", Gameoption); // Debug
+                connectButton.style.display = "block";
+
+                // Update addressmyInput value after Gameoption is set
+                addressmyInput.value = `${window.location.href}?roomId=${roomdude34}&gameoption=${Gameoption}`;
+            });
+
+            dropdownList.appendChild(listItem);
+        });
+    }).catch(error => console.error('Error loading the JSON file:', error));
+ 
+ 
+console.log("this is the player 1 roomid "+roomInput.value);
+
+
+function copytext() {
+  // Get the text field
+  const copyText = document.getElementById("addressmyInput") as HTMLInputElement; // Cast to HTMLInputElement
+  // Select the text field
+  copyText.select();
+  copyText.setSelectionRange(0, 99999); // For mobile devices
+
+   // Copy the text inside the text field
+  navigator.clipboard.writeText(copyText.value);
+
+  // Alert the copied text
+  alert("Copied the text: " + copyText.value);
+}
+
+// Variables.
+const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your Render URL
+const mediaConstraints = {
+  audio: true,
+  video: { width: 1280, height: 720 },
+}
+let localStream
+let remoteStream
+let isRoomCreator
+let rtcPeerConnection // Connection between the local device and the remote peer.
+let roomId
+
+// Free public STUN servers provided by Google.
+const iceServers = {
+  iceServers: [
+    { urls: 'stun:stun.l.google.com:19302' },
+    { urls: 'stun:stun1.l.google.com:19302' },
+    { urls: 'stun:stun2.l.google.com:19302' },
+    { urls: 'stun:stun3.l.google.com:19302' },
+    { urls: 'stun:stun4.l.google.com:19302' },
+  ],
+}
+const urlParams = new URLSearchParams(window.location.search);
+const roomIdFromUrl = urlParams.get('roomId'); // Extract roomId from URL
+
+if (roomIdFromUrl) { // If roomId exists in the URL
+    joinRoom(roomIdFromUrl); // Call joinRoom with the extracted roomId
+    player = 'player2'; // Assign value to player
+    console.log("your player name is " + player);
+} else {
+    player = 'player1'; // Assign value to player
+    console.log("your player name is " + player);
+}
+// BUTTON LISTENER ============================================================
+connectButton.addEventListener('click', () => {
+  joinRoom(roomInput.value)
+})
+
+// SOCKET EVENT CALLBACKS =====================================================
+socket.on('room_created', async () => {
+  console.log('Socket event callback: room_created')
+
+  await setLocalStream(mediaConstraints)
+  isRoomCreator = true
+  if (player === 'player1') {
+    console.log('Player 1 has joined the room');
+    copyaddress1.style.display = "flex";
+    copyaddress1.style.justifyContent = "center";
+    copyaddress1.style.alignItems = "center";
+    copyaddress1.style.textAlign = "center";
+    copyaddress1.style.minHeight = "100vh";
+    copyaddress1.style.position = "absolute";
+    copyaddress1.style.zIndex = "3000";
+    } else {
+    console.log(`this is the dude ${player}`);
+  }
+})
+
+socket.on('room_joined', async () => {
+  console.log('Socket event callback: room_joined')
+  copyaddress1.style.display = "none";
+
+  await setLocalStream(mediaConstraints)
+  socket.emit('start_call', roomId);
+
+
+
+// ... existing code ...
+
+// Create a canvas element and a button
+const readyButton = document.createElement('button');
+readyButton.innerText = 'Ready';
+readyButton.style.position = 'absolute';
+readyButton.style.bottom = '60px'; // Position above the canvas
+readyButton.style.left = '50%';
+readyButton.style.transform = 'translateX(-50%)'; // Center the button
+readyButton.style.zIndex = '3000'; // Ensure it appears above other elements
+
+// Append the button to the video chat container
+videoChatContainer.appendChild(readyButton);
+
+// Create a new canvas element for the "Ready" state
+const readyCanvas = document.createElement('canvas');
+readyCanvas.id = 'readyCanvas';
+readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas.style.position = 'absolute';
+readyCanvas.style.bottom = '0px';
+readyCanvas.style.width = localVideoComponent.clientWidth + 'px'; // Set canvas width
+readyCanvas.style.height = localVideoComponent.clientHeight + 'px'; // Set canvas height
+readyCanvas.style.marginBottom = '0px';
+readyCanvas.style.left = '0';
+readyCanvas.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas);
+
+// ... existing code ...
+
+readyButton.addEventListener('click', (data) => {
+ 
+// Draw the text "Read" on the readyCanvas
+const ctx = readyCanvas.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
+readyButton.remove(); // Remove the button from the DOM
+let message = `ready to start ${player}`;
+socket.emit('send_message', { roomId, message }); // Send message to the server
+// displayMessage(`You: ${message}`); 
+if (message == 'ready to start player1') {
+  player1Ready = true; // Set player1 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
+if (message == 'ready to start player2') {
+  player2Ready = true; // Set player2 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
+})
+  
+
+
+})
+
+socket.on('full_room', () => {
+  console.log('Socket event callback: full_room')
+
+  alert('The room is full, please try another one')
+})
+
+socket.on('start_call', async () => {
+  console.log('Socket event callback: start_call')
+  copyaddress1.style.display = "none";
+
+
+  if (isRoomCreator) {
+    copyaddress1.style.display = "none";
+    rtcPeerConnection = new RTCPeerConnection(iceServers)
+    addLocalTracks(rtcPeerConnection)
+    rtcPeerConnection.ontrack = setRemoteStream
+    rtcPeerConnection.onicecandidate = sendIceCandidate
+    await createOffer(rtcPeerConnection)
+  }
+})
+
+socket.on('webrtc_offer', async (event) => {
+  console.log('Socket event callback: webrtc_offer')
+
+  if (!isRoomCreator) {
+    rtcPeerConnection = new RTCPeerConnection(iceServers)
+    addLocalTracks(rtcPeerConnection)
+    rtcPeerConnection.ontrack = setRemoteStream
+    rtcPeerConnection.onicecandidate = sendIceCandidate
+    rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event))
+    await createAnswer(rtcPeerConnection)
+  }
+})
+
+socket.on('webrtc_answer', (event) => {
+  console.log('Socket event callback: webrtc_answer')
+
+  rtcPeerConnection.setRemoteDescription(new RTCSessionDescription(event));
+
+
+// ... existing code ...
+
+// Create a canvas element and a button
+const readyButton = document.createElement('button');
+readyButton.innerText = 'Ready';
+readyButton.style.position = 'absolute';
+readyButton.style.bottom = '60px'; // Position above the canvas
+readyButton.style.left = '50%';
+readyButton.style.transform = 'translateX(-50%)'; // Center the button
+readyButton.style.zIndex = '3000'; // Ensure it appears above other elements
+
+// Append the button to the video chat container
+videoChatContainer.appendChild(readyButton);
+
+// Create a new canvas element for the "Ready" state
+const readyCanvas = document.createElement('canvas');
+readyCanvas.id = 'readyCanvas';
+readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
+readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
+readyCanvas.style.position = 'absolute';
+readyCanvas.style.bottom = '0px';
+readyCanvas.style.width = localVideoComponent.clientWidth + 'px'; // Set canvas width
+readyCanvas.style.height = localVideoComponent.clientHeight + 'px'; // Set canvas height
+readyCanvas.style.marginBottom = '0px';
+readyCanvas.style.left = '0';
+readyCanvas.style.objectFit = 'contain';
+
+// Append the canvas to the video chat container
+videoChatContainer.appendChild(readyCanvas);
+
+// ... existing code ...
+
+readyButton.addEventListener('click', () => {
+ 
+// Draw the text "Read" on the readyCanvas
+const ctx = readyCanvas.getContext('2d');
+ctx.font = '48px Arial'; // Set font size and family
+ctx.fillStyle = 'black'; // Set text color
+ctx.textAlign = 'center'; // Center the text
+ctx.textBaseline = 'middle'; // Align text vertically
+ctx.fillText('Ready', readyCanvas.width / 2, readyCanvas.height / 2); // Draw the text in the center
+readyButton.remove(); // Remove the button from the DOM
+let message = `ready to start ${player}`;
+socket.emit('send_message', { roomId, message }); // Send message to the server
+// displayMessage(`You: ${message}`); 
+if (message == 'ready to start player1') {
+  player1Ready = true; // Set player1 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
+if (message == 'ready to start player2') {
+  player2Ready = true; // Set player2 as ready
+  checkBothPlayersReady(); // Check if both players are ready
+}
+})
+  
+
+
+
+})
+
+socket.on('webrtc_ice_candidate', (event) => {
+  console.log('Socket event callback: webrtc_ice_candidate')
+
+  // ICE candidate configuration.
+  const candidate = new RTCIceCandidate({
+    sdpMLineIndex: event.label,
+    candidate: event.candidate,
+  })
+  rtcPeerConnection.addIceCandidate(candidate)
+})
+
+// FUNCTIONS ==================================================================
+function joinRoom(room) {
+  if (room === '') {
+    alert('Please type a room ID')
+  } else {
+    roomId = room
+    socket.emit('join', room)
+    showVideoConference()
+  }
+}
+
+function showVideoConference() {
+  roomSelectionContainer.style.display = 'none'
+  videoChatContainer.style.display = 'block'
+}
+
+async function setLocalStream(mediaConstraints) {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia(mediaConstraints)
+    localVideoComponent.srcObject = localStream
+
+
+
+    // Create a new canvas element for MoveNet
+   // const canvas = document.createElement('canvas');
+    videoChatContainer.appendChild(canvas);
+    canvas.style.position = 'absolute';
+    canvas.style.bottom = '0px';
+    canvas.style.width = localVideoComponent.clientWidth + 'px'; // Set canvas width
+    canvas.style.height = localVideoComponent.clientHeight + 'px'; // Set canvas height
+    canvas.style.marginBottom = '0px';
+    canvas.style.left = '0';
+    canvas.style.objectFit = 'contain';
+    localVideoComponent.onloadedmetadata = () => {
+      localVideoComponent.play();
+      startMoveNet(canvas, localVideoComponent);
+    };
+    
+  } catch (error) {
+    console.error('Could not get user media', error)
+  }
+}
+
+
+
+
+setLocalStream(mediaConstraints);
+
+
+async function name(canvas, video) {
+  
+}
+
+function addLocalTracks(rtcPeerConnection) {
+  localStream.getTracks().forEach((track) => {
+    rtcPeerConnection.addTrack(track, localStream)
+  })
+}
+
+async function createOffer(rtcPeerConnection) {
+  try {
+    const sessionDescription = await rtcPeerConnection.createOffer()
+    rtcPeerConnection.setLocalDescription(sessionDescription)
+    
+    socket.emit('webrtc_offer', {
+      type: 'webrtc_offer',
+      sdp: sessionDescription,
+      roomId,
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+async function createAnswer(rtcPeerConnection) {
+  try {
+    const sessionDescription = await rtcPeerConnection.createAnswer()
+    rtcPeerConnection.setLocalDescription(sessionDescription)
+    
+    socket.emit('webrtc_answer', {
+      type: 'webrtc_answer',
+      sdp: sessionDescription,
+      roomId,
+    })
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+function setRemoteStream(event) {
+  remoteVideoComponent.srcObject = event.streams[0];
+  remoteStream = event.stream;
+}
+
+function sendIceCandidate(event) {
+  if (event.candidate) {
+    socket.emit('webrtc_ice_candidate', {
+      roomId,
+      label: event.candidate.sdpMLineIndex,
+      candidate: event.candidate.candidate,
+    })
+  }
+}
+// ... existing code ...
+
+// DOM elements for messaging
+const messageInput = document.getElementById('message-input') as HTMLInputElement;
+const sendMessageButton = document.getElementById('send-message-button');
+const messageContainer = document.getElementById('message-container');
+
+// BUTTON LISTENER FOR SENDING MESSAGES =====================================
+sendMessageButton.addEventListener('click', () => {
+    const message = messageInput.value;
+    if (message) {
+        socket.emit('send_message', { roomId, message }); // Send message to the server
+    //    displayMessage(`You: ${message}`); // Display your own message
+        messageInput.value = ''; // Clear the input field
+    }
+});
+
+// SOCKET EVENT FOR RECEIVING MESSAGES =====================================
+socket.on('receive_message', (data) => {
+ //   displayMessage(`${data.sender}: ${data.message}`); // Display received message
+    if (data.message == 'ready to start player1'){
+      player1Ready = true; // Set player1 as ready
+      checkBothPlayersReady(); // Check if both players are ready
+
+// Create a new canvas element for the "Ready" state
+const readyCanvas1 = document.getElementById('readyCanvas1') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+const ctx = readyCanvas1.getContext('2d'); // Use readyCanvas1 for context
+ctx.clearRect(0, 0, readyCanvas1.width, readyCanvas1.height); // Clear previous text
+ctx.fillText('0', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw "0" in the center
+
+
+// ... existing code ...
+
+      console.log('what the fuck 1');
+    };
+    if (data.message == 'ready to start player2'){
+      player2Ready = true; // Set player2 as ready
+      checkBothPlayersReady(); // Check if both players are ready
+    
+// Create a new canvas element for the "Ready" state
+const readyCanvas1 = document.getElementById('readyCanvas1') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+const ctx = readyCanvas1.getContext('2d'); // Use readyCanvas1 for context
+ctx.clearRect(0, 0, readyCanvas1.width, readyCanvas1.height); // Clear previous text
+ctx.fillText('0', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw "0" in the center
+
+
+      console.log('what the fuck 2')
+    };
+    if (player !== 'player1' && data.message.startsWith('player1')) {
+        const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
+        player1Score = scoreUpdate; // Update player1Score
+        console.log(`Updated player1Score: ${player1Score}`); // Log the updated score
+        const readyCanvas = document.getElementById('readyCanvas1') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+        const ctx = readyCanvas.getContext('2d');
+        ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+        ctx.fillText(player1Score.toString(), readyCanvas.width / 2, readyCanvas.height / 2); // Draw score in the center
+        
+    }
+    if (player !== 'player2' && data.message.startsWith('player2')) {
+      const scoreUpdate = parseInt(data.message.slice(8), 10); // Remove first 8 characters and parse the score
+      player2Score = scoreUpdate; // Update player1Score
+      console.log(`Updated player2Score: ${player2Score}`); // Log the updated score
+      const readyCanvas = document.getElementById('readyCanvas1') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+      const ctx = readyCanvas.getContext('2d'); // Use readyCanvas for context
+      ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+      ctx.fillText(player2Score.toString(), readyCanvas.width / 2, readyCanvas.height / 2); // Draw score in the center
+ 
+   }
+});
+
+
+// Function to check if both players are ready
+function checkBothPlayersReady() {
+  if (player1Ready && player2Ready) {
+      startCountdown(5); // Start a 5-second countdown
+  }
+}
+
+function resetScores() {
+  player1Score = 0; // Reset player 1 score
+  player2Score = 0; // Reset player 2 score
+  jumpCount = 0; // Reset jump counter
+}
+
+// Countdown function
+function startCountdown(seconds) {
+  let timeLeft = seconds;
+  const countdownElement = document.createElement('div');
+  countdownElement.style.position = 'absolute';
+  countdownElement.style.top = '10px';
+  countdownElement.style.left = '50%';
+  countdownElement.style.transform = 'translateX(-50%)';
+  countdownElement.style.fontSize = '48px';
+  countdownElement.style.color = 'red';
+  videoChatContainer.appendChild(countdownElement);
+
+  const timerId = setInterval(() => {
+      countdownElement.innerText = timeLeft;
+      if (timeLeft <= 0) {
+          clearInterval(timerId);
+          countdownElement.innerText = 'Go!'; // Indicate the start
+resetScores();
+          const readyCanvas = document.getElementById('readyCanvas') as HTMLCanvasElement;
+          const readyCanvas1 = document.getElementById('readyCanvas1') as HTMLCanvasElement;
+          const ctx = readyCanvas.getContext('2d');
+          ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+          ctx.fillText('0', readyCanvas.width / 2, readyCanvas.height / 2); // Draw "0" in the center
+          const ctx1 = readyCanvas1.getContext('2d');
+          ctx1.clearRect(0, 0, readyCanvas1.width, readyCanvas1.height); // Clear previous text
+          ctx1.fillText('0', readyCanvas1.width / 2, readyCanvas1.height / 2); // Draw "0" in the center
+
+
+          setTimeout(() => {
+              countdownElement.remove(); // Remove countdown element after a moment
+              timer3()
+          }, 1000);
+      }
+      timeLeft--;
+  }, 1000);
+}
+
+// FUNCTION TO DISPLAY MESSAGES ============================================
+function displayMessage(message) {
+    const messageElement = document.createElement('div');
+    messageElement.textContent = message;
+    messageContainer.appendChild(messageElement);
+}
+
+
+function timer3(){
+
+  var timeLeft = 30;
+  var elem = document.getElementById('Timer');
+  
+  
+  //document.getElementById('onctent2').id = 'onctent1';
+  
+  let keypoints; // Declare keypoints variable
+
+  // Ensure keypoints is assigned a value before using it
+  var timerId = setInterval(() => countdown(keypoints), 1000); // Call countdown with keypoints
+  countStarJumps(keypoints); // Call countStarJumps with keypoints
+
+  function countdown(keypoints) { // Ensure keypoints is passed to countdown
+    if (timeLeft == 0) {
+      clearTimeout(timerId);
+   //   document.getElementById("onctent1").innerHTML = "";
+  //value1 = counter;
+    
+   //   document.getElementById('onctent1').id = 'two';
+   //   openNav();
+   if(player == 'player1'){
+    alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Win Well Done!' : player1Score < player2Score ? 'You Lost, Better Luck Next Time!' : 'It\'s a tie!'}`);
+    if (player1Score > player2Score) {
+      confetti(); // Trigger confetti for Player 1
+  }
+   }
+   if(player == 'player2'){
+    alert(`Player 1 Score: ${player1Score} + Player 2 Score: ${player2Score} - ${player1Score > player2Score ? 'You Lost, Better Luck Next Time!' : player1Score < player2Score ? 'You Win Well Done!' : 'It\'s a tie!'}`);
+    if (player2Score > player1Score) {
+      confetti(); // Trigger confetti for Player 2
+  }
+   }
+
+   //   doSomething();
+      
+    } else {
+      elem.innerHTML = timeLeft + ' seconds remaining';
+      timeLeft--;
+    }
+  }
+  
+  }
+
+
+
+  async function startMoveNet(canvas, video) {
+    // Load MoveNet model
+    const detector = await poseDetection.createDetector(
+      poseDetection.SupportedModels.MoveNet,
+      {
+        modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      }
+    );
+  
+    const ctx = canvas.getContext('2d');
+  
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+  
+    // Function to detect poses
+    async function detectPose() {
+      // Clear the canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+      // Detect poses
+      const poses = await detector.estimatePoses(video, {
+        maxPoses: 1,
+        flipHorizontal: false,
+      });
+  
+      // Log the detected poses for debugging
+      console.log("Detected poses:", poses);
+  
+      // Draw the video frame onto the canvas
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+  
+      // Draw keypoints and skeleton
+      poses.forEach((pose) => {
+        const keypoints = pose.keypoints;
+  
+        // Log the keypoints for debugging
+        console.log("Keypoints:", keypoints);
+  
+        // Check if keypoints are valid
+        if (!keypoints || keypoints.length < 17) {
+            console.error("Keypoints array is not defined or does not have enough elements.");
+            return; // Exit if keypoints are not valid
+        }
+  
+        drawKeypoints(keypoints, ctx);
+        drawSkeleton(keypoints, ctx);
+        
+        // Call countStarJumps with the keypoints of the detected pose
+        countStarJumps(keypoints);
+      });
+  
+      // Request the next frame
+      requestAnimationFrame(detectPose);
+    }
+  
+    // Function to draw keypoints
+    function drawKeypoints(keypoints, ctx) {
+      keypoints.forEach((keypoint) => {
+        if (keypoint.score > 0.5) {
+          const { x, y } = keypoint;
+          ctx.beginPath();
+          ctx.arc(x, y, 5, 0, 2 * Math.PI);
+          ctx.fillStyle = 'red';
+          ctx.fill();
+        }
+      });
+    }
+  
+    // Function to draw skeleton
+    function drawSkeleton(keypoints, ctx) {
+      const adjacentPairs = poseDetection.util.getAdjacentPairs(poseDetection.SupportedModels.MoveNet);
+      adjacentPairs.forEach(([i, j]) => {
+        const kp1 = keypoints[i];
+        const kp2 = keypoints[j];
+  
+        if (kp1.score > 0.5 && kp2.score > 0.5) {
+          ctx.beginPath();
+          ctx.moveTo(kp1.x, kp1.y);
+          ctx.lineTo(kp2.x, kp2.y);
+          ctx.strokeStyle = 'yellow';
+          ctx.lineWidth = 5;
+          ctx.stroke();
+        }
+      });
+    }
+  
+    // Start detecting poses
+    detectPose();
+  }
+
+  setLocalStream(mediaConstraints);
+
+
+
+  let jumpCount = 0; // Counter for star jumps
+//  let jumpCount = 0; // Player's jump counter
+let player1Score = 0;
+let player2Score = 0;
+
+  let lastState = "closed"; // Track the last state of the jump
+
+  function countStarJumps(keypoints) {
+    // Check if keypoints is defined and has enough elements
+    if (!keypoints || keypoints.length < 17) {
+        console.error("Keypoints array is not defined or does not have enough elements.");
+        return; // Exit the function if the check fails
+    }
+
+    // Extract relevant keypoints
+    const leftWrist = keypoints[9].y; // Left wrist
+    const rightWrist = keypoints[10].y; // Right wrist
+    const leftAnkle = keypoints[15].y; // Left ankle
+    const rightAnkle = keypoints[16].y; // Right ankle
+    const shoulderY = keypoints[5].y; // Shoulder Y position
+
+    // Conditions for a "star" position
+    const armsRaised = leftWrist < shoulderY && rightWrist < shoulderY; // Arms are raised above shoulders
+    const legsApart = Math.abs(leftAnkle - rightAnkle) > 100; // Legs are apart
+
+    // Check if the current state is a star jump
+    if (armsRaised && legsApart) {
+        if (lastState === "closed") {
+            jumpCount++; // Increment jump count
+            console.log("Star jump detected! Total jumps: " + jumpCount);
+            if (player === 'player1') {
+                player1Score = jumpCount; // Update player1Score
+                const readyCanvas = document.getElementById('readyCanvas') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+                const ctx = readyCanvas.getContext('2d');
+                ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+                ctx.fillText(player1Score.toString(), readyCanvas.width / 2, readyCanvas.height / 2); // Draw score in the center
+          
+            } 
+            if (player === 'player2') {
+                player2Score = jumpCount; // Update player2Score
+                const readyCanvas = document.getElementById('readyCanvas') as HTMLCanvasElement; // Cast to HTMLCanvasElement
+                const ctx = readyCanvas.getContext('2d');
+                ctx.clearRect(0, 0, readyCanvas.width, readyCanvas.height); // Clear previous text
+                ctx.fillText(player2Score.toString(), readyCanvas.width / 2, readyCanvas.height / 2); // Draw score in the center
+          
+            }
+            let message = `${player} ${jumpCount}`;
+            socket.emit('send_message', { roomId, message }); 
+            lastState = "open"; // Update state to open
+        }
+        lastState = "closed"; // Update state to closed
+    } else {
+        lastState = "closed"; // Update state to closed
+    }
+  }
+  
+
+// ... existing code ...
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const signalingChannel = new WebSocket('wss://your-signaling-server');
+
   function gotopage() {
     window.location.href = "/app1";
 
   }
 
   useEffect(() => {
+    const peerConnection = new RTCPeerConnection();
+
+    // Get local media stream
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+      .then(stream => {
+        localVideoRef.current!.srcObject = stream;
+        stream.getTracks().forEach(track => peerConnection.addTrack(track, stream));
+      });
+
+    // Handle incoming tracks
+    peerConnection.ontrack = (event) => {
+      remoteVideoRef.current!.srcObject = event.streams[0];
+    };
+
+    // Signaling channel message handling
+    signalingChannel.onmessage = async (message) => {
+      const data = JSON.parse(message.data);
+      if (data.offer) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+        const answer = await peerConnection.createAnswer();
+        await peerConnection.setLocalDescription(answer);
+        signalingChannel.send(JSON.stringify({ answer }));
+      } else if (data.answer) {
+        await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+      } else if (data.iceCandidate) {
+        await peerConnection.addIceCandidate(new RTCIceCandidate(data.iceCandidate));
+      }
+    };
+
+    // ICE candidate handling
+    peerConnection.onicecandidate = (event) => {
+      if (event.candidate) {
+        signalingChannel.send(JSON.stringify({ iceCandidate: event.candidate }));
+      }
+    };
+
+    peerConnectionRef.current = peerConnection;
+
+    return () => {
+      peerConnection.close();
+    };
     const element = document.querySelector(".border-gradient") as HTMLElement;
 
     if (element) {
@@ -28,51 +881,21 @@ export default function Home() {
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto'}}>
-          <Image
-            className="dark:invert"
-            src="/images/logo2.png"
-            alt="Next.js logo"
-            width={180}
-            height={38}
-            priority
-          />
+        <div>
+          <div>
+      <video ref={localVideoRef} autoPlay muted />
+      <video id="local-video" autoPlay muted></video>
+      </div>
+      <div>
+      <input type="text" id="room-input" />
+      </div>
+      <div>
+      <video ref={remoteVideoRef} autoPlay />
+      </div>
+    </div>
         </div>
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-           Get Started by Clicking  Play Now.
-          </li>
-          <li>Or Launch App</li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="/games"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/logo.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Play now
-          </a>
-        {/*   <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="/app/index.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Launch App
-          </a>*/}
-          <button onClick={gotopage} className="border-gradient button5">
-          Launch App
-</button>
-
-        </div>
+     
+      
       </main>
   <Footer />
     </div>
