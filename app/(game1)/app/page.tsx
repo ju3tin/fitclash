@@ -9,8 +9,8 @@ import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Po
 import { Pose } from '@mediapipe/pose'; // Import the Pose class
 
 export default function Home() {
-
-
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -18,8 +18,9 @@ export default function Home() {
         <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto'}}>
         <div>
           <div>
-      <video id="local-video" autoPlay muted></video>
-      </div>
+          <video ref={localVideoRef} autoPlay muted />
+      </div><div>
+      <video ref={remoteVideoRef} autoPlay />  </div>
       <div>
       <input type="text" id="room-input" />
       </div>
