@@ -8,7 +8,7 @@ import * as tf from '@tensorflow/tfjs'; // Import TensorFlow.js
 import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
 import { Pose } from '@mediapipe/pose'; // Import the Pose class
 
-const socket = io('https://your-signaling-server-url'); // Replace with your signaling server URL
+const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your signaling server URL
 
 export default function Home() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
