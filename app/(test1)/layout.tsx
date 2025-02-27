@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dance Clash",
+  title: "Fit Clash",
   description: "Challange Your Friends To A Dance Battle",
 };
 

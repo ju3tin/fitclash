@@ -13,7 +13,7 @@ const FEATURE_ITEMS = [
   {
     image: "/images/posenet.png",
     alt: "fully responsive",
-    title: "Dance Clash",
+    title: "Fit Clash",
     description: "The best way to learn how to dance is by doing.",
     link: "/examples/3d/index4.html?videourl=/assets/video/2.mp4"
   },
