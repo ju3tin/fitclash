@@ -1,4 +1,4 @@
-"use client"
+"use client" 
 import Image from "next/image";
 import Footer from "../../../components/footer1";
 import { useEffect, useRef } from 'react';
