@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dance Clash",
-  description: "Challange Your Friends To A Dance Battle",
+  title: "Fit Clash",
+  description: "Challange Your Friends To A Fitness Battle",
 };
 
 export default function RootLayout({
