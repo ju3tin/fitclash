@@ -26,18 +26,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-      <meta property="og:image" content="https://danceclash.vercel.app/images/logo2.png" />
+      <meta property="og:image" content="https://fitclash.vercel.app/images/dance1.png" />
 <meta property="og:image:type" content="<generated>" />
 <meta property="og:image:width" content="<generated>" />
 <meta property="og:image:height" content="<generated>" />
-<meta property="og:site_name" content="https://danceclash.vercel.app" />
-<meta property="og:title" content="Dance Clash" />
-<meta property="og:description" content="Challange Your Friends To A Dance Battle" />
-<meta property="twitter:image" content="https://danceclash.vercel.app/images/logo2.png"></meta>
+<meta property="og:site_name" content="https://fitclash.vercel.app" />
+<meta property="og:title" content="Fit Clash" />
+<meta property="og:description" content="Challange Your Friends To A Fitness Battle" />
+<meta property="twitter:image" content="https://fitclash.vercel.app/images/dance1.png"></meta>
 <meta property="twitter:card" content="summary_large_image"></meta>
-<meta property="twitter:description" content="Challange Your Friends To A Dance Battle"></meta>
-<meta property="twitter:title" content="Dance Clash"></meta>
-<meta property="og:url" content="https://danceclash.vercel.app"></meta>
+<meta property="twitter:description" content="Challange Your Friends To A Fitness Battle"></meta>
+<meta property="twitter:title" content="Fitness Clash"></meta>
+<meta property="og:url" content="https://fitclash.vercel.app"></meta>
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
