@@ -40,50 +40,72 @@ const FAQItem = ({ question, answer }) => {
 const FAQ = () => {
     const faqData = [
         {
-            question: "What courses do you offer?",
-            answer: `We offer a variety of courses
-                     across subjects like programming,
-                     data science, design, and business
-                     management.`,
+          "question": "What is FitClash?",
+          "answer": "FitClash is a skill-based wagering dApp on Solana that allows players to compete in fitness-based challenges and earn rewards."
         },
         {
-            question: "How long do the courses take?",
-            answer: `Course duration varies; some are
-                     completed in a few hours while others
-                     may take several weeks, depending on the
-                     depth of the content.`,
+          "question": "How does FitClash work?",
+          "answer": "Players engage in fitness challenges, wager SOL or tokens, and compete based on their performance. Winners receive rewards from the prize pool."
         },
         {
-            question: "Are the courses self-paced?",
-            answer: `Yes, our courses are self-paced,
-                     allowing you to learn at your 
-                     own speed and convenience.`,
+          "question": "Do I need crypto to play?",
+          "answer": "Yes, you’ll need a Solana wallet with SOL for transactions and wagers."
         },
         {
-            question: "Do I receive a certificate upon completion?",
-            answer: `Yes, upon completing a course, you will
-                     receive a certificate that you can download
-                     and share.`,
+          "question": "What kind of fitness challenges are available?",
+          "answer": "FitClash includes various challenges like step counts, push-ups, and endurance-based competitions."
         },
         {
-            question: "Is there a money-back guarantee?",
-            answer: `Absolutely! If you are not satisfied
-                     with a course, you can request a full
-                     refund within 30 days of purchase.`,
+          "question": "How is fairness ensured?",
+          "answer": "FitClash uses smart contracts and verifiable fitness tracking data to ensure fair competition."
         },
         {
-            question: "Can I access the courses on mobile devices?",
-            answer: `Yes, our platform is mobile-friendly,
-                     allowing you to access courses on
-                     smartphones and tablets.`,
+          "question": "Can I play for free?",
+          "answer": "Some modes may allow free participation, but wagering requires SOL or tokens."
         },
-    ];
+        {
+          "question": "Why is FitClash built on Solana?",
+          "answer": "Solana offers fast transactions, low fees, and high scalability, making it ideal for FitClash’s real-time wagering mechanics."
+        },
+        {
+          "question": "Is my data secure?",
+          "answer": "Yes, FitClash uses blockchain security and decentralized data verification to protect user information."
+        },
+        {
+          "question": "How do I create an account?",
+          "answer": "Connect your Solana wallet to FitClash, and you're ready to go—no traditional sign-up needed."
+        },
+        {
+          "question": "Which wallets are supported?",
+          "answer": "FitClash supports popular Solana wallets like Phantom and Solflare."
+        },
+        {
+          "question": "How do I deposit funds?",
+          "answer": "Transfer SOL to your connected wallet and use it to place wagers on FitClash."
+        },
+        {
+          "question": "How do I claim my winnings?",
+          "answer": "Winnings are automatically credited to your wallet after a match ends."
+        },
+        {
+          "question": "Are there any withdrawal fees?",
+          "answer": "Standard Solana network fees apply, but FitClash does not charge extra withdrawal fees."
+        },
+        {
+          "question": "What if I have an issue?",
+          "answer": "You can reach out to our support team via Discord, Telegram, or our official website."
+        },
+        {
+          "question": "How can I stay updated?",
+          "answer": "Follow FitClash on Twitter, Discord, and Telegram for updates, tournaments, and community events."
+        }
+      ];
 
     return (
         <div className="max-w-4xl mx-auto p-4">
             <h1 className="text-center mb-4
                            text-2xl font-bold">
-                            FAQ - EdTech Platform
+                            FAQ - Fitclash
                             </h1>
             {faqData.map((item, index) => (
                 <FAQItem key={index} 
