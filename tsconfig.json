@@ -28,7 +28,9 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
+    "**/*.tsx",
+    "src/**/*", // Adjust this path if your declaration file is in a different location
+    "global.d.ts" // Ensure this is included if necessary
   ],
   "exclude": [
     "node_modules"
