@@ -20,6 +20,7 @@ const Header = () => {
         <div>
           <Link href="/login">
             <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            <Image src="/images/login.svg" alt="Logo" width={20} height={20} />
               Login
             </button>
           </Link>
