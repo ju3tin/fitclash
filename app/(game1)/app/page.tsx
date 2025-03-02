@@ -7,7 +7,7 @@ import confetti from 'canvas-confetti'; // Import the confetti function
 import * as tf from '@tensorflow/tfjs'; // Import TensorFlow.js
 import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
 import { Pose } from '@mediapipe/pose'; // Import the Pose class
-import NetworkStatus from "../../../components/network";
+
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your signaling server URL
 
 export default function Home() {
@@ -61,7 +61,6 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <NetworkStatus />
         <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto'}}>
         <div>
           <div>
