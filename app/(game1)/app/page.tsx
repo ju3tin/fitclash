@@ -5,7 +5,7 @@ import { useEffect, useRef } from 'react';
 import { io } from 'socket.io-client'; // Import the io function
 import confetti from 'canvas-confetti'; // Import the confetti function
 import * as tf from '@tensorflow/tfjs'; // Import TensorFlow.js
-import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
+//import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
 import { Pose } from '@mediapipe/pose'; // Import the Pose class
 
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your signaling server URL
