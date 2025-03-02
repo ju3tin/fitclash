@@ -15,7 +15,7 @@ const Header = () => {
           <Menu size={24} />
         </button>
         <div className="flex-1 flex justify-center">
-          <Image src="/logo.png" alt="Logo" width={40} height={40} />
+          <Image src="/images/logo2.png" alt="Logo" width={40} height={40} />
         </div>
         <div>
           <Link href="/login">
