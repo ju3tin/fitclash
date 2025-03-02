@@ -8,6 +8,10 @@ import Sidebar from './sidebar';
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
+const handleClick = () => {
+  console.log("Button clicked!");
+};
+
   return (
     <>
       <header className="flex justify-between items-center p-4 bg-gray-900 text-white shadow-md relative">
@@ -18,11 +22,11 @@ const Header = () => {
           <Image src="/images/logo2.png" alt="Logo" width={40} height={40} />
         </div>
         <div>
-          <Link href="/login">
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        {/*  <Link href="/login"> */}
+            <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Login<Image src="/images/login.svg" alt="Logo" width={20} height={20} />
             </button>
-          </Link>
+       {/*     </Link>*/}
         </div>
       </header>
 
