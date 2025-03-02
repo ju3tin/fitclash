@@ -7,22 +7,17 @@ import confetti from 'canvas-confetti'; // Import the confetti function
 import * as tf from '@tensorflow/tfjs'; // Import TensorFlow.js
 import * as poseDetection from '@tensorflow-models/pose-detection'; // Import Pose Detection
 import { Pose } from '@mediapipe/pose'; // Import the Pose class
-
+import NetworkStatus from "../../../components/network";
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your signaling server URL
-
-// Use type assertion to access the connection property
-const connectionType: string = (navigator as any).connection?.type || 'unknown'; // Fallback to 'unknown' if not available
 
 export default function Home() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
-
-  
   useEffect(() => {
     const peerConnection = new RTCPeerConnection();
-    console.log(connectionType);
+
     // Get local media stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then(stream => {
@@ -59,7 +54,6 @@ export default function Home() {
     peerConnectionRef.current = peerConnection;
 
     return () => {
-     
       peerConnection.close();
     };
   }, []);
@@ -67,6 +61,7 @@ export default function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+        <NetworkStatus />
         <div style={{ display: 'block', marginLeft: 'auto', marginRight: 'auto'}}>
         <div>
           <div>
