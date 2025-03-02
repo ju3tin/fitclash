@@ -10,14 +10,27 @@ import { Pose } from '@mediapipe/pose'; // Import the Pose class
 
 const socket = io('https://webrtcsocket.onrender.com/'); // Replace with your signaling server URL
 
+// Use type assertion to access the connection property
+const connectionType: string = (navigator as any).connection?.type || 'unknown'; // Fallback to 'unknown' if not available
+
 export default function Home() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
+  const isUsingWiFi = (): boolean => {
+    // Use type assertion to access the connection property
+    const connection = (navigator as any).connection; // Assert navigator as any
+    if (connection && 'effectiveType' in connection) {
+        return connection.effectiveType === 'wifi';
+    }
+    return false; // Default to false if connection is not available
+  };
+  console.log("User is on WiFi:", isUsingWiFi());
+
   useEffect(() => {
     const peerConnection = new RTCPeerConnection();
-
+    console.log(connectionType);
     // Get local media stream
     navigator.mediaDevices.getUserMedia({ video: true, audio: true })
       .then(stream => {
@@ -54,6 +67,7 @@ export default function Home() {
     peerConnectionRef.current = peerConnection;
 
     return () => {
+     
       peerConnection.close();
     };
   }, []);
