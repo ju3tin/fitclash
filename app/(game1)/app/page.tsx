@@ -18,16 +18,8 @@ export default function Home() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
 
-  const isUsingWiFi = (): boolean => {
-    // Use type assertion to access the connection property
-    const connection = (navigator as any).connection; // Assert navigator as any
-    if (connection && 'effectiveType' in connection) {
-        return connection.effectiveType === 'wifi';
-    }
-    return false; // Default to false if connection is not available
-  };
-  console.log("User is on WiFi:", isUsingWiFi());
 
+  
   useEffect(() => {
     const peerConnection = new RTCPeerConnection();
     console.log(connectionType);
