@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Footer from "../../../components/footer1";
 import { useEffect } from 'react';
-import Header from "../../../components/header";
+import Header from "../../../components/header1";
 
 export default function Home() {
   function gotopage() {
