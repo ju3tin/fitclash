@@ -9,9 +9,29 @@ export default function Home() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [videoSize, setVideoSize] = useState({ width: 640, height: 480 });
   
+
+    useEffect(() => {
+        const video = videoRef.current;
+
+        if (!video) return;
+
+        // Wait until video metadata is loaded
+        const handleLoadedMetadata = () => {
+            setVideoSize({
+                width: video.videoWidth || 640,
+                height: video.videoHeight || 480,
+            });
+        };
+
+        video.addEventListener("loadedmetadata", handleLoadedMetadata);
+
+        return () => {
+            video.removeEventListener("loadedmetadata", handleLoadedMetadata);
+        };
+    }, []);
     return (
         <>
-      <div className="container flex items-center justify-center min-h-screen">
+      <div style={{display:'none'}} className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
          {/* Hidden video element */}
       <video
@@ -23,8 +43,20 @@ export default function Home() {
       ></video>
 
       {/* Canvas that matches the video size */}
-        <canvas id='canvasstart' className="output_canvas" style={{ width: "400px" , height:"100%" }}></canvas>
-        </div><div className="container flex items-center justify-center min-h-screen">
+    </div>
+    <div style={{width:'100%', margin:'auto'}} className="container flex items-center justify-center min-h-screen">
+  <canvas
+    id="canvasstart"
+    className="output_canvas"
+    style={{
+      width: `${videoSize.width}px`,
+      height: "100%",
+      border: "1px solid red",
+    }}
+  ></canvas>
+</div>
+    
+    <div className="container flex items-center justify-center min-h-screen">
        <div className="loading">
             <div className="spinner"></div>
             <div className="message">
