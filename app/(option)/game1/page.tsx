@@ -23,7 +23,7 @@ export default function Home() {
       ></video>
 
       {/* Canvas that matches the video size */}
-        <canvas id='canvasstart' className="output_canvas"   style={{ width: "400px" , height:"100%" }}></canvas>
+        <canvas id='canvasstart' className="output_canvas" style={{ width: "400px" , height:"100%" }}></canvas>
         </div><div className="container flex items-center justify-center min-h-screen">
        <div className="loading">
             <div className="spinner"></div>
