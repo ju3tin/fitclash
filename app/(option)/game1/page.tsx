@@ -31,7 +31,7 @@ export default function Home() {
     }, []);
     return (
         <>
-      <div style={{display:'none'}} className="container flex items-center justify-center min-h-screen">
+      <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
          {/* Hidden video element */}
       <video
