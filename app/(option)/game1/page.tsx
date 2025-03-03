@@ -4,11 +4,36 @@ import FAQ from '../../../components/faq';
 import NetworkStatus from '../../../components/NetworkStatus';
 import { useEffect, useRef, useState } from "react";
 
+const useOrientation = () => {
+    const [orientation, setOrientation] = useState<string | null>(null);
+  
+    useEffect(() => {
+      if (typeof window !== "undefined" && screen.orientation) {
+        setOrientation(screen.orientation.type);
+  
+        const handleOrientationChange = () => {
+          setOrientation(screen.orientation.type);
+        };
+  
+        screen.orientation.addEventListener("change", handleOrientationChange);
+  
+        return () => {
+          screen.orientation.removeEventListener("change", handleOrientationChange);
+        };
+      }
+    }, []);
+  
+    return orientation;
+  };
+
 export default function Home() {
+    
     const videoRef = useRef<HTMLVideoElement>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [videoSize, setVideoSize] = useState({ width: 640, height: 480 });
-  
+    const [orientation, setOrientation] = useState<string | null>(null);
+
+    const orientation1 = useOrientation();
 
     useEffect(() => {
         const video = videoRef.current;
@@ -29,10 +54,14 @@ export default function Home() {
             video.removeEventListener("loadedmetadata", handleLoadedMetadata);
         };
     }, []);
+    
     return (
+        
         <>
       <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
+           
+
          {/* Hidden video element */}
       <video
         ref={videoRef}
@@ -45,7 +74,7 @@ export default function Home() {
       {/* Canvas that matches the video size */}
     </div>
     <div style={{width:'100%', margin:'auto'}} className="container flex items-center justify-center min-h-screen">
-  
+    <p style={{zIndex:'3000', position:'fixed'}}>Current Orientation: {orientation1}</p>
   <canvas
   id="canvasstart"
   className="output_canvas"
