@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 
 export const useNetworkStatus = () => {
-  const [isWiFi, setIsWiFi] = useState<boolean>(false);
+  const [isWiFi, setIsWiFi] = useState<boolean | null>(null);
 
   useEffect(() => {
     const getNetworkType = () => {
@@ -11,9 +11,20 @@ export const useNetworkStatus = () => {
         (navigator as any).mozConnection ||
         (navigator as any).webkitConnection;
 
-      if (connection) {
-        setIsWiFi(connection.type === "wifi" || connection.effectiveType === "wifi");
+      // Default assumption: if `navigator.connection` is missing (Safari), assume WiFi if online
+      if (!connection) {
+        setIsWiFi(navigator.onLine);
+        return;
       }
+
+      // Check network type (only works in Chrome, Edge, Android)
+      const isWiFiConnection =
+        connection.type === "wifi" || connection.effectiveType === "wifi";
+
+      // For Apple devices where type is not available, assume WiFi if it's NOT "cellular"
+      const isNotCellular = connection.effectiveType && connection.effectiveType !== "cellular";
+
+      setIsWiFi(isWiFiConnection || isNotCellular);
     };
 
     getNetworkType();
@@ -34,8 +45,10 @@ const NetworkStatus = () => {
   const isWiFi = useNetworkStatus();
 
   return (
-    <div>
-      {isWiFi ? (
+    <div style={{display: 'none'}}>
+      {isWiFi === null ? (
+        <p className="text-gray-500">🔄 Checking network...</p>
+      ) : isWiFi ? (
         <p className="text-green-500">✅ Connected via WiFi</p>
       ) : (
         <p className="text-red-500">⚠️ Not on WiFi! Switch for best performance.</p>
