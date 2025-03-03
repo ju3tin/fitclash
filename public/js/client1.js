@@ -33,6 +33,32 @@ canvas.style.left = '0';
 canvas.style.objectFit = 'contain';
 
 
+// Function to log camera width, height, and screen orientation
+function logCameraAndOrientation() {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      const video = document.createElement("video");
+      video.srcObject = stream;
+      video.onloadedmetadata = () => {
+        console.log("Camera Width:", video.videoWidth);
+        console.log("Camera Height:", video.videoHeight);
+        console.log("Screen Orientation:", screen.orientation.type);
+      };
+    })
+    .catch(error => console.error("Error accessing camera:", error));
+}
+
+// Function to handle screen orientation changes
+function handleOrientationChange() {
+  console.log("Screen Orientation changed to:", screen.orientation.type);
+}
+
+// Initial log when page loads
+logCameraAndOrientation();
+
+// Listen for screen orientation changes
+screen.orientation.addEventListener("change", handleOrientationChange);
+
 document.getElementById('send-message-button').onclick = function() {
   const message = document.getElementById('message-input').value;
   if (message) {
@@ -172,18 +198,37 @@ readyButton.style.zIndex = '3000'; // Ensure it appears above other elements
 videoChatContainer.appendChild(readyButton);
 
 // Create a new canvas element for the "Ready" state
+// Create a new canvas element for the "Ready" state
 const readyCanvas = document.createElement('canvas');
 readyCanvas.id = 'readyCanvas';
-readyCanvas.width = localVideoComponent.clientWidth; // Set canvas width
-readyCanvas.height = localVideoComponent.clientHeight; // Set canvas height
-readyCanvas.style.position = 'absolute';
-readyCanvas.style.bottom = '0px';
-readyCanvas.style.width = '100%';
-readyCanvas.style.height = '50%';
-readyCanvas.style.marginBottom = '0px';
-readyCanvas.style.left = '0';
-readyCanvas.style.objectFit = 'contain';
+document.body.appendChild(readyCanvas);
 
+// Function to update the canvas size and styles dynamically
+function updateCanvasSize() {
+    const localVideoComponent = document.querySelector("video"); // Ensure you select the correct video element
+    if (!localVideoComponent) return;
+  
+    readyCanvas.width = localVideoComponent.clientWidth;
+    readyCanvas.height = localVideoComponent.clientHeight;
+  
+    if (window.innerWidth > window.innerHeight) {
+        // Landscape Mode
+        readyCanvas.style.width = "100%";
+        readyCanvas.style.height = "100%";
+    } else {
+        // Portrait Mode
+        readyCanvas.style.width = "100%";
+        readyCanvas.style.height = "50%";
+        readyCanvas.style.bottom = "0px";
+    }
+}
+
+// Initial setup
+updateCanvasSize();
+
+// Listen for screen orientation changes
+screen.orientation.addEventListener("change", updateCanvasSize);
+window.addEventListener("resize", updateCanvasSize);
 // Append the canvas to the video chat container
 videoChatContainer.appendChild(readyCanvas);
 
