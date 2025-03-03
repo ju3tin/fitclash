@@ -1,10 +1,12 @@
 
 import FAQ from '../../../components/faq';
+import NetworkStatus from '../../../components/NetworkStatus';
 
 export default function Home() {
     return (
         <>
         <div className="container">
+            <NetworkStatus />
         <video style={{display:'none'}} className="input_video"></video>
         <canvas className="output_canvas" width="1280px" height="720px"></canvas>
        <div className="loading">
