@@ -1,14 +1,30 @@
 
+"use client"
 import FAQ from '../../../components/faq';
 import NetworkStatus from '../../../components/NetworkStatus';
+import { useEffect, useRef, useState } from "react";
 
 export default function Home() {
+    const videoRef = useRef<HTMLVideoElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+    const [videoSize, setVideoSize] = useState({ width: 640, height: 480 });
+  
     return (
         <>
-        <div className="container">
+      <div className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
-        <video style={{display:'none'}} className="input_video"></video>
-        <canvas className="output_canvas" width="1280px" height="720px"></canvas>
+         {/* Hidden video element */}
+      <video
+        ref={videoRef}
+        style={{ display: "none" }}
+        className="input_video"
+        autoPlay
+        playsInline
+      ></video>
+
+      {/* Canvas that matches the video size */}
+        <canvas id='canvasstart' className="output_canvas"   style={{ width: "400px" , height:"100%" }}></canvas>
+        </div><div className="container flex items-center justify-center min-h-screen">
        <div className="loading">
             <div className="spinner"></div>
             <div className="message">
