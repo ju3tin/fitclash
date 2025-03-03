@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals1.css";
 import { Analytics } from "@vercel/analytics/react";
 import Header from "../../components/header";
+import Script from "next/script";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,11 @@ export default function RootLayout({
     <html lang="en">
       <head>
       <meta property="og:image" content="https://fitclash.vercel.app/images/logo3.png" />
+      <link rel="stylesheet" type="text/css" href="./css/control_utils.css" />
+      <Script src="./javascript/camera_utils.js" />
+      <Script src="./javascript/control_utils.js" />
+      <Script src="./javascript/drawing_utils.js" />
+      <Script src="./javascript/pose.js" />
 <meta property="og:image:type" content="<generated>" />
 <meta property="og:image:width" content="<generated>" />
 <meta property="og:image:height" content="<generated>" />
@@ -46,7 +52,8 @@ export default function RootLayout({
         <Header />
         {children}
         <Analytics />
-      </body>
+      </body> 
+      <Script src="./javascript/leg1.js" />
     </html>
   );
 }
