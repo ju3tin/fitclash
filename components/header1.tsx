@@ -4,6 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import Sidebar from './sidebar';
+import Login from './login';
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -21,9 +22,7 @@ const handleClick = () => {
        
         <div>
         {/*  <Link href="/login"> */}
-            <button onClick={handleClick} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            Login<Image src="/images/login.svg" alt="Logo" width={20} height={20} />
-            </button>
+           <Login />
        {/*     </Link>*/}
         </div>
       </header>
