@@ -45,7 +45,16 @@ export default function Home() {
       {/* Canvas that matches the video size */}
     </div>
     <div style={{width:'100%', margin:'auto'}} className="container flex items-center justify-center min-h-screen">
-    <canvas
+  <canvas
+    id="canvasstart"
+    className="output_canvas"
+    style={{
+      width: `${videoSize.width}px`,
+      height: "100%",
+      border: "1px solid red",
+    }}
+  ></canvas>
+{/*  <canvas
   id="canvasstart"
   className="output_canvas"
   style={{
@@ -53,7 +62,8 @@ export default function Home() {
     height: videoSize.width > videoSize.height ? "100%" : `${videoSize.height}px`,
     border: "1px solid red",
   }}
-></canvas>
+></canvas> */}
+
 </div>
     
     <div className="container flex items-center justify-center min-h-screen">
