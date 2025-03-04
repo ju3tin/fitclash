@@ -59,7 +59,10 @@ export default function Home() {
     return (
         
         <>
-      <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
+   
+    <div className="container">
+
+    <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
            
           
@@ -74,7 +77,7 @@ export default function Home() {
 
       {/* Canvas that matches the video size */}
     </div>
-    <div style={{ margin:'auto'}} className="container flex items-center justify-center min-h-screen">
+
     <Header /><br />
     <p style={{zIndex:'3000', position:'fixed'}}>Current Orientation: {orientation1}</p>
   <canvas
