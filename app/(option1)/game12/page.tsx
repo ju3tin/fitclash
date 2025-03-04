@@ -89,6 +89,8 @@ export default function Home() {
     width: videoSize.width < videoSize.height ? `${videoSize.width}px` : "100%",
     height: videoSize.width > videoSize.height ? "100%" :`${videoSize.height}px`,
     border: "1px solid red",
+    maxHeight: "100vh",
+    maxWidth: '100vw',
   }}
 ></canvas>
 
