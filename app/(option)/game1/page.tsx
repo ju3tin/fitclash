@@ -78,8 +78,10 @@ export default function Home() {
   <canvas
   id="canvasstart"
   className="output_canvas"
+  width={videoSize.width}
+  height={videoSize.height}
   style={{
-    width: videoSize.width > videoSize.height ? `${videoSize.width}px` : "100%",
+    width: videoSize.width < videoSize.height ? `${videoSize.width}px` : "100%",
     height: videoSize.width > videoSize.height ? "100%" :`${videoSize.height}px`  ,
     border: "1px solid red",
   }}
