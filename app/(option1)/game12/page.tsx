@@ -74,7 +74,7 @@ export default function Home() {
 
       {/* Canvas that matches the video size */}
     </div>
-    <div style={{width:'100%', margin:'auto'}} className="container flex items-center justify-center min-h-screen">
+    <div style={{ margin:'auto'}} className="container flex items-center justify-center min-h-screen">
     <Header /><br />
     <p style={{zIndex:'3000', position:'fixed'}}>Current Orientation: {orientation1}</p>
   <canvas
@@ -91,7 +91,7 @@ export default function Home() {
 
 </div>
     
-    <div className="container flex items-center justify-center min-h-screen">
+    <div  style={{display:'none'}}  className="container flex items-center justify-center min-h-screen">
        <div className="loading">
             <div className="spinner"></div>
             <div className="message">
@@ -112,7 +112,7 @@ export default function Home() {
             </div>
         </div>
     </div>
-    <div className="control-panel">
+    <div style={{display:'none'}} className="control-panel">
     </div>
     </>
     );
