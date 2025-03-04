@@ -46,9 +46,7 @@ export default function RootLayout({
 <meta property="twitter:title" content="Fitness Clash"></meta>
 <meta property="og:url" content="https://fitclash.vercel.app"></meta>
       </head>
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body>
      
         {children}
         <Analytics />
