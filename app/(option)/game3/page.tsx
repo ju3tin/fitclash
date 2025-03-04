@@ -3,6 +3,7 @@
 import FAQ from '../../../components/faq';
 import NetworkStatus from '../../../components/NetworkStatus';
 import { useEffect, useRef, useState } from "react";
+import Header from "../../../components/header2";
 
 const useOrientation = () => {
     const [orientation, setOrientation] = useState<string | null>(null);
@@ -61,7 +62,7 @@ export default function Home() {
       <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
             <NetworkStatus />
            
-
+          
          {/* Hidden video element */}
       <video
         ref={videoRef}
@@ -74,6 +75,7 @@ export default function Home() {
       {/* Canvas that matches the video size */}
     </div>
     <div style={{width:'100%', margin:'auto'}} className="container flex items-center justify-center min-h-screen">
+    <Header /><br />
     <p style={{zIndex:'3000', position:'fixed'}}>Current Orientation: {orientation1}</p>
   <canvas
   id="canvasstart"
