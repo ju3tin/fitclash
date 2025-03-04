@@ -59,7 +59,7 @@ export default function Home() {
     return (
         
         <>
-   
+   <Header />
     <div className="container" style={{margin:'auto', aspectRatio: '16 / 10', width: '100%', maxWidth: '800px', background: 'lightgray',display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
 
     <div style={{display:'none', width: '0px', height:'0px'}} className="container flex items-center justify-center min-h-screen">
