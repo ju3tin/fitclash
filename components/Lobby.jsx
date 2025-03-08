@@ -1,5 +1,6 @@
 import { useSocket } from '../context/SocketProvider';
 import { useRouter } from 'next/navigation';
+import { io } from "socket.io-client";
 import React, { useCallback, useEffect, useState } from 'react';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 
@@ -7,13 +8,16 @@ const LobbyScreen = () => {
     const [email, setEmail] = useState("");
     const [room, setRoom] = useState("");
 
-    const socket = useSocket();
+    const [socket, setSocket] = useState(null);
     const router = useRouter();
     // console.log(socket);
 
     const handleSubmitForm = useCallback((e) => {
         e.preventDefault();
-        socket.emit('room:join', { email, room });
+        if (socket != null) {
+            socket.emit('room:join', { email, room });
+        }
+       
     }, [email, room, socket]);
 
     const handleJoinRoom = useCallback((data) => {
@@ -22,10 +26,17 @@ const LobbyScreen = () => {
     }, [router]);
 
     useEffect(() => {
-        socket.on("room:join", handleJoinRoom);
-        return () => {
-            socket.off("room:join", handleJoinRoom);
+        
+        if (socket != null) {
+            socket.on("room:join", handleJoinRoom);
         }
+        else {
+            return () => {
+                socket.off("room:join", handleJoinRoom);
+            }
+        }
+        
+       
     }, [socket, handleJoinRoom]);
 
     return (

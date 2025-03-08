@@ -1,13 +1,14 @@
-import { useSocket } from '@/context/SocketProvider';
-import { useRouter } from 'next/router';
+"use client"
+import { useSocket } from '../../../../context/SocketProvider';
+import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react'
-import peer from '@/service/peer';
+import peer from '../../../../services/peer';
 import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
-import VideoPlayer from '@/components/VideoPlayer';
-import CallHandleButtons from '@/components/CallHandleButtons';
+import VideoPlayer from '../../../../components/VideoPlayer';
+import CallHandleButtons from '../../../../components/CallHandleButtons';
 
-const RoomPage = () => {
+const RoomPage = ({ params }) => {
     const socket = useSocket();
     const [remoteSocketId, setRemoteSocketId] = useState(null);
     const [myStream, setMyStream] = useState(null);
@@ -16,6 +17,8 @@ const RoomPage = () => {
     const [isVideoOnHold, setIsVideoOnHold] = useState(false);
     const [callButton, setCallButton] = useState(true);
     const [isSendButtonVisible, setIsSendButtonVisible] = useState(true);
+    const [slug, setSlug] = useState(null);
+
 
     const handleUserJoined = useCallback(({ email, id }) => {
         //! console.log(`Email ${email} joined the room!`);
@@ -82,7 +85,13 @@ const RoomPage = () => {
     }, [])
 
     useEffect(() => {
-        socket.on("user:joined", handleUserJoined);
+        if (!socket) {
+            console.log("Socket is not initialized");
+            return;
+          }else{
+
+
+            socket.on("user:joined", handleUserJoined);
         socket.on("incoming:call", handleIncomingCall);
         socket.on("call:accepted", handleCallAccepted);
         socket.on("peer:nego:needed", handleNegoNeededIncoming);
@@ -95,6 +104,8 @@ const RoomPage = () => {
             socket.off("peer:nego:needed", handleNegoNeededIncoming);
             socket.off("peer:nego:final", handleNegoFinal);
         };
+          }
+        
     },
         [
             socket,
@@ -107,36 +118,48 @@ const RoomPage = () => {
 
 
     useEffect(() => {
-        socket.on("call:end", ({ from }) => {
-            if (from === remoteSocketId) {
-                peer.peer.close();
+        if (!socket) {
 
-                if (myStream) {
-                    myStream.getTracks().forEach(track => track.stop());
-                    setMyStream(null);
+        }else{
+            socket.on("call:end", ({ from }) => {
+                if (from === remoteSocketId) {
+                    peer.peer.close();
+    
+                    if (myStream) {
+                        myStream.getTracks().forEach(track => track.stop());
+                        setMyStream(null);
+                    }
+    
+                    setRemoteStream(null);
+                    setRemoteSocketId(null);
                 }
-
-                setRemoteStream(null);
-                setRemoteSocketId(null);
+            });
+    
+            return () => {
+                socket.off("call:end");
             }
-        });
-
-        return () => {
-            socket.off("call:end");
         }
+        
     }, [remoteSocketId, myStream, socket]);
 
     //* for disappearing call button
     useEffect(() => {
-        socket.on("call:initiated", ({ from }) => {
-            if (from === remoteSocketId) {
-                setCallButton(false);
-            }
-        });
+        if (!socket) {
 
-        return () => {
-            socket.off("call:initiated");
+        }else{
+            socket.on("call:initiated", ({ from }) => {
+                if (from === remoteSocketId) {
+                    setCallButton(false);
+                }
+            });
+    
+            return () => {
+                socket.off("call:initiated");
+            }
+
+
         }
+        
     }, [socket, remoteSocketId]);
 
 
@@ -199,7 +222,16 @@ const RoomPage = () => {
 
     const router = useRouter();
 
-    const { slug } = router.query;
+   // const { slug } = router.query;
+
+    useEffect(() => {
+        if (router.isReady) {
+          setSlug(router.query?.slug);
+        }
+      }, [router.isReady, router.query]);
+      if (!slug) {
+        return <div>Loading...</div>; // or any loading indicator
+      }
 
     return (
         <div className='flex flex-col items-center justify-center w-screen h-screen overflow-hidden'>
