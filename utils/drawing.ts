@@ -28,23 +28,22 @@ export const COLOR_PALETTE = {
 }
 
 // Get color based on keypoint id
-export function getKeypointColor(id: number): string {
-  if ([0, 1, 2, 3, 4].includes(id)) return COLOR_PALETTE.middle // Face
-  if ([5, 7, 9, 11, 13, 15].includes(id)) return COLOR_PALETTE.left // Left side
-  return COLOR_PALETTE.right // Right side
+export function getKeypointColor(index: number): string {
+  if ([0, 1, 2, 3, 4].includes(index)) return COLOR_PALETTE.middle; // Face
+  if ([5, 7, 9, 11, 13, 15].includes(index)) return COLOR_PALETTE.left; // Left side
+  return COLOR_PALETTE.right; // Right side
 }
 
 // Draw a keypoint on the canvas
-export function drawKeypoint(ctx: CanvasRenderingContext2D, keypoint: posedetection.Keypoint, size = 4) {
+export function drawKeypoint(ctx: CanvasRenderingContext2D, keypoint: posedetection.Keypoint, index: number, size = 4) {
   if (keypoint.score && keypoint.score > 0.3) {
-    const { x, y } = keypoint
-    ctx.beginPath()
-    ctx.arc(x, y, size, 0, 2 * Math.PI)
-    ctx.fillStyle = getKeypointColor(keypoint.id || 0)
-    ctx.fill()
+    const { x, y } = keypoint;
+    ctx.beginPath();
+    ctx.arc(x, y, size, 0, 2 * Math.PI);
+    ctx.fillStyle = getKeypointColor(index);
+    ctx.fill();
   }
 }
-
 // Draw a line between two keypoints
 export function drawSegment(
   ctx: CanvasRenderingContext2D,
