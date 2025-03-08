@@ -6,7 +6,7 @@ import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import { Label } from "./ui/label"
-import {Textarea} from "@heroui/input";
+import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
