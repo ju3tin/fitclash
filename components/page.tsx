@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import style from "./chat.module.css";
+import style from "../app/(test2)/test123/chat.module.css";
 
 interface IMsgDataTypes {
   roomId: String | number;
