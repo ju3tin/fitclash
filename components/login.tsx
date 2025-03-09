@@ -6,12 +6,28 @@ import { signInWithGoogle } from "../lib/auth";
 import { useState } from "react";
 import Image from "next/image";
 
+// Define the User type
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  // Add other user properties as needed
+}
+
 const LoginButton = () => {
   const { connected } = useWallet();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
 
   const handleGoogleLogin = async () => {
-    const user = await signInWithGoogle();
+    const result = await signInWithGoogle();
+    
+    // Assuming result contains the necessary information
+    const user: User = {
+      id: result.id, // Use the correct property names
+      name: result.name,
+      email: result.email,
+    };
+  
     setUser(user);
   };
 
