@@ -20,7 +20,8 @@ const LoginButton = () => {
 
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithGoogle();
+    
+    /*  const result = await signInWithGoogle();
 
       if (!result || typeof result.id !== "string" || typeof result.name !== "string" || typeof result.email !== "string") {
         throw new Error("Invalid user data received from Google");
@@ -33,6 +34,7 @@ const LoginButton = () => {
       };
 
       setUser(user);
+      */
     } catch (error) {
       console.error("Google sign-in error:", error);
     }
