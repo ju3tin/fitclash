@@ -8,6 +8,8 @@ const Home = ({ params }) => {
   const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
+    if (!searchParams) return; // Check if searchParams is available
+
     const currentParams = new URLSearchParams(searchParams.toString());
     currentParams.set('tags', JSON.stringify(tags));
     router.push(`?${currentParams.toString()}`);
@@ -15,7 +17,7 @@ const Home = ({ params }) => {
 
   return (
     <div>
-      Router: {JSON.stringify(searchParams.toString())}
+      Router: {JSON.stringify(searchParams?.toString())} {/* Use optional chaining */}
       <br />
       Tags: {JSON.stringify(tags)}
       <br />
