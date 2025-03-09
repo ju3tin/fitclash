@@ -19,16 +19,23 @@ const LoginButton = () => {
   const [user, setUser] = useState<User | null>(null);
 
   const handleGoogleLogin = async () => {
-    const result = await signInWithGoogle();
-    
-    // Assuming result contains the necessary information
-    const user: User = {
-      id: result.id, // Use the correct property names
-      name: result.name,
-      email: result.email,
-    };
-  
-    setUser(user);
+    try {
+      const result = await signInWithGoogle();
+
+      if (!result || typeof result.id !== "string" || typeof result.name !== "string" || typeof result.email !== "string") {
+        throw new Error("Invalid user data received from Google");
+      }
+
+      const user: User = {
+        id: result.id, 
+        name: result.name,
+        email: result.email,
+      };
+
+      setUser(user);
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+    }
   };
 
   return (
@@ -48,4 +55,4 @@ const LoginButton = () => {
   );
 };
 
-export default LoginButton; // ✅ Ensure correct export
+export default LoginButton;
