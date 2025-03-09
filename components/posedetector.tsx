@@ -8,17 +8,19 @@ import "@tensorflow/tfjs-backend-webgl";
 import Webcam from "react-webcam";
 
 const UserPose = () => {
-  // refs to the HTML elements
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
-  let camera = null; // variable to initialize the camera
+  // Explicitly define ref types
+  const webcamRef = useRef<Webcam | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  let camera: cam.Camera | null = null; // Ensure camera is properly typed
 
   // Function to draw landmarks once the pose has been determined
-  const onResults = (poses) => {
-    if (!canvasRef.current || !webcamRef.current) return;
+  const onResults = (poses: posedetection.Pose[]) => {
+    if (!canvasRef.current || !webcamRef.current || !webcamRef.current.video) return;
 
     const canvasElement = canvasRef.current;
     const canvasCtx = canvasElement.getContext("2d");
+
+    if (!canvasCtx) return; // Ensure context is not null
 
     // Ensure the canvas matches the video feed size
     canvasElement.width = webcamRef.current.video.videoWidth;
@@ -65,7 +67,7 @@ const UserPose = () => {
       if (webcamRef.current && webcamRef.current.video) {
         camera = new cam.Camera(webcamRef.current.video, {
           onFrame: async () => {
-            const poses = await detector.estimatePoses(webcamRef.current.video);
+            const poses = await detector.estimatePoses(webcamRef.current!.video!);
             onResults(poses);
           },
           width: 1280,
@@ -77,6 +79,12 @@ const UserPose = () => {
     };
 
     setupPoseDetection();
+
+    return () => {
+      if (camera) {
+        camera.stop();
+      }
+    };
   }, []);
 
   return (
