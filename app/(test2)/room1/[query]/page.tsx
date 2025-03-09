@@ -2,7 +2,7 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from "react";
 
-const Home = ({ children, href }) => {
+const Home = ({ params }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [tags, setTags] = useState<string[]>([]);
@@ -26,4 +26,4 @@ const Home = ({ children, href }) => {
   );
 };
 
-export default Home; 
+export default Home;
