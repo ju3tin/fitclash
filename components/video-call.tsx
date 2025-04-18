@@ -24,7 +24,7 @@ export default function VideoCall() {
     setCopied(false);
   };
 
-  const copyToClipboard = async () => {
+  const copyToClipboard1 = async () => {
     if (url) {
       await navigator.clipboard.writeText(url);
       setCopied(true);
@@ -556,7 +556,7 @@ export default function VideoCall() {
         <div className="mt-4">
           <p className="break-words text-blue-700 font-mono">{url}</p>
           <button
-            onClick={copyToClipboard}
+            onClick={copyToClipboard1}
             className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
           >
             Copy
