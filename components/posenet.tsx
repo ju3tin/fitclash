@@ -54,13 +54,13 @@ const MoveNetComponent = () => {
         ctx.lineWidth = 2;
 
         // Draw keypoints
-        pose.keypoints.forEach(({ x, y, score }) => {
-          if (score > 0.3) { // Confidence threshold
-            ctx.beginPath();
-            ctx.arc(x, y, 5, 0, 2 * Math.PI);
-            ctx.fill();
-          }
-        });
+      pose.keypoints.forEach(({ x, y, score }) => {
+  if (score !== undefined && score > 0.3) { // Ensure score is defined and above threshold
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+});
 
         // Draw skeleton (connecting keypoints)
         const adjacentPairs = posedetection.util.getAdjacentPairs(posedetection.SupportedModels.MoveNet);
