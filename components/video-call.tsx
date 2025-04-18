@@ -6,6 +6,7 @@ import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import { Label } from "./ui/label"
+import { RandomUrlGenerator } from "./RandomUrlGenerator"
 import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
@@ -524,6 +525,7 @@ export default function VideoCall() {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="newgame">Click Here For New Game</Label>
+              <RandomUrlGenerator />
               <Label htmlFor="offer">Offer Signal</Label>
               <div className="flex gap-2">
                 <Textarea
