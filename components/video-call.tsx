@@ -13,6 +13,24 @@ import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-servi
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 
 export default function VideoCall() {
+
+  const [url, setUrl] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const generateUrl = () => {
+    const randomString = Math.random().toString(36).substring(2, 10);
+    const newUrl = `https://example.com/${randomString}`;
+    setUrl(newUrl);
+    setCopied(false);
+  };
+
+  const copyToClipboard = async () => {
+    if (url) {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500); // Hide "Copied!" after 1.5s
+    }
+  };
   // Refs for video and canvas elements
   const localVideoRef = useRef<HTMLVideoElement>(null)
   const remoteVideoRef = useRef<HTMLVideoElement>(null)
