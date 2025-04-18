@@ -566,7 +566,7 @@ export default function VideoCall() {
       )}
     </div>
               
-              <RandomUrlGenerator />
+            
               <Label htmlFor="offer">Offer Signal</Label>
               <div className="flex gap-2">
                 <Textarea
