@@ -1,30 +1,19 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, Db } from 'mongodb';
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
-}
+let client: MongoClient | null = null;
+let db: Db | null = null;
 
-const uri = process.env.MONGODB_URI;
-const options = {};
+const uri = process.env.MONGODB_URI || "mongodb+srv://admin1:Grierson1979.@cluster0.ia9rd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"; // Update the URI as needed
+const dbName = "chippie";
 
-let client: MongoClient;
+export async function connectToDatabase(): Promise<Db> {
+  if (db) return db;
 
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClient?: MongoClient;
-  };
-
-  if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri, options);
+  if (!client) {
+    client = new MongoClient(uri);
+    await client.connect();
   }
-  client = globalWithMongo._mongoClient;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
-}
 
-// Export a module-scoped MongoClient. By doing this in a
-// separate module, the client can be shared across functions.
-export default client;
+  db = client.db(dbName);
+  return db;
+}
