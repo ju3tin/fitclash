@@ -543,6 +543,29 @@ export default function VideoCall() {
           <div className="grid gap-4">
             <div className="grid gap-2">
               <Label htmlFor="newgame">Click Here For New Game</Label>
+
+ <div className="p-4 border rounded-lg shadow-md max-w-md mx-auto mt-10 text-center">
+      <button
+        onClick={generateUrl}
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+      >
+        Generate URL
+      </button>
+
+      {url && (
+        <div className="mt-4">
+          <p className="break-words text-blue-700 font-mono">{url}</p>
+          <button
+            onClick={copyToClipboard}
+            className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+          >
+            Copy
+          </button>
+          {copied && <p className="text-sm text-green-500 mt-1">Copied!</p>}
+        </div>
+      )}
+    </div>
+              
               <RandomUrlGenerator />
               <Label htmlFor="offer">Offer Signal</Label>
               <div className="flex gap-2">
