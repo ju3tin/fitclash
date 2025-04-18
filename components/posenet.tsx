@@ -28,12 +28,14 @@ const MoveNetComponent = () => {
 
     const detectPose = async (detector: posedetection.PoseDetector) => {
       if (!videoRef.current || !canvasRef.current) return;
+
       const ctx = canvasRef.current.getContext("2d");
+      if (!ctx) return; // Ensure the context is valid
 
       const poseDetectionLoop = async () => {
         if (videoRef.current && ctx) {
           const poses = await detector.estimatePoses(videoRef.current);
-          ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+          ctx.clearRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
           ctx.drawImage(videoRef.current, 0, 0, 640, 480);
           drawPose(poses, ctx);
         }
