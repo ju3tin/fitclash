@@ -3,7 +3,9 @@
 import { useRef, useState, useEffect } from "react"
 //import clientPromise from '../lib/mongodb';
 import client from "../lib/mongodb";
-import { GetServerSideProps } from 'next';
+//import { GetServerSideProps } from 'next';
+import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+
 //import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
@@ -19,6 +21,10 @@ import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 
+
+type ConnectionStatus = {
+  isConnected: boolean;
+};
 
 export default function VideoCall() {
 
