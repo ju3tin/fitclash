@@ -19,7 +19,7 @@ export default function VideoCall() {
 
   const generateUrl = () => {
     const randomString = Math.random().toString(36).substring(2, 10);
-    const newUrl = `https://example.com/${randomString}`;
+    const newUrl = `https://fitclash.vercel.app/videocall?game=${randomString}`;
     setUrl(newUrl);
     setCopied(false);
   };
