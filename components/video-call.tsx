@@ -1,8 +1,8 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import client from "../lib/mongodb";
-import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+import clientPromise from '../lib/mongodb';
+import { NextResponse } from 'next/server';
 import * as tf from "@tensorflow/tfjs"
 import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
@@ -14,27 +14,19 @@ import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 
-
-
-type ConnectionStatus = {
-  isConnected: boolean;
-};
-export const getServerSideProps: GetServerSideProps<
-  ConnectionStatus
-> = async () => {
+export async function GET() {
   try {
-    const mongoClient = await client; // Await the client promise
-    await mongoClient.connect(); // Now call connect on the resolved instance
-    return {
-      props: { isConnected: true },
-      };
-  } catch (e) {
-    console.error(e);
-    return {
-      props: { isConnected: false },
-    };
+    const client = await clientPromise;
+    const db = client.db('your-db-name');
+    const collection = db.collection('your-collection');
+
+    const data = await collection.find({}).toArray();
+
+    return NextResponse.json(data);
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
-};
+}
 
 export default function VideoCall() {
 
