@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import { MongoClient, ServerApiVersion } from 'mongodb'
 import * as tf from "@tensorflow/tfjs"
 import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
@@ -14,6 +15,11 @@ import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide
 
 export default function VideoCall() {
 
+  const uri = process.env.MONGO_URI
+  if(!uri){
+    throw new Error("environment variable MONGO_URI is not defined");
+  }
+  
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
