@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   // ... other configurations ...
   resolve: {
     fallback: {

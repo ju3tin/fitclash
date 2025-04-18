@@ -2,28 +2,39 @@
 
 import { useRef, useState, useEffect } from "react"
 import clientPromise from '../lib/mongodb';
+//import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
 import { NextResponse } from 'next/server';
 import * as tf from "@tensorflow/tfjs"
 import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
 import { Card, CardContent } from "./ui/card"
 import { Label } from "./ui/label"
-import RandomUrlGenerator from "./RandomUrlGenerator"
+//import RandomUrlGenerator from "./RandomUrlGenerator"
 import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 
-export async function GET() {
+// Optional: define a type for your MongoDB documents
+interface YourDocument {
+  _id: string;
+  name: string;
+  createdAt?: Date;
+}
+
+export async function GET(req: NextRequest) {
   try {
     const client = await clientPromise;
     const db = client.db('your-db-name');
-    const collection = db.collection('your-collection');
+    const collection = db.collection<YourDocument>('your-collection');
 
     const data = await collection.find({}).toArray();
 
     return NextResponse.json(data);
   } catch (error) {
+    console.error('Error fetching data from MongoDB:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
 }
