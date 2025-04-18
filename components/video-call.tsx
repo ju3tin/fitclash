@@ -16,6 +16,26 @@ import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide
 
 
 
+type ConnectionStatus = {
+  isConnected: boolean;
+};
+export const getServerSideProps: GetServerSideProps<
+  ConnectionStatus
+> = async () => {
+  try {
+    const mongoClient = await client; // Await the client promise
+    await mongoClient.connect(); // Now call connect on the resolved instance
+    return {
+      props: { isConnected: true },
+      };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: { isConnected: false },
+    };
+  }
+};
+
 export default function VideoCall() {
 
   const [url, setUrl] = useState('');
