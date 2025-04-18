@@ -523,6 +523,7 @@ export default function VideoCall() {
         <CardContent className="p-6">
           <div className="grid gap-4">
             <div className="grid gap-2">
+              <Label htmlFor="newgame">Click Here For New Game</Label>
               <Label htmlFor="offer">Offer Signal</Label>
               <div className="flex gap-2">
                 <Textarea
