@@ -13,13 +13,49 @@ import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 
+
+  
+const uri = process.env.MONGO_URI
+if(!uri){
+    throw new Error("environment variable MONGO_URI is not defined");
+}
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+    try {
+      // Connect the client to the server (optional starting in v4.7)
+      await client.connect();
+      // Querying our database
+            // Querying our database
+            // Querying our database
+      const cursor = await client.db("test").collection("greetings").find();
+      const array = await cursor.toArray(); // Ensure this returns a promise
+      return array;
+    } finally {
+      // Ensures that the client will close when you finish/error
+      await client.close();
+    }
+  
+  }
+export async function GET(request: Request) {
+    const greetings =  await run();
+    return Response.json(greetings)
+  }
+
 export default function VideoCall() {
 
-  const uri = process.env.MONGO_URI
-  if(!uri){
-    throw new Error("environment variable MONGO_URI is not defined");
-  }
+
+
   
+
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
