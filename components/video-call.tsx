@@ -544,7 +544,7 @@ export default function VideoCall() {
             <div className="grid gap-2">
               <Label htmlFor="newgame">Click Here For New Game</Label>
 
- <div className="p-4 border rounded-lg shadow-md max-w-md mx-auto mt-10 text-center">
+ <div className="flex gap-2">
       <button
         onClick={generateUrl}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
