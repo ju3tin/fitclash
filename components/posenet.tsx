@@ -68,12 +68,12 @@ const MoveNetComponent = () => {
           const kp1 = pose.keypoints[i];
           const kp2 = pose.keypoints[j];
 
-          if (kp1.score > 0.3 && kp2.score > 0.3) {
-            ctx.beginPath();
-            ctx.moveTo(kp1.x, kp1.y);
-            ctx.lineTo(kp2.x, kp2.y);
-            ctx.stroke();
-          }
+        if (kp1.score !== undefined && kp1.score > 0.3 && kp2.score !== undefined && kp2.score > 0.3) {
+    ctx.beginPath();
+    ctx.moveTo(kp1.x, kp1.y);
+    ctx.lineTo(kp2.x, kp2.y);
+    ctx.stroke();
+}
         });
       });
     };
