@@ -1,6 +1,8 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import client from "../lib/mongodb";
+import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import * as tf from "@tensorflow/tfjs"
 import * as posedetection from "@tensorflow-models/pose-detection"
 import { Button } from "./ui/button"
@@ -11,6 +13,27 @@ import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
+
+
+
+type ConnectionStatus = {
+  isConnected: boolean;
+};
+export const getServerSideProps: GetServerSideProps<
+  ConnectionStatus
+> = async () => {
+  try {
+    await client.connect(); // `await client.connect()` will use the default database passed in the MONGODB_URI
+    return {
+      props: { isConnected: true },
+    };
+  } catch (e) {
+    console.error(e);
+    return {
+      props: { isConnected: false },
+    };
+  }
+};
 
 export default function VideoCall() {
 
