@@ -23,10 +23,11 @@ export const getServerSideProps: GetServerSideProps<
   ConnectionStatus
 > = async () => {
   try {
-    await client.connect(); // `await client.connect()` will use the default database passed in the MONGODB_URI
+    const mongoClient = await client; // Await the client promise
+    await mongoClient.connect(); // Now call connect on the resolved instance
     return {
       props: { isConnected: true },
-    };
+      };
   } catch (e) {
     console.error(e);
     return {

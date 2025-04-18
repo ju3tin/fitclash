@@ -1,31 +1,33 @@
-import { MongoClient } from "mongodb";
+// lib/mongodb.ts
 
-if (!process.env.MONGODB_URI) {
-  throw new Error('Invalid/Missing environment variable: "MONGODB_URI"');
-}
+import { MongoClient } from 'mongodb';
 
 const uri = process.env.MONGODB_URI;
-const options = { appName: "devrel.template.nextjs" };
+const options = {};
 
-let client: MongoClient;
-
-if (process.env.NODE_ENV === "development") {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  let globalWithMongo = global as typeof globalThis & {
-    _mongoClient?: MongoClient;
-  };
-
-  if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri, options);
-  }
-  client = globalWithMongo._mongoClient;
-} else {
-  // In production mode, it's best to not use a global variable.
-  client = new MongoClient(uri, options);
+if (!uri) {
+  throw new Error('Please define the MONGODB_URI environment variable');
 }
 
-// Export a module-scoped MongoClient. By doing this in a
-// separate module, the client can be shared across functions.
+// Global is used here to maintain a cached connection in development
+let client: MongoClient;
+let clientPromise: Promise<MongoClient>;
 
-export default client;
+declare global {
+  var _mongoClientPromise: Promise<MongoClient> | undefined;
+}
+
+if (process.env.NODE_ENV === 'development') {
+  // In dev, use a global variable so we don’t create a new client on every hot reload
+  if (!global._mongoClientPromise) {
+    client = new MongoClient(uri, options);
+    global._mongoClientPromise = client.connect();
+  }
+  clientPromise = global._mongoClientPromise;
+} else {
+  // In production, it's safe to create a new client per request
+  client = new MongoClient(uri, options);
+  clientPromise = client.connect();
+}
+
+export default clientPromise;
