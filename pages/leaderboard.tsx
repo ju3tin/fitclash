@@ -3,7 +3,7 @@ import React from 'react';
 type Player = {
   id: number;
   name: string;
-  score: number;
+  score: number; 
 };
 
 const mockLeaderboard: Player[] = [
