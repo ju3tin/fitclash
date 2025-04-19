@@ -1,18 +1,29 @@
 "use client"
-import React from "react";
-import { Canvas } from "react-three-fiber";
-import Lights from "../../../components/Light";
-import Model from "../../../components/Model";
+import { Canvas } from '@react-three/fiber';
+import { OrbitControls, useGLTF } from '@react-three/drei';
+import { Suspense } from 'react';
+import * as THREE from 'three';
 
-const App = () => {
+function Model() {
+  const gltf = useGLTF('/assets/mesh/BoxingGym-draco.gltf');
+  return <primitive object={gltf.scene} />;
+}
+
+export default function GLTFViewerPage() {
   return (
-    <>
-      <Canvas camera={{ position: [0, 0, 300] }}>
-        <Lights />
-        <Model />
+    <div style={{ height: '100vh', width: '100vw' }}>
+      <Canvas
+        camera={{ position: [0, 1.5, 3], fov: 60 }}
+        shadows
+        gl={{ antialias: true }}
+      >
+        <ambientLight intensity={0.6} />
+        <directionalLight position={[5, 5, 5]} intensity={1} />
+        <Suspense fallback={null}>
+          <Model />
+        </Suspense>
+        <OrbitControls enableDamping />
       </Canvas>
-    </>
+    </div>
   );
-};
-
-export default App;
+}
