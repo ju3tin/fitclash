@@ -5,9 +5,11 @@ import Room from "../../models/Room";
 
 
 
-export default async function handler(req, res) {
+import { NextApiRequest, NextApiResponse } from 'next'; // Import types
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse) { // Explicitly type parameters
   await connectDB();
-if (req.method === 'POST') {
+  if (req.method === 'POST') {
     const { offer, answer } = req.body;
     const { room } = req.query;
   
