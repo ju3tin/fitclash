@@ -1,4 +1,4 @@
-import client from "../lib/contact";
+import client from "../../lib/contact";
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
