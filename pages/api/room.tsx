@@ -3,13 +3,6 @@ import { NextResponse } from "next/server";
 import connectDB from "../../lib/mongodb1";
 import Room from "../../models/Room";
 
-interface UpdateData {
-  offer?: { type: string; sdp: string }; // Define the structure of offer
-  answer?: { type: string; sdp: string }; // Define the structure of answer
-}
-
-const updateData: UpdateData = {}; // Use the interface to type updateData
-
 export default async function handler(req, res) {
   await connectDB();
 
@@ -21,16 +14,9 @@ export default async function handler(req, res) {
     }
 
     try {
-      if (offer && offer.type && offer.sdp) {
-        updateData.offer = offer;
-      }
-      if (answer && answer.type && answer.sdp) {
-        updateData.answer = answer;
-      }
-
       const roomData = await Room.findOneAndUpdate(
         { room },
-        { room, ...updateData },
+        { room, offer, answer },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
       res.status(200).json({ success: true, data: roomData });
