@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import { unique } from "next/dist/build/utils";
+import { type } from "os";
 
 const offerSchema = new mongoose.Schema({
   type: String,
@@ -12,6 +14,8 @@ const answerSchema = new mongoose.Schema({
 
 const RoomSchema = new mongoose.Schema({
   room: { type: String, required: true, unique: true },
+  game: { type: String, required: false, unique: false },
+  time: { type: String, required: false, unique: false },
   offer: offerSchema,
   answer: answerSchema,
 });
