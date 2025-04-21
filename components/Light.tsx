@@ -3,7 +3,7 @@ import React from "react";
 const Lights = () => {
   return (
     <>
-      <ambientLight intensity={0.1} />
+    {/*  <ambientLight intensity={0.1} />
       <directionalLight position={[40, 10, 5]} intensity={0.2} />
       <directionalLight
         castShadow
@@ -18,7 +18,7 @@ const Lights = () => {
         shadow-camera-bottom={-10}
       />
       <spotLight intensity={0.5} position={[90, 100, 50]} castShadow />
-    </>
+    */} </>
   );
 };
 
