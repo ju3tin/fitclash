@@ -551,57 +551,63 @@ export default function VideoCall() {
       <Card>
         <CardContent className="p-6">
           <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="newgame">Click Here For New Game</Label>
+          <div className="grid gap-2">
+  <Label htmlFor="newgame">Click Here For New Game</Label>
 
- <div className="flex gap-2">
-      <button
-        onClick={generateUrl}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+  <div>
+    <button
+      onClick={generateUrl}
+      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      Generate URL
+    </button>
+
+    {url && (
+      <div className="">
+        <p className="text-blue-700 font-mono text-sm break-words">{url}</p>
+        <button
+          onClick={copyToClipboard1}
+          className="bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 w-fit"
+        >
+          Copy
+        </button>
+        {copied && <p className="text-xs text-green-500">Copied!</p>}
+      </div>
+    )}
+  </div>
+
+  <Label htmlFor="offer">Offer Signal</Label>
+  <div className="flex gap-2">
+    <Textarea
+      id="offer"
+      value={offerSignal}
+      onChange={(e) => setOfferSignal(e.target.value)}
+      placeholder="Paste offer signal here..."
+      className="font-mono text-xs flex-1"
+    />
+    {offerSignal && (
+      <Button
+        variant="outline"
+        size="icon"
+        onClick={() => copyToClipboard(offerSignal)}
+        className="h-full"
       >
-        Generate URL
-      </button>
+        {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+      </Button>
+    )}
+  </div>
 
-      {url && (
-        <div className="mt-4">
-          <p className="break-words text-blue-700 font-mono">{url}</p>
-          <button
-            onClick={copyToClipboard1}
-            className="mt-2 bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
-          >
-            Copy
-          </button>
-          {copied && <p className="text-sm text-green-500 mt-1">Copied!</p>}
-        </div>
-      )}
-    </div>
-              
-            
-              <Label htmlFor="offer">Offer Signal</Label>
-              <div className="flex gap-2">
-                <Textarea
-                  id="offer"
-                  value={offerSignal}
-                  onChange={(e) => setOfferSignal(e.target.value)}
-                  placeholder="Paste offer signal here..."
-                  className="font-mono text-xs"
-                />
-                {offerSignal && (
-                  <Button variant="outline" size="icon" onClick={() => copyToClipboard(offerSignal)} className="h-full">
-                    {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                )}
-              </div>
-              <div className="flex justify-end">
-                <Button
-                  onClick={createAnswer}
-                  disabled={!localStream || !offerSignal || connectionStatus !== "disconnected"}
-                  size="sm"
-                >
-                  Create Answer
-                </Button>
-              </div>
-            </div>
+  <div className="flex justify-end">
+    <Button
+      onClick={createAnswer}
+      disabled={!localStream || !offerSignal || connectionStatus !== "disconnected"}
+      size="sm"
+    >
+      Create Answer
+    </Button>
+  </div>
+</div>
+
 
             <div className="grid gap-2">
               <Label htmlFor="answer">Answer Signal</Label>

@@ -25,7 +25,7 @@ export default function RandomUrlGenerator() {
 
   return (
     <div className="gap-4">
-      <div className="grid gap-4">
+      <div className="gap-4">
         <button
           onClick={generateUrl}
           className="bg-blue-600 text-white rounded hover:bg-blue-700"
