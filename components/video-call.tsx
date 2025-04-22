@@ -1,6 +1,8 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
+
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
 //import { GetServerSideProps } from 'next';
@@ -491,8 +493,8 @@ export default function VideoCall() {
                   </>
                 ) : (
                   <>
-                    <Camera className="h-4 w-4" />
-                    Start Camera
+                   <img src="/images/gameicon.svg" alt="My Icon" className="w-6 h-6" />
+                    Start Game
                   </>
                 )}
               </Button>
