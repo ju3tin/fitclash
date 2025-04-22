@@ -557,10 +557,9 @@ export default function VideoCall() {
           <div className="grid gap-2">
   <Label htmlFor="newgame">Click Here For New Game</Label>
 
-  <div>
 
     {url && (
-      <div className="">
+    <>
         <p className="text-blue-700 font-mono text-sm break-words">{url}</p>
         <button
           onClick={copyToClipboard1}
@@ -569,9 +568,9 @@ export default function VideoCall() {
           Copy
         </button>
         {copied && <p className="text-xs text-green-500">Copied!</p>}
-      </div>
+        </>
     )}
-  </div>
+  
 
   <Label htmlFor="offer">Offer Signal</Label>
   <div className="flex gap-2">
