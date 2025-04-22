@@ -1,9 +1,10 @@
 // pages/api/room.js
+import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from "next/server";
 import connectDB from "../../lib/mongodb1";
 import Room from "../../models/Room";
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await connectDB();
 
   if (req.method === 'POST') {
