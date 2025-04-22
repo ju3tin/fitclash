@@ -21,7 +21,7 @@ const Form: React.FC<FormProps> = ({ setOverlayVisible }) => {
 
     
     <div id="overlay" onClick={handleSubmit}>
-<div id="text">What Game Do you Want To Play</div>
+<div id="text">What Game Do You Want To Play</div>
 </div>
 
 
