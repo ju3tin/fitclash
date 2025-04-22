@@ -14,11 +14,12 @@ const answerSchema = new mongoose.Schema({
 
 const RoomSchema = new mongoose.Schema({
   room: { type: String, required: true, unique: true },
-  game: { type: String, required: false, unique: false },
-  time: { type: String, required: false, unique: false },
-  bet: { type: String, required: false, unique: false },
-  offer: offerSchema,
-  answer: answerSchema,
+  game: { type: String },
+  time: { type: String },
+  bet: { type: String },
+  offer: [offerSchema],  // ARRAY OF OFFERS
+  answer: [answerSchema],  // ARRAY OF ANSWERS
 });
+
 
 export default mongoose.models.Room || mongoose.model("Room", RoomSchema);
