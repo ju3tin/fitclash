@@ -16,6 +16,7 @@ const RoomSchema = new mongoose.Schema({
   room: { type: String, required: true, unique: true },
   game: { type: String, required: false, unique: false },
   time: { type: String, required: false, unique: false },
+  bet: { type: String, required: false, unique: false },
   offer: offerSchema,
   answer: answerSchema,
 });
