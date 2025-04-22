@@ -1,6 +1,4 @@
 import mongoose from "mongoose";
-import { unique } from "next/dist/build/utils";
-import { type } from "os";
 
 const offerSchema = new mongoose.Schema({
   type: String,
@@ -14,12 +12,13 @@ const answerSchema = new mongoose.Schema({
 
 const RoomSchema = new mongoose.Schema({
   room: { type: String, required: true, unique: true },
-  game: { type: String },
-  time: { type: String },
-  bet: { type: String },
-  offer: [offerSchema],  // ARRAY OF OFFERS
-  answer: [answerSchema],  // ARRAY OF ANSWERS
+  game: { type: String, required: false, unique: false },
+  time: { type: String, required: false, unique: false },
+  bet: { type: String, required: false, unique: false },
+  offer: offerSchema,
+  answer: answerSchema,
+  offerUpdated: { type: Boolean, default: false },
+  answerUpdated: { type: Boolean, default: false },
 });
-
 
 export default mongoose.models.Room || mongoose.model("Room", RoomSchema);
