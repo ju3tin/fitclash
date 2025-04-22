@@ -15,11 +15,18 @@ export default function Home() {
     setOverlayVisible(false);
   };
 
+  // Define the onSelect function
+  const handleSelect = (game) => {
+    console.log("Selected game:", game);
+    // You can add additional logic here if needed
+    hideOverlay(); // Optionally hide the overlay after selection
+  };
+
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gray-50">
       {isOverlayVisible && (
         
-        <Form setOverlayVisible={setOverlayVisible} />
+        <Form setOverlayVisible={setOverlayVisible} onSelect={handleSelect} />
         
       )}
       <div className="max-w-6xl mx-auto">
