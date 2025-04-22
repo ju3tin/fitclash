@@ -16,8 +16,10 @@ export default function Home() {
   };
 
   // Define the onSelect function
-  const handleSelect = (game) => {
+  const handleSelect = (game, betAmount, duration) => {
     console.log("Selected game:", game);
+    console.log("Bet Amount:", betAmount);
+    console.log("Duration:", duration);
     // You can add additional logic here if needed
     hideOverlay(); // Optionally hide the overlay after selection
   };

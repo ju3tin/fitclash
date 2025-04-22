@@ -1,7 +1,6 @@
 'use client';
-import Link from 'next/link';
+
 import React, { useEffect, useState } from 'react';
-import GameSelector from './red1';
 
 type Game = {
   id: string;
@@ -10,30 +9,20 @@ type Game = {
 };
 
 interface FormProps {
-  setOverlayVisible: (visible: boolean) => void; // Define the prop type
-  onSelect: (game: Game) => void; // Add onSelect to the props
+  setOverlayVisible: (visible: boolean) => void;
+  onSelect: (game: Game, betAmount: number, duration: { hours: number; minutes: number; seconds: number }) => void;
 }
 
 const Form: React.FC<FormProps> = ({ setOverlayVisible, onSelect }) => {
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-    // Handle form submission logic here
-    setOverlayVisible(false);
-  };
-
   const [games, setGames] = useState<Game[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  
-  // State for duration
   const [hours, setHours] = useState<number>(0);
-  const [minutes, setMinutes] = useState<number>(30); // Default to 30 minutes
+  const [minutes, setMinutes] = useState<number>(0);
   const [seconds, setSeconds] = useState<number>(0);
-  
-  // State for bet amount
-  const [betAmount, setBetAmount] = useState<number>(0); // Default bet amount
+  const [betAmount, setBetAmount] = useState<number>(0);
+  const [step, setStep] = useState<number>(0);
 
   useEffect(() => {
-    // Replace with your actual GET endpoint
     fetch('/api/game')
       .then(res => res.json())
       .then(data => setGames(data))
@@ -42,14 +31,25 @@ const Form: React.FC<FormProps> = ({ setOverlayVisible, onSelect }) => {
 
   const handleSelect = (game: Game) => {
     setSelectedId(game.id);
-    onSelect(game);
   };
 
+  const handleSubmit = (event?: React.FormEvent) => {
+    if (event) event.preventDefault();
+    const selectedGame = games.find(game => game.id === selectedId);
+    if (!selectedGame || betAmount <= 0) return;
+
+    onSelect(selectedGame, betAmount, { hours, minutes, seconds });
+    setOverlayVisible(false);
+  };
+
+  const isLastStep = step === 2;
+
   return (
-    <>
-      <div id="overlay" onClick={handleSubmit}>
+    <div id="overlay" className="p-4 space-y-6">
+      {/* Step 0 - Select Game */}
+      {step === 0 && (
         <div className="grid grid-cols-1 gap-4">
-          <div id="text">What Game Do You Want To Play</div>
+          <div className="text-lg font-semibold">What Game Do You Want To Play</div>
           {games.map((game) => (
             <div
               key={game.id}
@@ -63,54 +63,81 @@ const Form: React.FC<FormProps> = ({ setOverlayVisible, onSelect }) => {
             </div>
           ))}
         </div>
-        
-        <div className="grid grid-cols-1 gap-4 mt-4">
-          <div id="text">Select Duration:</div>
+      )}
+
+      {/* Step 1 - Duration */}
+      {step === 1 && (
+        <div className="grid grid-cols-1 gap-4">
+          <div className="text-lg font-semibold">Select Duration:</div>
           <div className="flex space-x-2">
-            <select
-              value={hours}
-              onChange={(e) => setHours(Number(e.target.value))}
-              className="border rounded p-2"
-            >
-              {[...Array(24).keys()].map((h) => (
+            <select value={hours} onChange={(e) => setHours(Number(e.target.value))} className="border rounded p-2">
+              {[...Array(24).keys()].map(h => (
                 <option key={h} value={h}>{h} hour{h !== 1 ? 's' : ''}</option>
               ))}
             </select>
-            <select
-              value={minutes}
-              onChange={(e) => setMinutes(Number(e.target.value))}
-              className="border rounded p-2"
-            >
-              {[...Array(60).keys()].map((m) => (
+            <select value={minutes} onChange={(e) => setMinutes(Number(e.target.value))} className="border rounded p-2">
+              {[...Array(60).keys()].map(m => (
                 <option key={m} value={m}>{m} minute{m !== 1 ? 's' : ''}</option>
               ))}
             </select>
-            <select
-              value={seconds}
-              onChange={(e) => setSeconds(Number(e.target.value))}
-              className="border rounded p-2"
-            >
-              {[...Array(60).keys()].map((s) => (
-                <option key={s} value={s}>{s} second{ s !== 1 ? 's' : ''}</option>
+            <select value={seconds} onChange={(e) => setSeconds(Number(e.target.value))} className="border rounded p-2">
+              {[...Array(60).keys()].map(s => (
+                <option key={s} value={s}>{s} second{s !== 1 ? 's' : ''}</option>
               ))}
             </select>
           </div>
         </div>
+      )}
 
-        <div className="grid grid-cols-1 gap-4 mt-4">
-          <div id="text">Enter Bet Amount (in SOL):</div>
+      {/* Step 2 - Bet Amount */}
+      {step === 2 && (
+        <div className="grid grid-cols-1 gap-4">
+          <div className="text-lg font-semibold">Enter Bet Amount (in SOL):</div>
           <input
             type="number"
             value={betAmount}
             onChange={(e) => setBetAmount(Number(e.target.value))}
             className="border rounded p-2"
             placeholder="Enter amount in SOL"
+            min="0"
           />
         </div>
+      )}
+
+      {/* Navigation Buttons */}
+      <div className="flex justify-between pt-4">
+        {step > 0 && (
+          <button
+            type="button"
+            className="px-4 py-2 border rounded hover:bg-gray-100"
+            onClick={() => setStep(step - 1)}
+          >
+            Back
+          </button>
+        )}
+        {!isLastStep && (
+          <button
+            type="button"
+            className="ml-auto px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => setStep(step + 1)}
+            disabled={step === 0 && !selectedId}
+          >
+            Next
+          </button>
+        )}
+        {isLastStep && (
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="ml-auto px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
+            disabled={betAmount <= 0}
+          >
+            Submit
+          </button>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
 export default Form;
-    
