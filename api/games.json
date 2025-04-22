@@ -1,32 +1,27 @@
 [
     {
       "id": 1,
-      "image": "https://example.com/images/game1.jpg",
+      "image": "/images/pushups.gif",
       "link": "/game/game1",
-      "title": "Game 1"
+      "title": "push ups"
     },
     {
       "id": 2,
-      "image": "https://example.com/images/game2.jpg",
+      "image": "/images/starjumps.gif",
       "link": "/game/game2",
-      "title": "Game 2"
+      "title": "Star Jumps"
     },
     {
       "id": 3,
-      "image": "https://example.com/images/game3.jpg",
+      "image": "/images/situp.gif",
       "link": "/game/game3",
-      "title": "Game 3"
+      "title": "Sit ups"
     },
     {
       "id": 4,
-      "image": "https://example.com/images/game3.jpg",
+      "image": "/images/boxing1.gif",
       "link": "/game/game3",
-      "title": "Game 3"
-    },
-    {
-      "id": 5,
-      "image": "https://example.com/images/game3.jpg",
-      "link": "/game/game3",
-      "title": "Game 3"
+      "title": "Boxing"
     }
   ]
+  
