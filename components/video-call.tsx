@@ -124,6 +124,7 @@ export default function VideoCall() {
   // Start local webcam
   const startWebcam = async () => {
     try {
+      generateUrl()
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: "user", width: 640, height: 480 },
         audio: true,
@@ -557,12 +558,6 @@ export default function VideoCall() {
   <Label htmlFor="newgame">Click Here For New Game</Label>
 
   <div>
-    <button
-      onClick={generateUrl}
-      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-    >
-      Generate URL
-    </button>
 
     {url && (
       <div className="">
