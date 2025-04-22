@@ -16,5 +16,17 @@
       "image": "https://example.com/images/game3.jpg",
       "link": "/game/game3",
       "title": "Game 3"
+    },
+    {
+      "id": 4,
+      "image": "https://example.com/images/game3.jpg",
+      "link": "/game/game3",
+      "title": "Game 3"
+    },
+    {
+      "id": 5,
+      "image": "https://example.com/images/game3.jpg",
+      "link": "/game/game3",
+      "title": "Game 3"
     }
   ]
