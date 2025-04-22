@@ -49,6 +49,7 @@
     "@tensorflow/tfjs-backend-webgpu": "^4.22.0",
     "@vercel/analytics": "^1.4.1",
     "@web3modal/wagmi": "^4.2.3",
+    "@zebra-ui/uniapp": "^2.0.2",
     "add": "^2.0.6",
     "algoliasearch": "^5.19.0",
     "axios": "^1.7.9",

@@ -2,6 +2,25 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Add this to your globals.css or a specific CSS file */
+#overlay {
+  position: fixed; /* Cover the entire screen */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* Ensure it appears above other content */
+}
+
+#text {
+  color: white; /* Text color */
+  font-size: 24px; /* Text size */
+}
+
 @layer base {
   .border-border {
     /* Your declarations here. */
