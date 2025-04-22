@@ -21,8 +21,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (time) updateData.time = time;
       if (bet) updateData.bet = bet;
 
-      if (offerUpdated && offer) updateData.offer = offer;  // Only update offer if offerUpdated is true
-      if (answerUpdated && answer) updateData.answer = answer;  // Only update answer if answerUpdated is true
+      if (offerUpdated && offer) {
+        updateData.offer = offer;
+        updateData.offerUpdated = true;
+      }
+      if (answerUpdated && answer) {
+        updateData.answer = answer;
+        updateData.answerUpdated = true;
+      }  // Only update answer if answerUpdated is true
 
       // If no fields to update, return a message
       if (Object.keys(updateData).length === 0) {
