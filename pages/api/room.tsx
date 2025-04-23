@@ -10,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method === 'POST') {
     const { room, offer, answer } = req.body;
 
-    if (!room || !offer || !offer.type || !offer.sdp) {
+    if (!room || !offer ) {
       return res.status(400).json({ error: 'Missing room or offer fields' });
     }
 

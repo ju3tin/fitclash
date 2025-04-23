@@ -30,7 +30,17 @@ const generateRandomUUID = () => {
   return 'user-' + Math.random().toString(36).substring(2, 10);
 };
 
-export default function VideoCall() {
+interface GameSessionData {
+  room: string;
+  game: any; // Replace 'any' with the actual type of your game object if known
+  betAmount: number;
+  duration: { hours: number; minutes: number; seconds: number };
+  offer: string;
+  timestamp: string;
+  offerread: string; 
+}
+
+export default function VideoCall({ onSelect, selectedGameData  }) {
 
   //pubnub
   const [message, setMessage] = useState('');
@@ -38,6 +48,130 @@ export default function VideoCall() {
   const [channel] = useState('my-channel');
   const [pubnub, setPubnub] = useState<PubNub | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const randomString = Math.random().toString(36).substring(2, 10);
+  // videostart
+
+  const startLocalStream = async (): Promise<MediaStream> => {
+    console.log("Starting local stream...");
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: "user", width: 640, height: 480 },
+        audio: true,
+      });
+
+      if (localVideoRef.current) {
+        localVideoRef.current.srcObject = stream;
+        setLocalStream(stream);
+      }
+      
+      return stream; // Return the stream
+    } catch (err) {
+      console.error("Error accessing webcam:", err);
+      setError("Could not access your camera. Please allow camera access and try again.");
+      throw err; // Optionally rethrow the error
+    }
+  };
+
+  const sendGameSessionToAPI = async ( data: GameSessionData) => {
+    try {
+      const myHeaders = new Headers();
+myHeaders.append("Content-Type", "application/json");
+console.log('i want sick'+ data.offerread)
+
+const raw = JSON.stringify({
+  "room": "dicdddk1",
+  "offerUpdated": "true",
+  "offer": data.offer
+});
+
+const requestOptions = {
+  method: "POST",
+  headers: myHeaders,
+  body: raw,
+  redirect: "follow" as RequestRedirect,
+};
+
+fetch("/api/room", requestOptions)
+  .then((response) => response.text())
+  .then((result) => console.log(result))
+  .catch((error) => console.error(error));
+    } catch (err) {
+      console.error("Error sending session:", err.message);
+      setError("Error sending session data.");
+    }
+  };
+  
+
+  useEffect(() => {
+    if (!selectedGameData) return;
+  
+    const startProcess = async () => {
+      console.log("Game selected, starting stream...");
+  
+      try {
+        const stream = await startLocalStream(); // Await the actual stream
+        setLocalStream(stream); // Make sure you store it in state
+  
+        setTimeout(() => {
+          if (!stream) {
+            setError("Please start your webcam first");
+            return;
+          }
+  
+          console.log("Creating offer after 2s delay...");
+  
+          const callbacks: PeerEventCallbacks = {
+            onSignal: (signal) => {
+              const signalStr = JSON.stringify(signal);
+              setOfferSignal(signalStr);
+              if (selectedGameData) {
+                sendGameSessionToAPI({
+                  room: randomString,
+                  game: selectedGameData.game,
+                  betAmount: selectedGameData.betAmount,
+                  duration: selectedGameData.duration,
+                  offerread: signalStr,
+                  offer: signal,
+                  timestamp: new Date().toISOString(),
+                });
+              }
+            },
+            onStream: (stream) => {
+              setRemoteStream(stream);
+              if (remoteVideoRef.current) {
+                remoteVideoRef.current.srcObject = stream;
+              }
+              setConnectionStatus("connected");
+            },
+            onConnect: () => {
+              console.log("Peer connection established");
+            },
+            onClose: () => {
+              setConnectionStatus("disconnected");
+              setRemoteStream(null);
+            },
+            onError: (err) => {
+              setError(`WebRTC error: ${err.message}`);
+            },
+          };
+  
+          const service = new WebRTCService(callbacks);
+          service.initiatePeer(stream); // Use the guaranteed stream
+          setWebrtcService(service);
+          setConnectionStatus("connecting");
+  
+        }, 2000); // 2-second delay
+  
+      } catch (err) {
+        setError("Failed to start webcam: " + err.message);
+      }
+    };
+  
+    startProcess();
+  }, [selectedGameData]);
+  
+  
+  //end
 
   useEffect(() => {
     const uuid = generateRandomUUID();
@@ -93,7 +227,7 @@ export default function VideoCall() {
   const [copied, setCopied] = useState(false);
 
   const generateUrl = () => {
-    const randomString = Math.random().toString(36).substring(2, 10);
+   
     const newUrl = `https://fitclash.vercel.app/videocall?game=${randomString}`;
     setUrl(newUrl);
     setCopied(false);

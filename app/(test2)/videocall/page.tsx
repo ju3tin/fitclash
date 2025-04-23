@@ -7,6 +7,11 @@ import MessageSender from "../../../components/pubnunb"
 
 export default function Home() {
   const [isOverlayVisible, setOverlayVisible] = useState(false);
+  const [selectedGameData, setSelectedGameData] = useState<{
+    game: any;
+    betAmount: number;
+    duration: { hours: number; minutes: number; seconds: number };
+  } | null>(null);
 
   const showOverlay = () => {
     setOverlayVisible(true);
@@ -18,10 +23,16 @@ export default function Home() {
 
   // Define the onSelect function
   const handleSelect = (game, betAmount, duration) => {
+    const data5 = {
+      game,
+      betAmount,
+      duration,
+    };
+
     console.log("Selected game:", game);
     console.log("Bet Amount:", betAmount);
     console.log("Duration:", duration);
-    // You can add additional logic here if needed
+    setSelectedGameData(data5);
     hideOverlay(); // Optionally hide the overlay after selection
   };
 
@@ -49,7 +60,7 @@ export default function Home() {
 
         </div>
       
-        <VideoCall />
+        <VideoCall onSelect={handleSelect}  selectedGameData={selectedGameData} />
       
       </div>
     </main>
