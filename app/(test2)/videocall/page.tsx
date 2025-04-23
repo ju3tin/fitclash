@@ -1,11 +1,16 @@
 "use client"
 import VideoCall from "../../../components/video-call"
-import { useState } from "react";
 import "../globals.css"
 import Form from "../../../components/form";
-import MessageSender from "../../../components/pubnunb"
+import { useSearchParams } from 'next/navigation'
+import { useEffect, useState } from 'react';
+
 
 export default function Home() {
+  
+
+const searchParams = useSearchParams();
+const gameFromUrl = searchParams ? searchParams.get("game") : null;
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const [selectedGameData, setSelectedGameData] = useState<{
     game: any;
@@ -49,18 +54,25 @@ export default function Home() {
           <h1 className="text-gray-600">Test Your Fitness Against Your Friends with Our Games</h1>
           <h2 className="text-gray-600">Click The Button Below To Start.</h2>
           <p>
-  <button 
-    onClick={showOverlay} 
-    className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 flex items-center"
-  >
-    <img src="/images/gameicon.svg" alt="My Icon" className="w-5 h-5 mr-2" />
-    Start game
-  </button>
-</p>
-
+            {gameFromUrl === null && (
+              <button 
+                onClick={showOverlay} 
+                className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 flex items-center"
+              >
+                <img src="/images/gameicon.svg" alt="My Icon" className="w-5 h-5 mr-2" />
+                Start game
+              </button>
+            )}
+          </p>
         </div>
       
-        <VideoCall onSelect={handleSelect}  selectedGameData={selectedGameData} />
+        <VideoCall 
+          onSelect={handleSelect} 
+          gameFromUrl={gameFromUrl}  
+          selectedGameData={selectedGameData} 
+          setSelectedGameData={setSelectedGameData} 
+          hideOverlay={hideOverlay}
+        />
       
       </div>
     </main>

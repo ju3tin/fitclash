@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
+//import MessageSender from './pubnunb';
 
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
@@ -25,6 +26,19 @@ import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 import PubNub from 'pubnub';
+import { useSearchParams } from 'next/navigation';
+
+interface VideoCallProps {
+  onSelect: (room: any, game: any, betAmount: number, duration: { hours: number; minutes: number; seconds: number }) => void;
+  selectedGameData: {
+    game: any;
+    betAmount: number;
+    duration: { hours: number; minutes: number; seconds: number };
+  } | null;
+  gameFromUrl: string | null;
+  setSelectedGameData: (data: any) => void;
+  hideOverlay: () => void;
+}
 
 const generateRandomUUID = () => {
   return 'user-' + Math.random().toString(36).substring(2, 10);
@@ -39,16 +53,19 @@ interface GameSessionData {
   timestamp: string;
   offerread: string; 
 }
-
-export default function VideoCall({ onSelect, selectedGameData  }) {
+interface gameFromUrl {
+  gameFromUrl: string | null;
+}
+export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, setSelectedGameData, hideOverlay }: VideoCallProps) {
+  console.log("Game from URL:", gameFromUrl);
 
   //pubnub
   const [message, setMessage] = useState('');
+  const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
   const [messages, setMessages] = useState<{ text: string; sender: string }[]>([]);
-  const [channel, setChannel] = useState('my-channel');
+  const [channel, setChannel] = useState('dodgy');
   const [pubnub, setPubnub] = useState<PubNub | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
   // videostart
 
   const startLocalStream = async (): Promise<MediaStream> => {
@@ -142,7 +159,7 @@ fetch("/api/room", requestOptions)
                   duration: selectedGameData.duration,
                   offerread: signalStr,
                   offer: signal,
-                  timestamp: new Date().toISOString(),
+                  timestamp: new Date().toISOString()
                 });
               }
             },
@@ -213,12 +230,17 @@ fetch("/api/room", requestOptions)
   }, [messages]);
 
   const sendMessage = () => {
-    if (!message || !pubnub) return;
+    if (!message || !pubnub || !channel) {
+      console.error("Message, PubNub instance, or channel is missing");
+      return;
+    }
+
+    const senderUUID = pubnub.getUUID(); // Call the method to get the UUID as a string
 
     pubnub.publish(
       {
         channel,
-        message: { text: message, sender: pubnub.getUUID() },
+        message: { text: message, sender: senderUUID }, // Use the retrieved UUID
       },
       (status) => {
         if (status.error) {
@@ -649,9 +671,34 @@ fetch("/api/room", requestOptions)
 
   useEffect(() => {
     if (selectedGameData) {
-      setChannel(selectedGameData.room);
+     setChannel(randomString);
     }
   }, [selectedGameData]);
+
+  const handleSelect = (game, betAmount, duration, room) => {
+    const data5 = {
+      game,
+      betAmount,
+      duration,
+      room,
+    };
+
+    console.log("Selected game:", game);
+    console.log("Bet Amount:", betAmount);
+    console.log("Duration:", duration);
+    setSelectedGameData(data5);
+    hideOverlay();
+  };
+
+  // Effect to set randomString based on gameFromUrl
+  useEffect(() => {
+    if (gameFromUrl) {
+      setRandomString(gameFromUrl); 
+      setChannel(gameFromUrl); // Set channel to gameFromUrl if it's not null
+    } else {
+      setChannel('randomString'); // Ensure channel is set to randomString
+    }
+  }, [gameFromUrl]);
 
   return (
     <div className="grid gap-6">
@@ -800,6 +847,15 @@ fetch("/api/room", requestOptions)
         Send Message
       </button>
     </div> 
+    <div className="p-4 border rounded space-y-4 max-w-md w-full">
+
+{/* 
+lets win
+<MessageSender />
+*/}
+
+
+    </div>
       {/* WebRTC Connection Controls */}
       <Card>
         <CardContent className="p-6">
