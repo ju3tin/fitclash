@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 export default function Home() {
   
 
-const searchParams = useSearchParams();
+const searchParams = useSearchParams(); 
 const gameFromUrl = searchParams ? searchParams.get("game") : null;
   const [isOverlayVisible, setOverlayVisible] = useState(false);
   const [selectedGameData, setSelectedGameData] = useState<{
