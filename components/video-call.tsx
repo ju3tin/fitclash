@@ -48,7 +48,7 @@ export default function VideoCall({ onSelect, selectedGameData  }) {
   const [channel, setChannel] = useState('my-channel');
   const [pubnub, setPubnub] = useState<PubNub | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const [randomString, setRandomString] = Math.random().toString(36).substring(2, 10);
+  const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
   // videostart
 
   const startLocalStream = async (): Promise<MediaStream> => {
