@@ -3,7 +3,7 @@ import VideoCall from "../../../components/video-call"
 import "../globals.css"
 import Form from "../../../components/form";
 import { useSearchParams } from 'next/navigation'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 
 
 export default function Home() {
@@ -66,13 +66,15 @@ const gameFromUrl = searchParams ? searchParams.get("game") : null;
           </p>
         </div>
       
-        <VideoCall 
-          onSelect={handleSelect} 
-          gameFromUrl={gameFromUrl}  
-          selectedGameData={selectedGameData} 
-          setSelectedGameData={setSelectedGameData} 
-          hideOverlay={hideOverlay}
-        />
+        <Suspense fallback={<div>Loading...</div>}>
+          <VideoCall 
+            onSelect={handleSelect} 
+            gameFromUrl={gameFromUrl}  
+            selectedGameData={selectedGameData} 
+            setSelectedGameData={setSelectedGameData} 
+            hideOverlay={hideOverlay}
+          />
+        </Suspense>
       
       </div>
     </main>
