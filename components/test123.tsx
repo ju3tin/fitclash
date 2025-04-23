@@ -27,6 +27,26 @@ export default function HomeContent() {
 
   useEffect(() => {
     if (gameFromUrl && !selectedGameData) {
+      const requestOptions = {
+        method: "GET",
+        redirect: "follow" as RequestRedirect,
+      };
+
+      // Construct the URL with query parameters
+      const url = `fitclash.vercel.app/api/room?room=${gameFromUrl}&game=dsfsfd`;
+
+      fetch(url, requestOptions)
+        .then((response) => response.json())
+        .then((result) => {
+          console.log(result);
+          setSelectedGameData((prevData) => ({
+            game: prevData ? prevData.game : gameFromUrl,
+            betAmount: result.betAmount,
+            duration: prevData ? prevData.duration : { hours: 0, minutes: 0, seconds: 0 },
+          }));
+        })
+        .catch((error) => console.error(error));
+
       setSelectedGameData({
         game: gameFromUrl,
         betAmount: 0,

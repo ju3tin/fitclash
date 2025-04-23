@@ -196,7 +196,7 @@ fetch("/api/room", requestOptions)
   
     startProcess();
  //   generateUrl1(selectedGameData);
-  }, [selectedGameData]);
+  }, [selectedGameData, gameFromUrl]);
   
   
   //end
