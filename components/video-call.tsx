@@ -45,7 +45,7 @@ export default function VideoCall({ onSelect, selectedGameData  }) {
   //pubnub
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<{ text: string; sender: string }[]>([]);
-  const [channel] = useState('my-channel');
+  const [channel, setChannel] = useState('my-channel');
   const [pubnub, setPubnub] = useState<PubNub | null>(null);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const randomString = Math.random().toString(36).substring(2, 10);
@@ -79,7 +79,7 @@ myHeaders.append("Content-Type", "application/json");
 console.log('i want sick'+ data.offerread)
 
 const raw = JSON.stringify({
-  "room": "dicdddk1",
+  "room": data.room,
   "offerUpdated": "true",
   "offer": data.offer
 });
@@ -95,6 +95,16 @@ fetch("/api/room", requestOptions)
   .then((response) => response.text())
   .then((result) => console.log(result))
   .catch((error) => console.error(error));
+
+
+  if (data) {
+    const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
+    setUrl(newUrl4);
+    setCopied(false);
+  } else {
+    console.error("Data is not available.");
+  }
+
     } catch (err) {
       console.error("Error sending session:", err.message);
       setError("Error sending session data.");
@@ -168,6 +178,7 @@ fetch("/api/room", requestOptions)
     };
   
     startProcess();
+ //   generateUrl1(selectedGameData);
   }, [selectedGameData]);
   
   
@@ -232,6 +243,8 @@ fetch("/api/room", requestOptions)
     setUrl(newUrl);
     setCopied(false);
   };
+
+ 
 
   const copyToClipboard1 = async () => {
     if (url) {
@@ -623,6 +636,22 @@ fetch("/api/room", requestOptions)
       if (remoteAnimationId) cancelAnimationFrame(remoteAnimationId)
     }
   }, [detector, localStream, remoteStream])
+
+  const generateUrl1 = (data: GameSessionData) => {
+    if (data) {
+      const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
+      setUrl(newUrl4);
+      setCopied(false);
+    } else {
+      console.error("Data is not available.");
+    }
+  };
+
+  useEffect(() => {
+    if (selectedGameData) {
+      setChannel(selectedGameData.room);
+    }
+  }, [selectedGameData]);
 
   return (
     <div className="grid gap-6">
