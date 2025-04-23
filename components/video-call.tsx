@@ -728,20 +728,7 @@ export default function VideoCall() {
       </Card>
 
       {/* Instructions */}
-      <Card>
-        <CardContent className="p-6">
-          <h3 className="text-lg font-medium mb-2">How to use:</h3>
-          <ol className="list-decimal list-inside space-y-2 text-sm">
-            <li>Both users: Start your camera</li>
-            <li>User 1: Click "Start Call" to generate an offer signal</li>
-            <li>User 1: Copy and send the offer signal to User 2</li>
-            <li>User 2: Paste the offer signal and click "Create Answer"</li>
-            <li>User 2: Copy and send the answer signal back to User 1</li>
-            <li>User 1: Paste the answer signal and click "Connect"</li>
-            <li>Once connected, pose detection will run on both video streams</li>
-          </ol>
-        </CardContent>
-      </Card>
+      
     </div>
   )
 }
