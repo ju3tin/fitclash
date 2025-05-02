@@ -186,9 +186,9 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                   };
             
                   const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
-                  const result11 = await response11.text();
+                  const result11 = await response11.json()
                   console.log("this is your answer please get it right "+result11);
-                  signalStr = result11;
+                  signalStr = result11.offer;
                 }
             
                 setOfferSignal(signalStr);
@@ -439,16 +439,26 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
 
     // Define callbacks for WebRTC events
     const callbacks: PeerEventCallbacks = {
-      onSignal: (signal) => {
-        if (!gameFromUrl) {
-          const signalStr = JSON.stringify(signal)
-          setOfferSignal(signalStr)
-        }else{
-          const signalStr = (`dickhead 123`)
-          setOfferSignal(signalStr)
+      onSignal: async (signal) => {
+        try {
+          let signalStr: any;
+      
+          if (!gameFromUrl) {
+            signalStr = JSON.stringify(signal);
+          } else {
+            const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`);
+            const result11 = await response11.json();
+            console.log("This is your answer, please get it right:", result11);
+      
+            signalStr = result11.offer; // extract just the `offer` if that's what you need
+          }
+      
+          setOfferSignal(signalStr);
+        } catch (err) {
+          console.error("Error in onSignal:", err);
         }
-       
       },
+      
       onStream: (stream) => {
         setRemoteStream(stream)
         if (remoteVideoRef.current) {
