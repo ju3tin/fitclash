@@ -126,6 +126,18 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
         console.log(
           `I have a game url dude cant you see`
         )
+     
+
+        const requestOptions: RequestInit = {
+          method: "GET",
+          redirect: "follow",
+        };
+        
+        fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions)
+          .then((response) => response.text())
+          .then((result) => console.log(result))
+          .catch((error) => console.error(error));
+
       }
     } catch (err: any) {
       console.error("Error sending session:", err.message);
