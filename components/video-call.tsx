@@ -91,41 +91,47 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
 
   const sendGameSessionToAPI = async ( data: GameSessionData) => {
     try {
-      const myHeaders = new Headers();
-myHeaders.append("Content-Type", "application/json");
-console.log('i want sick'+ data.offerread)
-
-const raw = JSON.stringify({
-  "room": data.room,
-  "offerUpdated": "true",
-  "offer": data.offer
-});
-
-const requestOptions = {
-  method: "POST",
-  headers: myHeaders,
-  body: raw,
-  redirect: "follow" as RequestRedirect,
-};
-
-fetch("/api/room", requestOptions)
-  .then((response) => response.text())
-  .then((result) => console.log(result))
-  .catch((error) => console.error(error));
-
-
-  if (data) {
-    const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
-    setUrl(newUrl4);
-    setCopied(false);
-  } else {
-    console.error("Data is not available.");
-  }
-
-    } catch (err) {
+      // If there's no game URL (assuming this is what you meant by your opening line)
+      if (!gameFromUrl) {
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+    
+        console.log('this is my offer' + data.offerread); // Consider clarifying this log
+    
+        const raw = JSON.stringify({
+          room: data.room,
+          offerUpdated: "true",
+          offer: data.offer,
+        });
+    
+        const requestOptions: RequestInit = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+    
+        const response = await fetch("/api/room", requestOptions);
+        const result = await response.text();
+        console.log(result);
+    
+        if (data) {
+          const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
+          setUrl(newUrl4);
+          setCopied(false);
+        } else {
+          console.error("Data is not available.");
+        }
+      }else{
+        console.log(
+          `I have a game url dude cant you see`
+        )
+      }
+    } catch (err: any) {
       console.error("Error sending session:", err.message);
       setError("Error sending session data.");
     }
+    
   };
   
 
