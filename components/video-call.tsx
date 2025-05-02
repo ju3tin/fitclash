@@ -133,10 +133,17 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           redirect: "follow",
         };
         
+
+
+
         fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions)
-          .then((response) => response.text())
-          .then((result) => console.log(result))
+          .then((response11) => response11.text())
+          .then((result11) => console.log(result11))
           .catch((error) => console.error(error));
+
+          const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
+          const result11 = await response11.text();
+          console.log(result11);
 
       }
     } catch (err: any) {
@@ -166,22 +173,42 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           console.log("Creating offer after 2s delay...");
   
           const callbacks: PeerEventCallbacks = {
-            onSignal: (signal) => {
-              
-              const signalStr = !gameFromUrl ? JSON.stringify(signal) : "dickhead 123";
-              setOfferSignal(signalStr);
-              if (selectedGameData) {
-                sendGameSessionToAPI({
-                  room: randomString,
-                  game: selectedGameData.game,
-                  betAmount: selectedGameData.betAmount,
-                  duration: selectedGameData.duration,
-                  offerread: signalStr,
-                  offer: signal,
-                  timestamp: new Date().toISOString()
-                });
+            onSignal: async (signal) => {
+              try {
+                let signalStr: any;
+            
+                if (!gameFromUrl) {
+                  signalStr = JSON.stringify(signal);
+                } else {
+                  const requestOptions: RequestInit = {
+                    method: "GET",
+                    redirect: "follow",
+                  };
+            
+                  const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
+                  const result11 = await response11.text();
+                  console.log("this is your answer please get it right "+result11);
+                  signalStr = result11;
+                }
+            
+                setOfferSignal(signalStr);
+            
+                if (selectedGameData) {
+                  sendGameSessionToAPI({
+                    room: randomString,
+                    game: selectedGameData.game,
+                    betAmount: selectedGameData.betAmount,
+                    duration: selectedGameData.duration,
+                    offerread: signalStr,
+                    offer: signal,
+                    timestamp: new Date().toISOString(),
+                  });
+                }
+              } catch (error) {
+                console.error("Error in onSignal handler:", error);
               }
             },
+            
             onStream: (stream) => {
               setRemoteStream(stream);
               if (remoteVideoRef.current) {
