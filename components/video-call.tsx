@@ -167,7 +167,8 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   
           const callbacks: PeerEventCallbacks = {
             onSignal: (signal) => {
-              const signalStr = JSON.stringify(signal);
+              
+              const signalStr = !gameFromUrl ? JSON.stringify(signal) : "dickhead 123";
               setOfferSignal(signalStr);
               if (selectedGameData) {
                 sendGameSessionToAPI({
@@ -412,8 +413,14 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
     // Define callbacks for WebRTC events
     const callbacks: PeerEventCallbacks = {
       onSignal: (signal) => {
-        const signalStr = JSON.stringify(signal)
-        setOfferSignal(signalStr)
+        if (!gameFromUrl) {
+          const signalStr = JSON.stringify(signal)
+          setOfferSignal(signalStr)
+        }else{
+          const signalStr = (`dickhead 123`)
+          setOfferSignal(signalStr)
+        }
+       
       },
       onStream: (stream) => {
         setRemoteStream(stream)
