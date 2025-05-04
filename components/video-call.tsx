@@ -187,7 +187,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
             
                   const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
                   const result11 = await response11.json()
-                  console.log("this is your answer please get it right "+result11.offer);
+                  console.log("this is your answer please get it right "+result11);
                   signalStr = result11.offer;
                 }
             
@@ -442,17 +442,22 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
       onSignal: async (signal) => {
         try {
           let signalStr: any;
-      
+        
           if (!gameFromUrl) {
             signalStr = JSON.stringify(signal);
           } else {
             const response11 = await fetch(`/api/room?room=${gameFromUrl}`);
-            const result11 = await response11.json();
-            console.log("This is your answer, please get it right:", result11);
-      
-            signalStr = result11.offer; // extract just the `offer` if that's what you need
+            const result11 = await response11.json(); // <- parse as JSON, not text
+            console.log("Full response:", result11);
+        
+            // Extract just the offer
+            if (result11.success && result11.data && result11.data.offer) {
+              signalStr = JSON.stringify(result11.data.offer);
+            } else {
+              throw new Error("Offer not found in response");
+            }
           }
-      
+        
           setOfferSignal(signalStr);
         } catch (err) {
           console.error("Error in onSignal:", err);
@@ -757,6 +762,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
     if (gameFromUrl) {
       setRandomString(gameFromUrl); 
       setChannel(gameFromUrl); // Set channel to gameFromUrl if it's not null
+
     } else {
       setChannel('randomString'); // Ensure channel is set to randomString
     }
