@@ -187,7 +187,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
             
                   const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
                   const result11 = await response11.json()
-                  console.log("this is your answer please get it right "+result11);
+                  console.log("this is your answer please get it right "+result11.offer);
                   signalStr = result11.offer;
                 }
             
