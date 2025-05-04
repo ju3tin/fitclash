@@ -174,48 +174,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   
           const callbacks: PeerEventCallbacks = {
             onSignal: async (signal) => {
-              try {
-                let signalStr: any;
             
-                if (!gameFromUrl) {
-                  signalStr = JSON.stringify(signal);
-                } else {
-                  const requestOptions = {
-                    method: "GET",
-                    redirect: "follow" as RequestRedirect,
-                  };
-                  const url = `/api/room?room=${gameFromUrl}&game=dsfsfd`;
-
-                  fetch(url, requestOptions)
-                    .then((response) => response.text())
-                    .then((result) => {
-                      console.log("the rest the just in "+result);
-                    })
-
-                    
-            
-                  const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
-                  const result11 = await response11.json()
-                  console.log("this is your answer please get it right "+result11);
-                  signalStr = result11.offer;
-                }
-            
-                setOfferSignal(signalStr);
-            
-                if (selectedGameData) {
-                  sendGameSessionToAPI({
-                    room: randomString,
-                    game: selectedGameData.game,
-                    betAmount: selectedGameData.betAmount,
-                    duration: selectedGameData.duration,
-                    offerread: signalStr,
-                    offer: signal,
-                    timestamp: new Date().toISOString(),
-                  });
-                }
-              } catch (error) {
-                console.error("Error in onSignal handler:", error);
-              }
               try {
                 let signalStr: any;
               
@@ -493,6 +452,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           }
         
           setOfferSignal(signalStr);
+          
         } catch (err) {
           console.error("Error in onSignal:", err);
         }
