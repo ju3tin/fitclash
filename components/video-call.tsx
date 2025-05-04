@@ -449,10 +449,10 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
             const response11 = await fetch(`/api/room?room=${gameFromUrl}`);
             const result11 = await response11.json(); // <- parse as JSON, not text
             console.log("Full response:", result11);
-        
             // Extract just the offer
             if (result11.success && result11.data && result11.data.offer) {
               signalStr = JSON.stringify(result11.data.offer);
+              setOfferSignal(signalStr);
             } else {
               throw new Error("Offer not found in response");
             }
