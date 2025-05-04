@@ -136,14 +136,14 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
 
 
 
-        fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions)
+        fetch(`/api/room?room=${gameFromUrl}`, requestOptions)
           .then((response11) => response11.text())
           .then((result11) => console.log(result11))
           .catch((error) => console.error(error));
 
-          const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
-          const result11 = await response11.text();
-          console.log(result11);
+        //  const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
+       //   const result11 = await response11.text();
+       //   console.log(result11);
 
       }
     } catch (err: any) {
@@ -185,7 +185,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                     redirect: "follow",
                   };
             
-                  const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`, requestOptions);
+                  const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
                   const result11 = await response11.json()
                   console.log("this is your answer please get it right "+result11);
                   signalStr = result11.offer;
@@ -446,7 +446,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           if (!gameFromUrl) {
             signalStr = JSON.stringify(signal);
           } else {
-            const response11 = await fetch(`https://fitclash.vercel.app/api/room?room=${gameFromUrl}`);
+            const response11 = await fetch(`/api/room?room=${gameFromUrl}`);
             const result11 = await response11.json();
             console.log("This is your answer, please get it right:", result11);
       

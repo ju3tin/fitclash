@@ -33,7 +33,7 @@ export default function HomeContent() {
       };
 
       // Construct the URL with query parameters
-      const url = `fitclash.vercel.app/api/room?room=${gameFromUrl}&game=dsfsfd`;
+      const url = `/api/room?room=${gameFromUrl}&game=dsfsfd`;
 
       fetch(url, requestOptions)
         .then((response) => response.json())
