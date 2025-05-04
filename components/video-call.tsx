@@ -180,10 +180,17 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                 if (!gameFromUrl) {
                   signalStr = JSON.stringify(signal);
                 } else {
-                  const requestOptions: RequestInit = {
+                  const requestOptions = {
                     method: "GET",
-                    redirect: "follow",
+                    redirect: "follow" as RequestRedirect,
                   };
+                  const url = `/api/room?room=${gameFromUrl}&game=dsfsfd`;
+
+                  fetch(url, requestOptions)
+                    .then((response) => response.json())
+                    .then((result) => {
+                      console.log("the rest the just in"+result);
+                    })
             
                   const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
                   const result11 = await response11.json()
