@@ -187,10 +187,12 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                   const url = `/api/room?room=${gameFromUrl}&game=dsfsfd`;
 
                   fetch(url, requestOptions)
-                    .then((response) => response.json())
+                    .then((response) => response.text())
                     .then((result) => {
-                      console.log("the rest the just in"+result);
+                      console.log("the rest the just in "+result);
                     })
+
+                    
             
                   const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
                   const result11 = await response11.json()
@@ -214,6 +216,31 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
               } catch (error) {
                 console.error("Error in onSignal handler:", error);
               }
+              try {
+                let signalStr: any;
+              
+                if (!gameFromUrl) {
+                  signalStr = JSON.stringify(signal);
+                } else {
+                  const response11 = await fetch(`/api/room?room=${gameFromUrl}`);
+                  const result11 = await response11.json(); // <- parse as JSON, not text
+                  console.log("Full response:", result11.data.offer);
+              
+                  // Extract just the offer
+                  if (result11.success && result11.data && result11.data.offer) {
+                    signalStr = JSON.stringify(result11.data.offer);
+                  } else {
+                    throw new Error("Offer not found in response");
+                  }
+                }
+              
+                setOfferSignal(signalStr);
+              } catch (err) {
+                console.error("Error in onSignal:", err);
+              }
+              
+
+
             },
             
             onStream: (stream) => {
