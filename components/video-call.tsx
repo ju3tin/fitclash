@@ -174,7 +174,48 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   
           const callbacks: PeerEventCallbacks = {
             onSignal: async (signal) => {
+              try {
+                let signalStr: any;
             
+                if (!gameFromUrl) {
+                  signalStr = JSON.stringify(signal);
+                } else {
+                  const requestOptions = {
+                    method: "GET",
+                    redirect: "follow" as RequestRedirect,
+                  };
+                  const url = `/api/room?room=${gameFromUrl}&game=dsfsfd`;
+
+                  fetch(url, requestOptions)
+                    .then((response) => response.text())
+                    .then((result) => {
+                      console.log("the rest the just in "+result);
+                    })
+
+                    
+            
+                  const response11 = await fetch(`/api/room?room=${gameFromUrl}`, requestOptions);
+                  const result11 = await response11.json()
+                  console.log("this is your answer please get it right "+result11);
+                  signalStr = result11.offer;
+                }
+            
+                setOfferSignal(signalStr);
+            
+                if (selectedGameData) {
+                  sendGameSessionToAPI({
+                    room: randomString,
+                    game: selectedGameData.game,
+                    betAmount: selectedGameData.betAmount,
+                    duration: selectedGameData.duration,
+                    offerread: signalStr,
+                    offer: signal,
+                    timestamp: new Date().toISOString(),
+                  });
+                }
+              } catch (error) {
+                console.error("Error in onSignal handler:", error);
+              }
               try {
                 let signalStr: any;
               
@@ -183,7 +224,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                 } else {
                   const response11 = await fetch(`/api/room?room=${gameFromUrl}`);
                   const result11 = await response11.json(); // <- parse as JSON, not text
-                  console.log("Full response:", result11.data.offer);
+                  console.log("Full response:", result11.data);
               
                   // Extract just the offer
                   if (result11.success && result11.data && result11.data.offer) {
@@ -194,6 +235,67 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                 }
               
                 setOfferSignal(signalStr);
+                
+                if (gameFromUrl){
+                  const offerSignal = signalStr
+                  navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                  .then((stream) => {
+                    setLocalStream(stream); // ✅ this must happen
+                    if (localVideoRef.current) {
+                      localVideoRef.current.srcObject = stream;
+                    }
+                  })
+                  .catch((err) => {
+                    console.error("Failed to get media stream:", err);
+                    setError("Could not access webcam");
+                  });
+                
+                  if (!localStream) {
+                //     setError("Please start your webcam first")
+                      return
+                    }
+                
+                    if (!offerSignal) {
+                      setError("Please paste the offer signal first")
+                      return
+                    }
+                
+                    try {
+                      // Define callbacks for WebRTC events
+                      const callbacks: PeerEventCallbacks = {
+                        onSignal: (signal) => {
+                          const signalStr = JSON.stringify(signal)
+                          setAnswerSignal(signalStr)
+                        },
+                        onStream: (stream) => {
+                          setRemoteStream(stream)
+                          if (remoteVideoRef.current) {
+                            remoteVideoRef.current.srcObject = stream
+                          }
+                          setConnectionStatus("connected")
+                        },
+                        onConnect: () => {
+                          console.log("Peer connection established")
+                        },
+                        onClose: () => {
+                          setConnectionStatus("disconnected")
+                          setRemoteStream(null)
+                        },
+                        onError: (err) => {
+                          setError(`WebRTC error: ${err.message}`)
+                        },
+                      }
+                
+                      // Create WebRTC service and receive peer
+                      const service = new WebRTCService(callbacks)
+                      service.receivePeer(localStream)
+                      service.signal(JSON.parse(offerSignal))
+                      setWebrtcService(service)
+                      setConnectionStatus("connecting")
+                    } catch (err) {
+                      setError("Invalid offer signal format")
+                    }
+                }
               } catch (err) {
                 console.error("Error in onSignal:", err);
               }
@@ -452,7 +554,6 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           }
         
           setOfferSignal(signalStr);
-          
         } catch (err) {
           console.error("Error in onSignal:", err);
         }
@@ -488,6 +589,53 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   const createAnswer = () => {
     if (!localStream) {
       setError("Please start your webcam first")
+      return
+    }
+
+    if (!offerSignal) {
+      setError("Please paste the offer signal first")
+      return
+    }
+
+    try {
+      // Define callbacks for WebRTC events
+      const callbacks: PeerEventCallbacks = {
+        onSignal: (signal) => {
+          const signalStr = JSON.stringify(signal)
+          setAnswerSignal(signalStr)
+        },
+        onStream: (stream) => {
+          setRemoteStream(stream)
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = stream
+          }
+          setConnectionStatus("connected")
+        },
+        onConnect: () => {
+          console.log("Peer connection established")
+        },
+        onClose: () => {
+          setConnectionStatus("disconnected")
+          setRemoteStream(null)
+        },
+        onError: (err) => {
+          setError(`WebRTC error: ${err.message}`)
+        },
+      }
+
+      // Create WebRTC service and receive peer
+      const service = new WebRTCService(callbacks)
+      service.receivePeer(localStream)
+      service.signal(JSON.parse(offerSignal))
+      setWebrtcService(service)
+      setConnectionStatus("connecting")
+    } catch (err) {
+      setError("Invalid offer signal format")
+    }
+  }
+  const createAnswer1 = () => {
+    if (!localStream) {
+    //  setError("Please start your webcam first")
       return
     }
 
