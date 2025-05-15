@@ -67,10 +67,12 @@ export default function VideoCall() {
   
   // Initialize TensorFlow.js and load the MoveNet model
 
+
+  
   useEffect(() =>{
      const searchParams = useSearchParams()
    
-    async function setrt() { 
+     const dude34 = async () => {
       if (searchParams){
         const search = searchParams.get('game')
       const response11 = await fetch(`/api/room?room=${search}`);
@@ -85,7 +87,7 @@ export default function VideoCall() {
       }
   
     }
-    setrt()
+    dude34()
 
 
 
