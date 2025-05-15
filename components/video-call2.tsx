@@ -23,11 +23,11 @@ import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide
 import { headers } from 'next/headers';
 import { useSearchParams } from 'next/navigation';
 
-
+const searchParams = useSearchParams()
 export default function VideoCall() {
   
 
-  const searchParams = useSearchParams()
+  
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
