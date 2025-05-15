@@ -71,7 +71,8 @@ export default function VideoCall() {
      const searchParams = useSearchParams()
    
     async function setrt() { 
-      if (searchParams){
+      if (searchParams)
+        {
         const search = searchParams.get('game')
       const response11 = await fetch(`/api/room?room=${search}`);
       const result11 = await response11.json();
@@ -80,10 +81,7 @@ export default function VideoCall() {
       const host = url.host; // e.g., "example.com:3000"
       const hostname = url.hostname; // e.g., "example.com"
       const protocol = url.protocol; // e.g., "https:"    
-      }else{
-        
       }
-  
     }
     setrt()
 
