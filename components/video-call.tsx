@@ -3,7 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
 //import MessageSender from './pubnunb';
-
+//import { useSearchParams } from 'next/navigation'
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
 //import { GetServerSideProps } from 'next';
@@ -24,7 +24,7 @@ import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
-import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
+import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check, Wallet2 } from "lucide-react"
 import PubNub from 'pubnub';
 import { useSearchParams } from 'next/navigation';
 
@@ -59,6 +59,10 @@ interface gameFromUrl {
 export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, setSelectedGameData, hideOverlay }: VideoCallProps) {
   console.log("Game from URL:", gameFromUrl);
 
+
+
+  
+
   //pubnub
   const [message, setMessage] = useState('');
   const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
@@ -68,6 +72,10 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   // videostart
 
+  const searchParams = useSearchParams()
+  if (searchParams){
+  const search = searchParams.get('game')
+  }
   const startLocalStream = async (): Promise<MediaStream> => {
     console.log("Starting local stream...");
     try {
@@ -89,6 +97,9 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
     }
   };
 
+
+
+  
   const sendGameSessionToAPI = async ( data: GameSessionData) => {
     try {
       // If there's no game URL (assuming this is what you meant by your opening line)
@@ -229,7 +240,45 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                   // Extract just the offer
                   if (result11.success && result11.data && result11.data.offer) {
                     signalStr = JSON.stringify(result11.data.offer);
-                    setAnswerSignal(signalStr);
+                  console.log('this is for the user')
+                  try {
+                    // Define callbacks for WebRTC events
+                    const callbacks: PeerEventCallbacks = {
+                      onSignal: (signal) => {
+                        const signalStr = JSON.stringify(signal)
+                        setAnswerSignal(signalStr)
+                      },
+                      onStream: (stream) => {
+                        setRemoteStream(stream)
+                        if (remoteVideoRef.current) {
+                          remoteVideoRef.current.srcObject = stream
+                        }
+                        setConnectionStatus("connected")
+                      },
+                      onConnect: () => {
+                        console.log("Peer connection established")
+                      },
+                      onClose: () => {
+                        setConnectionStatus("disconnected")
+                        setRemoteStream(null)
+                      },
+                      onError: (err) => {
+                        setError(`WebRTC error: ${err.message}`)
+                      },
+                    }
+              
+                    // Create WebRTC service and receive peer
+                    const service = new WebRTCService(callbacks)
+                    if (localStream) {
+                    service.receivePeer(localStream)
+                  }
+                    service.signal(JSON.parse(offerSignal))
+                    setWebrtcService(service)
+                    setConnectionStatus("connecting")
+                  } catch (err) {
+                    setError("Invalid offer signal format")
+                  }
+                   // setAnswerSignal(signalStr);
                   } else {
                     throw new Error("Offer not found in response");
                   }
@@ -339,7 +388,73 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
     startProcess();
  //   generateUrl1(selectedGameData);
   }, [selectedGameData, gameFromUrl]);
-  
+  useEffect(() =>{
+
+    //if (gameFromUrl) return
+   
+const dude34 = async () => {
+      
+      if (searchParams){
+        const search1 = searchParams.get('game')
+        const response11 = await fetch(`/api/room?room=${search1}`);
+        const result11 = await response11.json();
+        console.log("we are doing the dam thing", result11.data.offer);
+
+        try {
+          // Define callbacks for WebRTC events
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user", width: 640, height: 480 },
+            audio: true,
+          })
+    
+          if (localVideoRef.current) {
+            localVideoRef.current.srcObject = stream
+            setLocalStream(stream)
+          }
+      
+          const callbacks: PeerEventCallbacks = {
+            onSignal: (signal) => {
+              const signalStr = JSON.stringify(signal)
+              setAnswerSignal(signalStr)
+            },
+            onStream: (stream) => {
+              setRemoteStream(stream)
+              if (remoteVideoRef.current) {
+                remoteVideoRef.current.srcObject = stream
+              }
+              setConnectionStatus("connected")
+            },
+            onConnect: () => {
+              console.log("Peer connection established")
+            },
+            onClose: () => {
+              setConnectionStatus("disconnected")
+              setRemoteStream(null)
+            },
+            onError: (err) => {
+              setError(`WebRTC error: ${err.message}`)
+            },
+          }
+         
+          // Create WebRTC service and receive peer
+          const service = new WebRTCService(callbacks)
+          service.receivePeer(stream)
+          service.signal(JSON.parse(offerSignal))
+          setWebrtcService(service)
+          setConnectionStatus("connecting")
+        } catch (err) {
+          setError("Invalid offer signal format")
+        }
+        
+        console.log('dude please work123')
+      }else{
+        console.log('this is not working')
+      }
+    
+
+}
+dude34()
+  },[gameFromUrl])
   
   //end
 
@@ -377,7 +492,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
       return;
     }
 
-    const senderUUID = pubnub.getUUID(); // Call the method to get the UUID as a string
+    const senderUUID = Wallet2+''; // Call the method to get the UUID as a string
 
     pubnub.publish(
       {
