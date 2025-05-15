@@ -73,13 +73,9 @@ export default function VideoCall() {
     if (!searchParams) return; // Early return if null
    // const gameParam = searchParams.get('game');
     setGame(searchParams?.get('game') ?? null);
-  }, [searchParams]);
 
-  useEffect(() =>{
-    if (!searchParams) return; // Early return if null
-    const search = searchParams.get('game')
     async function setrt() { 
-      const response11 = await fetch(`/api/room?room=${search}`);
+      const response11 = await fetch(`/api/room?room=${game}`);
       const result11 = await response11.json();
       console.log("we are doing the dam thing", result11.data.offer);
       const url = new URL(response11.url);
@@ -90,6 +86,13 @@ export default function VideoCall() {
   
     }
     setrt()
+
+  }, [searchParams]);
+
+  useEffect(() =>{
+   // if (!searchParams) return; // Early return if null
+   // const search = searchParams.get('game')
+    
 
 
 
