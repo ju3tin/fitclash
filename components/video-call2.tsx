@@ -66,14 +66,21 @@ export default function VideoCall() {
 
   
   // Initialize TensorFlow.js and load the MoveNet model
+  const searchParams = useSearchParams()
+  
+  const [game, setGame] = useState<string | null>(null);
+  useEffect(() => {
+    if (!searchParams) return; // Early return if null
+    const gameParam = searchParams.get('game');
+    setGame(gameParam);
+  }, [searchParams]);
 
   useEffect(() =>{
-     const searchParams = useSearchParams()
-   
+    if (!searchParams) return; // Early return if null
     async function setrt() { 
-      if (searchParams)
-        {
-        const search = searchParams.get('game')
+      if (searchParams){
+         const search = searchParams.get('game')
+    
       const response11 = await fetch(`/api/room?room=${search}`);
       const result11 = await response11.json();
       console.log("we are doing the dam thing", result11.data.offer);
@@ -82,6 +89,7 @@ export default function VideoCall() {
       const hostname = url.hostname; // e.g., "example.com"
       const protocol = url.protocol; // e.g., "https:"    
       }
+  
     }
     setrt()
 
