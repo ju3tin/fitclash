@@ -27,6 +27,7 @@ import { useSearchParams } from 'next/navigation';
 export default function VideoCall() {
   
 
+  const searchParams = useSearchParams()
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -67,7 +68,6 @@ export default function VideoCall() {
   
   // Initialize TensorFlow.js and load the MoveNet model
 
-  const searchParams = useSearchParams()
   useEffect(() =>{
    
     async function setrt() { 
