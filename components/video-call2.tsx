@@ -68,11 +68,11 @@ export default function VideoCall() {
   // Initialize TensorFlow.js and load the MoveNet model
 
   useEffect(() =>{
-    const searchParams = useSearchParams()
+     const searchParams = useSearchParams()
    
     async function setrt() { 
       if (searchParams){
-      const search = searchParams.get('game')
+        const search = searchParams.get('game')
       const response11 = await fetch(`/api/room?room=${search}`);
       const result11 = await response11.json();
       console.log("we are doing the dam thing", result11.data.offer);
@@ -80,6 +80,8 @@ export default function VideoCall() {
       const host = url.host; // e.g., "example.com:3000"
       const hostname = url.hostname; // e.g., "example.com"
       const protocol = url.protocol; // e.g., "https:"    
+      }else{
+        
       }
   
     }
