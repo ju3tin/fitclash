@@ -22,7 +22,7 @@ import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-servi
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 import { headers } from 'next/headers';
 import { useSearchParams } from 'next/navigation';
-
+const searchParams = useSearchParams()
 
 export default function VideoCall() {
   
@@ -66,12 +66,12 @@ export default function VideoCall() {
 
   
   // Initialize TensorFlow.js and load the MoveNet model
-  const searchParams = useSearchParams()
+  
   
   const [game, setGame] = useState<string | null>(null);
   useEffect(() => {
     if (!searchParams) return; // Early return if null
-    const gameParam = searchParams.get('game');
+   // const gameParam = searchParams.get('game');
     setGame(searchParams?.get('game') ?? null);
   }, [searchParams]);
 
