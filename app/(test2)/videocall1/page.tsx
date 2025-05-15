@@ -1,5 +1,5 @@
 "use client"
-import VideoCall from "../../../components/video-call2"
+import VideoCall from "../../../components/video-call1"
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
 
 
