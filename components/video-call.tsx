@@ -229,6 +229,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                   // Extract just the offer
                   if (result11.success && result11.data && result11.data.offer) {
                     signalStr = JSON.stringify(result11.data.offer);
+                    setAnswerSignal(signalStr);
                   } else {
                     throw new Error("Offer not found in response");
                   }
