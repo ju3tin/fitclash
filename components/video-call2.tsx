@@ -22,7 +22,7 @@ import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-servi
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
 import { headers } from 'next/headers';
 import { useSearchParams } from 'next/navigation';
-const searchParams = useSearchParams()
+
 
 export default function VideoCall() {
   
@@ -66,33 +66,26 @@ export default function VideoCall() {
 
   
   // Initialize TensorFlow.js and load the MoveNet model
-  
-  
-  const [game, setGame] = useState<string | null>(null);
-  useEffect(() => {
-    if (!searchParams) return; // Early return if null
-   // const gameParam = searchParams.get('game');
-    setGame(searchParams?.get('game') ?? null);
 
+  useEffect(() =>{
+     const searchParams = useSearchParams()
+   
     async function setrt() { 
-      const response11 = await fetch(`/api/room?room=${game}`);
+      if (searchParams){
+        const search = searchParams.get('game')
+      const response11 = await fetch(`/api/room?room=${search}`);
       const result11 = await response11.json();
       console.log("we are doing the dam thing", result11.data.offer);
       const url = new URL(response11.url);
       const host = url.host; // e.g., "example.com:3000"
       const hostname = url.hostname; // e.g., "example.com"
       const protocol = url.protocol; // e.g., "https:"    
-      
+      }else{
+        
+      }
   
     }
     setrt()
-
-  }, [searchParams]);
-
-  useEffect(() =>{
-   // if (!searchParams) return; // Early return if null
-   // const search = searchParams.get('game')
-    
 
 
 
