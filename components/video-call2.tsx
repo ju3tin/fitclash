@@ -67,8 +67,8 @@ export default function VideoCall() {
   
   // Initialize TensorFlow.js and load the MoveNet model
 
+  const searchParams = useSearchParams()
   useEffect(() =>{
-    const searchParams = useSearchParams()
    
     async function setrt() { 
       if (searchParams){
