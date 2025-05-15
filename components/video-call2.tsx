@@ -69,16 +69,19 @@ export default function VideoCall() {
 
   useEffect(() =>{
     const searchParams = useSearchParams()
-    if (searchParams){
+   
+    async function setrt() { 
+      if (searchParams){
       const search = searchParams.get('game')
+      const response11 = await fetch(`/api/room?room=${search}`);
+      const result11 = await response11.json();
+      console.log("we are doing the dam thing", result11.data.offer);
+      const url = new URL(response11.url);
+      const host = url.host; // e.g., "example.com:3000"
+      const hostname = url.hostname; // e.g., "example.com"
+      const protocol = url.protocol; // e.g., "https:"    
       }
-    async function setrt() {
-    const response = await fetch('https://fitclash.vercel.app');
-    const url = new URL(response.url);
-  const host = url.host; // e.g., "example.com:3000"
-  const hostname = url.hostname; // e.g., "example.com"
-  const protocol = url.protocol; // e.g., "https:"
-
+  
     }
     setrt()
 
