@@ -72,7 +72,7 @@ export default function VideoCall() {
   useEffect(() => {
     if (!searchParams) return; // Early return if null
     const gameParam = searchParams.get('game');
-    setGame(gameParam);
+    setGame(searchParams?.get('game') ?? null);
   }, [searchParams]);
 
   useEffect(() =>{
