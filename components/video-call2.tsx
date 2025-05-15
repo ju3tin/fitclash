@@ -23,11 +23,10 @@ import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide
 import { headers } from 'next/headers';
 import { useSearchParams } from 'next/navigation';
 
-const searchParams = useSearchParams()
+
 export default function VideoCall() {
   
 
-  
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
@@ -69,6 +68,7 @@ export default function VideoCall() {
   // Initialize TensorFlow.js and load the MoveNet model
 
   useEffect(() =>{
+    const searchParams = useSearchParams()
    
     async function setrt() { 
       if (searchParams){
