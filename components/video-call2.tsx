@@ -8,7 +8,6 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 
 //import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { useSearchParams } from 'next/navigation';
 
 import { NextResponse } from 'next/server';
 import * as tf from "@tensorflow/tfjs"
@@ -21,9 +20,12 @@ import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
-
+import { headers } from 'next/headers';
+import { useSearchParams } from 'next/navigation';
+const searchParams = useSearchParams()
 
 export default function VideoCall() {
+  
 
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
@@ -61,9 +63,11 @@ export default function VideoCall() {
   const [isModelLoading, setIsModelLoading] = useState<boolean>(true)
   const [detector, setDetector] = useState<posedetection.PoseDetector | null>(null)
   const [error, setError] = useState<string | null>(null)
- 
-  const searchParams = useSearchParams()
- 
+
+  
+  // Initialize TensorFlow.js and load the MoveNet model
+  
+  
   const [game, setGame] = useState<string | null>(null);
   useEffect(() => {
     if (!searchParams) return; // Early return if null
@@ -85,7 +89,15 @@ export default function VideoCall() {
 
   }, [searchParams]);
 
-  // Initialize TensorFlow.js and load the MoveNet model
+  useEffect(() =>{
+   // if (!searchParams) return; // Early return if null
+   // const search = searchParams.get('game')
+    
+
+
+
+
+  })
   useEffect(() => {
     async function setupTensorflow() {
       try {
