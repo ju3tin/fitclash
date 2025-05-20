@@ -1,5 +1,5 @@
 "use client"
-import VideoCall from "../../../components/video-call1"
+import VideoCall from "../../../components/video-call1a"
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState, Suspense } from "react";
@@ -27,7 +27,7 @@ function VideoCallContent() {
           <p className="text-gray-600">Real-time human pose estimation with peer-to-peer video calls</p>
         </div>
 
-        <VideoCall />
+        <VideoCall searchParams={searchParams} />
         <RandomUrlGenerator />
         <div className="mt-8 text-sm text-gray-500">
           <h2 className="font-medium text-lg mb-2">About This Demo</h2>
