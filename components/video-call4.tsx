@@ -21,7 +21,7 @@ import { Textarea } from "./ui/textarea"
 import { drawPose } from "../utils/drawing"
 import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide-react"
-import { console } from "inspector";
+//import { console } from "inspector";
 
 
 export default function VideoCall() {
