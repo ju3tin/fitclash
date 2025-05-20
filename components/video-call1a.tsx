@@ -459,7 +459,14 @@ useEffect(() => {
         }
       };
       initializeStream();
-      setOfferSignal('youlive on crack')
+const setoffer1 = async () =>{
+  const response11 = await fetch(`/api/room?room=${searchParams}`);
+  const result11 = await response11.json();
+  console.log("we are doing the dam thing", result11.data.offer);
+  setOfferSignal(result11.data.offer)
+}
+  setoffer1()    
+  
     }
   }, [isTokenValid]);
 
