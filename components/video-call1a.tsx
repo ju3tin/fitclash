@@ -709,6 +709,7 @@ useEffect(() => {
                   Create Answer
                 </Button>
                 <Button
+                style={{display:'none'}}
                   onClick={createAnswer1}
                   size="sm"
                   ref={buttonRef}
