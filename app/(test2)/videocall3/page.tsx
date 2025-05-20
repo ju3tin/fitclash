@@ -2,9 +2,9 @@
 import VideoCall from "../../../components/video-call1"
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 
-export default function Home() {
+function VideoCallContent() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -14,8 +14,8 @@ export default function Home() {
     if (token) {
       console.log('Token from URL:', token);
       // Do something with token
-    }else{
-      console.log('ther is no toekn');
+    } else {
+      console.log('there is no token');
     }
   }, [searchParams]);
 
@@ -28,7 +28,7 @@ export default function Home() {
         </div>
 
         <VideoCall />
-<RandomUrlGenerator />
+        <RandomUrlGenerator />
         <div className="mt-8 text-sm text-gray-500">
           <h2 className="font-medium text-lg mb-2">About This Demo</h2>
           <p className="mb-2">
@@ -42,5 +42,13 @@ export default function Home() {
         </div>
       </div>
     </main>
-  )
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VideoCallContent />
+    </Suspense>
+  );
 }
