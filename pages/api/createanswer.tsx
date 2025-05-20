@@ -18,6 +18,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         
           }
 
+          try {
+            const updatedRoom = await Room.findOneAndUpdate(
+              { room },
+              {
+              /*  $set: { time, game, bet },
+                $push: {
+                  offer: { $each: offer || [] },
+                  answer: { $each: answer || [] }
+                }
+                  */
+              },
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+      
+            res.status(200).json({ success: true, data: updatedRoom });
+          } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Failed to update room' });
+          }
+
     }else {
         res.setHeader('Allow', ['PUT']);
         res.status(405).end(`Method ${req.method} Not Allowed`);
