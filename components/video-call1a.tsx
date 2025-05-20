@@ -1,5 +1,6 @@
 "use client"
 
+import { useSearchParams } from "next/navigation";
 import { useRef, useState, useEffect } from "react"
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
@@ -31,14 +32,7 @@ export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    if (!searchParams) return;
-    const game = searchParams.get('game');
-    if (game) {
-      console.log('Game from URL:', game);
-      // Handle game parameter
-    }
-  }, [searchParams]);
+  
 
   const generateUrl = () => {
     const randomString = Math.random().toString(36).substring(2, 10);
@@ -460,7 +454,10 @@ useEffect(() => {
       };
       initializeStream();
 const setoffer1 = async () =>{
-  const response11 = await fetch(`/api/room?room=${searchParams}`);
+  const toldyou = searchParams
+  const searchParams1 = useSearchParams();
+  const gameFromUrl5 = searchParams1 ? searchParams1.get("token") : null;
+  const response11 = await fetch(`/api/room?room=${gameFromUrl5}`);
   const result11 = await response11.json();
   console.log("we are doing the dam thing", result11.data.offer);
   setOfferSignal(result11.data.offer)
