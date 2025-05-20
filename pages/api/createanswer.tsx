@@ -5,8 +5,8 @@ import Room from '../../models/Room';
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   await connectDB();
 
-  if (req.method !== 'PUT') {
-    res.setHeader('Allow', ['PUT']);
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', ['POST']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 
@@ -33,6 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         $set: {
           answer,
           answerUpdated: true,
+          offerUpdated: true,
         },
       },
       { new: true } // Return the updated document
