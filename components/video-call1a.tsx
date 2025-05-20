@@ -61,6 +61,7 @@ export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps
   const [offerSignal, setOfferSignal] = useState<string>("")
   const [answerSignal, setAnswerSignal] = useState<string>("")
   const [isCopied, setIsCopied] = useState<boolean>(false)
+  const [dude34, dude341] = useState<boolean>(false)
 
   // State for TensorFlow.js and MoveNet
   const [isModelLoading, setIsModelLoading] = useState<boolean>(true)
@@ -508,7 +509,7 @@ useEffect(() => {
         console.log("we are doing the dam thing", result11.data.offer);
         const cunt = JSON.stringify(result11.data.offer)
         setOfferSignal(cunt)
-       
+        dude341(true)
      
       }
       setoffer1()
@@ -528,6 +529,37 @@ useEffect(() => {
     }
   }, [isTokenValid, buttonRef]);
 
+  useEffect(() => {
+    if (dude34) {
+      const doStuff = async () => {
+        // Replace this with your actual logic
+       // await fetch('/api/something', { method: 'POST' });
+      //  console.log('API call sent because dude34 === true');
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      
+      const raw = JSON.stringify({
+        "answer": answerSignal
+      });
+      
+      const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw
+      };
+      
+      fetch(`/api/createanswer?room=${searchParams}`, requestOptions)
+        .then((response) => response.text())
+        .then((result) => console.log(result))
+        .catch((error) => console.error(error));
+
+
+
+      };
+  
+      doStuff();
+    }
+  }, [dude34]);
   return (
     <div className="grid gap-6">
       {error && (
