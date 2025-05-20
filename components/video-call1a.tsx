@@ -253,10 +253,7 @@ useEffect(() => {
   const createAnswer1 = () => {
    
 
-    if (!offerSignal) {
-      setError("Please paste the offer signal first")
-      return
-    }
+  
 
     try {
       // Define callbacks for WebRTC events
