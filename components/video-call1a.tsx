@@ -75,6 +75,10 @@ export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps
   const [error, setError] = useState<string | null>(null)
 
   // Initialize TensorFlow.js and load the MoveNet model
+useEffect(() => {
+  
+})
+
   useEffect(() => {
     async function setupTensorflow() {
       try {
@@ -436,6 +440,27 @@ export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps
       if (remoteAnimationId) cancelAnimationFrame(remoteAnimationId)
     }
   }, [detector, localStream, remoteStream])
+
+  useEffect(() => {
+    if (isTokenValid) {
+      const initializeStream = async () => {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user", width: 640, height: 480 },
+            audio: true,
+          });
+          setLocalStream(stream);
+          if (localVideoRef.current) {
+            localVideoRef.current.srcObject = stream;
+          }
+        } catch (err) {
+          console.error("Error accessing webcam:", err);
+          setError("Could not access your camera. Please allow camera access and try again.");
+        }
+      };
+      initializeStream();
+    }
+  }, [isTokenValid]);
 
   return (
     <div className="grid gap-6">
