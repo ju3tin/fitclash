@@ -459,6 +459,7 @@ useEffect(() => {
         }
       };
       initializeStream();
+      setOfferSignal('youlive on crack')
     }
   }, [isTokenValid]);
 
