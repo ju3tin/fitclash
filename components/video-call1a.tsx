@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from "react"
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
 //import { GetServerSideProps } from 'next';
+import axios from 'axios';
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import type { ReadonlyURLSearchParams } from 'next/navigation';
 
@@ -291,6 +292,7 @@ useEffect(() => {
       service.signal(JSON.parse(offerSignal))
       setWebrtcService(service)
       setConnectionStatus("connecting")
+      dude341(true)
     } catch (err) {
       setError("Invalid offer signal format")
     }
@@ -509,7 +511,7 @@ useEffect(() => {
         console.log("we are doing the dam thing", result11.data.offer);
         const cunt = JSON.stringify(result11.data.offer)
         setOfferSignal(cunt)
-        dude341(true)
+       
      
       }
       setoffer1()
@@ -529,38 +531,35 @@ useEffect(() => {
     }
   }, [isTokenValid, buttonRef]);
 
-  useEffect(() => {
-    if (dude34) {
-      const doStuff = async () => {
-        // Replace this with your actual logic
-       // await fetch('/api/something', { method: 'POST' });
-      //  console.log('API call sent because dude34 === true');
-      const myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
-      
-      const raw = JSON.stringify({
-        "answer": answerSignal
-      });
-      
-      const requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        body: raw
-      };
-      const toldyou1 = searchParams?.toString()
-      const res1 = toldyou1?.replace("token=", "");
-      fetch(`/api/createanswer?room=${res1}`, requestOptions)
-        .then((response) => response.text())
-        .then((result) => console.log(result))
-        .catch((error) => console.error(error));
+ 
 
+useEffect(() => {
+  if (dude34) {
+    const doStuff = async () => {
+      try {
+        const payload = {
+          "answer": answerSignal
+        };
 
+        const toldyou1 = searchParams?.toString();
+        const res1 = toldyou1?.replace("token=", "");
 
-      };
-  
-      doStuff();
-    }
-  }, [dude34]);
+        const response = await axios.post(`/api/createanswer?room=${res1}`, payload, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        console.log(response.data);
+      } catch (error) {
+        console.error('API call failed:', error);
+      }
+    };
+
+    doStuff();
+  }
+}, [dude34]);
+
   return (
     <div className="grid gap-6">
       {error && (
