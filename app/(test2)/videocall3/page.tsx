@@ -1,7 +1,11 @@
 "use client"
-import VideoCall from "../../../components/video-call4"
+import dynamic from 'next/dynamic'
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
 
+// Dynamically import VideoCall with no SSR
+const VideoCall = dynamic(() => import('../../../components/video-call4'), {
+  ssr: false
+});
 
 export default function Home() {
   return (
@@ -13,7 +17,7 @@ export default function Home() {
         </div>
 
         <VideoCall />
-<RandomUrlGenerator />
+        <RandomUrlGenerator />
         <div className="mt-8 text-sm text-gray-500">
           <h2 className="font-medium text-lg mb-2">About This Demo</h2>
           <p className="mb-2">
