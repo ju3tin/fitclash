@@ -24,9 +24,10 @@ import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check } from "lucide
 
 interface VideoCallProps {
   searchParams: ReadonlyURLSearchParams | null;
+  isTokenValid: boolean;
 }
 
-export default function VideoCall({ searchParams }: VideoCallProps) {
+export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps) {
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 

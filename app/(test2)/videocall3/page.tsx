@@ -6,6 +6,7 @@ import { useEffect, useState, Suspense } from "react";
 
 function VideoCallContent() {
   const searchParams = useSearchParams();
+  const [isTokenValid, setIsTokenValid] = useState(false);
 
   useEffect(() => {
     if (!searchParams) return;
@@ -13,9 +14,11 @@ function VideoCallContent() {
 
     if (token) {
       console.log('Token from URL:', token);
+      setIsTokenValid(true);
       // Do something with token
     } else {
       console.log('there is no token');
+      setIsTokenValid(false);
     }
   }, [searchParams]);
 
@@ -25,9 +28,10 @@ function VideoCallContent() {
         <div className="mb-8 text-center">
           <h1 className="text-3xl font-bold mb-2">TensorFlow.js MoveNet with WebRTC</h1>
           <p className="text-gray-600">Real-time human pose estimation with peer-to-peer video calls</p>
+          <p className="text-gray-600">Token Status: {isTokenValid ? "Valid" : "Invalid"}</p>
         </div>
 
-        <VideoCall searchParams={searchParams} />
+        <VideoCall searchParams={searchParams} isTokenValid={isTokenValid} />
         <RandomUrlGenerator />
         <div className="mt-8 text-sm text-gray-500">
           <h2 className="font-medium text-lg mb-2">About This Demo</h2>
