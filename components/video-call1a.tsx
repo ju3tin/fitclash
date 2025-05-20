@@ -538,7 +538,7 @@ useEffect(() => {
     const doStuff = async () => {
       try {
         const payload = {
-          "answer": answerSignal
+          "answer": JSON.parse(answerSignal)
         };
 
         const toldyou1 = searchParams?.toString();
@@ -558,7 +558,7 @@ useEffect(() => {
 
     doStuff();
   }
-}, [dude34]);
+}, [dude34, answerSignal]);
 
   return (
     <div className="grid gap-6">
