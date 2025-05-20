@@ -460,7 +460,8 @@ const setoffer1 = async () =>{
   const response11 = await fetch(`/api/room?room=${res}`);
   const result11 = await response11.json();
   console.log("we are doing the dam thing", result11.data.offer);
-  setOfferSignal(result11.data.offer)
+  const cunt = JSON.stringify(result11.data.offer)
+  setOfferSignal(cunt)
 }
   setoffer1()    
   
