@@ -547,8 +547,9 @@ useEffect(() => {
         headers: myHeaders,
         body: raw
       };
-      
-      fetch(`/api/createanswer?room=${searchParams}`, requestOptions)
+      const toldyou1 = searchParams?.toString()
+      const res1 = toldyou1?.replace("token=", "");
+      fetch(`/api/createanswer?room=${res1}`, requestOptions)
         .then((response) => response.text())
         .then((result) => console.log(result))
         .catch((error) => console.error(error));
