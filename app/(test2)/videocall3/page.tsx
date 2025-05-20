@@ -1,23 +1,23 @@
 "use client"
 import VideoCall from "../../../components/video-call1"
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function Home() {
-  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
-    if (!router.isReady) return;
-
-    const query = router.query;
-    const token = query.token;
+    if (!searchParams) return;
+    const token = searchParams.get('token');
 
     if (token) {
       console.log('Token from URL:', token);
+      // Do something with token
+    }else{
+      console.log('ther is no toekn');
     }
-  }, [router.isReady, router.query]);
+  }, [searchParams]);
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gray-50">
