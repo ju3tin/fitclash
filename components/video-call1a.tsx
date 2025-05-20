@@ -31,7 +31,7 @@ export default function VideoCall({ searchParams, isTokenValid }: VideoCallProps
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
 
-  
+  const buttonRef = useRef<HTMLButtonElement>(null);
 
   const generateUrl = () => {
     const randomString = Math.random().toString(36).substring(2, 10);
@@ -238,6 +238,57 @@ useEffect(() => {
 
       // Create WebRTC service and receive peer
       const service = new WebRTCService(callbacks)
+      if (!localStream) {
+        throw new Error("Local stream not initialized");
+      }
+      service.receivePeer(localStream)
+      service.signal(JSON.parse(offerSignal))
+      setWebrtcService(service)
+      setConnectionStatus("connecting")
+    } catch (err) {
+      setError("Invalid offer signal format")
+    }
+  }
+
+  const createAnswer1 = () => {
+   
+
+    if (!offerSignal) {
+      setError("Please paste the offer signal first")
+      return
+    }
+
+    try {
+      // Define callbacks for WebRTC events
+      const callbacks: PeerEventCallbacks = {
+        onSignal: (signal) => {
+          const signalStr = JSON.stringify(signal)
+          setAnswerSignal(signalStr)
+        },
+        onStream: (stream) => {
+          setRemoteStream(stream)
+          if (remoteVideoRef.current) {
+            remoteVideoRef.current.srcObject = stream
+          }
+          setConnectionStatus("connected")
+        },
+        onConnect: () => {
+          console.log("Peer connection established")
+        },
+        onClose: () => {
+          setConnectionStatus("disconnected")
+          setRemoteStream(null)
+        },
+        onError: (err) => {
+          setError(`WebRTC error: ${err.message}`)
+        },
+      }
+
+      // Create WebRTC service and receive peer
+      const service = new WebRTCService(callbacks)
+      if (!localStream) {
+        throw new Error("Local stream not initialized");
+      }
       service.receivePeer(localStream)
       service.signal(JSON.parse(offerSignal))
       setWebrtcService(service)
@@ -452,21 +503,33 @@ useEffect(() => {
         }
       };
       initializeStream();
-const setoffer1 = async () =>{
- // const toldyou = searchParams?.toString
-  //const params = new URLSearchParams(searchParams.toString());
-  const toldyou = searchParams?.toString()
-  const res = toldyou?.replace("token=", "");
-  const response11 = await fetch(`/api/room?room=${res}`);
-  const result11 = await response11.json();
-  console.log("we are doing the dam thing", result11.data.offer);
-  const cunt = JSON.stringify(result11.data.offer)
-  setOfferSignal(cunt)
-}
-  setoffer1()    
-  
+      const setoffer1 = async () => {
+        const toldyou = searchParams?.toString()
+        const res = toldyou?.replace("token=", "");
+        const response11 = await fetch(`/api/room?room=${res}`);
+        const result11 = await response11.json();
+        console.log("we are doing the dam thing", result11.data.offer);
+        const cunt = JSON.stringify(result11.data.offer)
+        setOfferSignal(cunt)
+       
+     
+      }
+      setoffer1()
+      const  setanswer5 = async () => {
+        buttonRef.current?.click();
+        //  setConnectionStatus("disconnected"); // Ensure connection status is disconnected
+          setTimeout(() => {
+            if (buttonRef.current) {
+              buttonRef.current.click();
+            } else {
+              console.log("Button is disabled, cannot click");
+            }
+          }, 3000);
+      }     
+      // Add a small delay to ensure state updates have completed
+      setanswer5()
     }
-  }, [isTokenValid]);
+  }, [isTokenValid, buttonRef]);
 
   return (
     <div className="grid gap-6">
@@ -641,9 +704,18 @@ const setoffer1 = async () =>{
                   onClick={createAnswer}
                   disabled={!localStream || !offerSignal || connectionStatus !== "disconnected"}
                   size="sm"
+                 
                 >
                   Create Answer
                 </Button>
+                <Button
+                  onClick={createAnswer1}
+                  size="sm"
+                  ref={buttonRef}
+                >
+                  Create Answer1
+                </Button>
+
               </div>
             </div>
 
