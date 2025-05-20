@@ -1,6 +1,5 @@
 "use client"
 
-import { useSearchParams } from "next/navigation";
 import { useRef, useState, useEffect } from "react"
 //import clientPromise from '../lib/mongodb';
 //import client from "../lib/mongodb";
@@ -454,10 +453,11 @@ useEffect(() => {
       };
       initializeStream();
 const setoffer1 = async () =>{
-  const toldyou = searchParams
-  const searchParams1 = useSearchParams();
-  const gameFromUrl5 = searchParams1 ? searchParams1.get("token") : null;
-  const response11 = await fetch(`/api/room?room=${gameFromUrl5}`);
+ // const toldyou = searchParams?.toString
+  //const params = new URLSearchParams(searchParams.toString());
+  const toldyou = searchParams?.toString()
+  const res = toldyou?.replace("token=", "");
+  const response11 = await fetch(`/api/room?room=${res}`);
   const result11 = await response11.json();
   console.log("we are doing the dam thing", result11.data.offer);
   setOfferSignal(result11.data.offer)
