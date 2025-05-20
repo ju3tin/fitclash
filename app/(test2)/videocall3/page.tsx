@@ -9,20 +9,15 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!router.isReady) return; // wait for router to be ready
+    if (!router.isReady) return;
 
     const query = router.query;
-
-    // Example: get ?token=abc123
     const token = query.token;
 
     if (token) {
       console.log('Token from URL:', token);
-      // Do something with token
     }
-
-  }, [router.isReady, router.query]); // Rerun if query or readiness changes
-
+  }, [router.isReady, router.query]);
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gray-50">
