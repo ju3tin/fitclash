@@ -456,6 +456,9 @@ const dude34 = async () => {
 dude34()
   },[gameFromUrl])
   
+  useEffect(() => {
+
+  }, [])
   //end
 
   useEffect(() => {
