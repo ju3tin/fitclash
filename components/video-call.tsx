@@ -132,6 +132,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
           setUrl(newUrl4);
           setCopied(false);
+          doned(true);
           // working this one Justin update
           useEffect(() => {
             let intervalId: NodeJS.Timeout;
@@ -540,6 +541,7 @@ dude34()
 
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [done, doned] = useState(false);
 
   const generateUrl = () => {
    
