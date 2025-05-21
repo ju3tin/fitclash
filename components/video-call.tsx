@@ -518,6 +518,7 @@ dude34()
 
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
+  const [done2, done2d] = useState(false)
 
   const generateUrl = () => {
    
