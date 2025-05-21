@@ -1,6 +1,7 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
+import axios from 'axios';
 import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
 //import MessageSender from './pubnunb';
 //import { useSearchParams } from 'next/navigation'
@@ -64,6 +65,8 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
   
 
   //pubnub
+  const [offerUpdated, setOfferUpdated] = useState(false);
+  //const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
   const [messages, setMessages] = useState<{ text: string; sender: string }[]>([]);
@@ -457,6 +460,27 @@ dude34()
   },[gameFromUrl])
   
   useEffect(() => {
+    if(done2){
+      let intervalId: NodeJS.Timeout;
+
+      const checkOfferStatus = async () => {
+        try {
+          const response = await axios.get('/api/your-endpoint'); // Replace with your actual endpoint
+          if (response.data.offerUpdated) {
+            setOfferUpdated(true);
+            clearInterval(intervalId);
+          }
+        } catch (err) {
+          console.error('Error checking offer status:', err);
+          setError('Error fetching offer status');
+        }
+      };
+  
+      intervalId = setInterval(checkOfferStatus, 2000);
+  
+      return () => clearInterval(intervalId); // Cleanup on unmount
+
+    }
 
   }, [])
   //end
