@@ -628,6 +628,7 @@ dude34()
           const response = await axios.get(`/api/room?room=${randomString}`); // Replace with your actual endpoint
           if (response.data.answerUpdated === true) {
             setOfferUpdated(true);
+            console.log('this is working dude991')
             clearInterval(intervalId);
           }
         } catch (err) {
