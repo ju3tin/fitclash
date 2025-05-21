@@ -134,7 +134,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           setCopied(false);
           doned(true);
           // working this one Justin update
-          useEffect(() => {
+  /*        useEffect(() => {
             let intervalId: NodeJS.Timeout;
         
             const checkOfferStatus = async () => {
@@ -154,7 +154,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
         
             return () => clearInterval(intervalId); // Cleanup on unmount
           }, []);
-
+*/
           //
         } else {
           console.error("Data is not available.");
