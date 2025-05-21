@@ -462,7 +462,7 @@ dude34()
   useEffect(() => {
     if(done2){
       let intervalId: NodeJS.Timeout;
-
+console.log('this is working dude99')
       const checkOfferStatus = async () => {
         try {
           const response = await axios.get('/api/your-endpoint'); // Replace with your actual endpoint
