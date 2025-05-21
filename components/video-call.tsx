@@ -111,7 +111,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
         myHeaders.append("Content-Type", "application/json");
     
         console.log('this is my offer' + data.offerread); // Consider clarifying this log
-    
+    done2d(true)
         const raw = JSON.stringify({
           room: data.room,
           offerUpdated: "true",
@@ -133,6 +133,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
           setUrl(newUrl4);
           setCopied(false);
+          done2d(true)
         } else {
           console.error("Data is not available.");
         }
@@ -243,45 +244,45 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
                   // Extract just the offer
                   if (result11.success && result11.data && result11.data.offer) {
                     signalStr = JSON.stringify(result11.data.offer);
-                  console.log('this is for the user')
-                  try {
-                    // Define callbacks for WebRTC events
-                    const callbacks: PeerEventCallbacks = {
-                      onSignal: (signal) => {
-                        const signalStr = JSON.stringify(signal)
-                        setAnswerSignal(signalStr)
-                      },
-                      onStream: (stream) => {
-                        setRemoteStream(stream)
-                        if (remoteVideoRef.current) {
-                          remoteVideoRef.current.srcObject = stream
-                        }
-                        setConnectionStatus("connected")
-                      },
-                      onConnect: () => {
-                        console.log("Peer connection established")
-                      },
-                      onClose: () => {
-                        setConnectionStatus("disconnected")
-                        setRemoteStream(null)
-                      },
-                      onError: (err) => {
-                        setError(`WebRTC error: ${err.message}`)
-                      },
-                    }
+                    console.log('this is for the user')
+                    try {
+                      // Define callbacks for WebRTC events
+                      const callbacks: PeerEventCallbacks = {
+                        onSignal: (signal) => {
+                          const signalStr = JSON.stringify(signal)
+                          setAnswerSignal(signalStr)
+                        },
+                        onStream: (stream) => {
+                          setRemoteStream(stream)
+                          if (remoteVideoRef.current) {
+                            remoteVideoRef.current.srcObject = stream
+                          }
+                          setConnectionStatus("connected")
+                        },
+                        onConnect: () => {
+                          console.log("Peer connection established")
+                        },
+                        onClose: () => {
+                          setConnectionStatus("disconnected")
+                          setRemoteStream(null)
+                        },
+                        onError: (err) => {
+                          setError(`WebRTC error: ${err.message}`)
+                        },
+                      }
               
-                    // Create WebRTC service and receive peer
-                    const service = new WebRTCService(callbacks)
-                    if (localStream) {
-                    service.receivePeer(localStream)
-                  }
-                    service.signal(JSON.parse(offerSignal))
-                    setWebrtcService(service)
-                    setConnectionStatus("connecting")
-                  } catch (err) {
-                    setError("Invalid offer signal format")
-                  }
-                   // setAnswerSignal(signalStr);
+                      // Create WebRTC service and receive peer
+                      const service = new WebRTCService(callbacks)
+                      if (localStream) {
+                      service.receivePeer(localStream)
+                    }
+                      service.signal(JSON.parse(offerSignal))
+                      setWebrtcService(service)
+                      setConnectionStatus("connecting")
+                    } catch (err) {
+                      setError("Invalid offer signal format")
+                    }
+                     // setAnswerSignal(signalStr);
                   } else {
                     throw new Error("Offer not found in response");
                   }
@@ -459,30 +460,6 @@ const dude34 = async () => {
 dude34()
   },[gameFromUrl])
   
-  useEffect(() => {
-    if(done2){
-      let intervalId: NodeJS.Timeout;
-console.log('this is working dude99')
-      const checkOfferStatus = async () => {
-        try {
-          const response = await axios.get('/api/your-endpoint'); // Replace with your actual endpoint
-          if (response.data.offerUpdated) {
-            setOfferUpdated(true);
-            clearInterval(intervalId);
-          }
-        } catch (err) {
-          console.error('Error checking offer status:', err);
-          setError('Error fetching offer status');
-        }
-      };
-  
-      intervalId = setInterval(checkOfferStatus, 2000);
-  
-      return () => clearInterval(intervalId); // Cleanup on unmount
-
-    }
-
-  }, [])
   //end
 
   useEffect(() => {
@@ -638,6 +615,34 @@ console.log('this is working dude99')
       }
     }
   }, [])
+
+
+
+  useEffect(() => {
+    if(done2){
+      console.log('this is working dude99')
+      let intervalId: NodeJS.Timeout;
+
+      const checkOfferStatus = async () => {
+        try {
+          const response = await axios.get(`/api/room?room=${randomString}`); // Replace with your actual endpoint
+          if (response.data.answerUpdated === true) {
+            setOfferUpdated(true);
+            clearInterval(intervalId);
+          }
+        } catch (err) {
+          console.error('Error checking offer status:', err);
+          setError('Error fetching offer status');
+        }
+      };
+  
+      intervalId = setInterval(checkOfferStatus, 2000);
+  
+      return () => clearInterval(intervalId); // Cleanup on unmount
+
+    }
+
+  }, [done2, gameFromUrl])
 
   // Start local webcam
   const startWebcam = async () => {
