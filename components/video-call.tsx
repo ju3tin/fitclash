@@ -525,6 +525,7 @@ dude34()
     const newUrl = `https://fitclash.vercel.app/videocall?game=${randomString}`;
     setUrl(newUrl);
     setCopied(false);
+    done2d(true);
   };
 
  
