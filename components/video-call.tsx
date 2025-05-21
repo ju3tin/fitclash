@@ -1,7 +1,6 @@
 "use client"
 
 import { useRef, useState, useEffect } from "react"
-import axios from 'axios';
 import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
 //import MessageSender from './pubnunb';
 //import { useSearchParams } from 'next/navigation'
@@ -14,8 +13,7 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 
 //import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-const [offerUpdated, setOfferUpdated] = useState(false);
-const [error, setError] = useState(null)
+
 import { NextResponse } from 'next/server';
 import * as tf from "@tensorflow/tfjs"
 import * as posedetection from "@tensorflow-models/pose-detection"
@@ -132,30 +130,6 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
           const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
           setUrl(newUrl4);
           setCopied(false);
-          doned(true);
-          // working this one Justin update
-  /*        useEffect(() => {
-            let intervalId: NodeJS.Timeout;
-        
-            const checkOfferStatus = async () => {
-              try {
-                const response = await axios.get('/api/your-endpoint'); // Replace with your actual endpoint
-                if (response.data.offerUpdated) {
-                  setOfferUpdated(true);
-                  clearInterval(intervalId);
-                }
-              } catch (err) {
-                console.error('Error checking offer status:', err);
-                setError('Error fetching offer status');
-              }
-            };
-        
-            intervalId = setInterval(checkOfferStatus, 2000);
-        
-            return () => clearInterval(intervalId); // Cleanup on unmount
-          }, []);
-*/
-          //
         } else {
           console.error("Data is not available.");
         }
@@ -541,7 +515,6 @@ dude34()
 
   const [url, setUrl] = useState('');
   const [copied, setCopied] = useState(false);
-  const [done, doned] = useState(false);
 
   const generateUrl = () => {
    
