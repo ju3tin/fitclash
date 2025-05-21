@@ -616,34 +616,28 @@ dude34()
     }
   }, [])
 
-
-
   useEffect(() => {
-    if(done2){
-      console.log('this is working dude99')
-      let intervalId: NodeJS.Timeout;
-
-      const checkOfferStatus = async () => {
-        try {
-          const response = await axios.get(`/api/room?room=${randomString}`); // Replace with your actual endpoint
-          if (response.data.answerUpdated === true) {
-            setOfferUpdated(true);
-            console.log('this is working dude991')
-            clearInterval(intervalId);
-          }
-        } catch (err) {
-          console.error('Error checking offer status:', err);
-          setError('Error fetching offer status');
+    if (!done2) return;
+  
+    console.log('this is working dude99');
+  
+    const intervalId = setInterval(async () => {
+      try {
+        const response = await axios.get(`/api/room?room=${randomString}`);
+        if (response.data.answerUpdated) {
+          setOfferUpdated(true);
+          console.log('this is working dude991');
+          clearInterval(intervalId); // ✅ Clear interval inside the same closure
         }
-      };
+      } catch (err) {
+        console.error('Error checking offer status:', err);
+        setError('Error fetching offer status');
+      }
+    }, 2000);
   
-      intervalId = setInterval(checkOfferStatus, 2000);
+    return () => clearInterval(intervalId); // ✅ Cleanup on unmount
+  }, [done2, gameFromUrl]);
   
-      return () => clearInterval(intervalId); // Cleanup on unmount
-
-    }
-
-  }, [done2, gameFromUrl])
 
   // Start local webcam
   const startWebcam = async () => {
