@@ -66,6 +66,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
 
   //pubnub
   const [offerUpdated, setOfferUpdated] = useState(false);
+  const buttonRef2 = useRef<HTMLButtonElement>(null);
   //const [error, setError] = useState(null);
   const [message, setMessage] = useState('');
   const [randomString, setRandomString] = useState(Math.random().toString(36).substring(2, 10));
@@ -624,19 +625,40 @@ dude34()
     const intervalId = setInterval(async () => {
       try {
         const response = await axios.get(`/api/room?room=${randomString}`);
-        if (response.data.answerUpdated) {
+        const jsonString = JSON.stringify(response.data);
+        console.log('this is the json string', jsonString);
+        if (!jsonString.includes('"offerUpdated":false}}')) {
           setOfferUpdated(true);
           console.log('this is working dude991');
-          clearInterval(intervalId); // ✅ This now refers to the correct interval
+          const response12 = await axios.get(`/api/room?room=${randomString}`);
+          console.log('Full response12:', response12.data); // Debug log
+          
+          // Check if answer exists in the response
+          if (response12.data && response12.data.data && response12.data.data.answer) {
+            const answerstring = JSON.stringify(response12.data.data.answer);
+            console.log('this is the answer string', answerstring);
+            setAnswerSignal(answerstring);
+            buttonRef2.current?.click();
+            setTimeout(() => {
+              if (buttonRef2.current) {
+                buttonRef2.current.click();
+              } else {
+                console.log("Button is disabled, cannot click");
+              }
+            }, 3000);
+          } else {
+            console.error('Answer not found in response:', response12.data);
+            setError('Answer signal not found in response');
+          }
+          clearInterval(intervalId);
         }
       } catch (err) {
         console.error('Error checking offer status:', err);
         setError('Error fetching offer status');
-        clearInterval(intervalId); // ✅ Stop polling on error too
+        clearInterval(intervalId);
       }
     }, 2000);
   
-    // Cleanup function on unmount or when deps change
     return () => {
       clearInterval(intervalId);
     };
@@ -1294,6 +1316,7 @@ lets win
               </div>
               <div className="flex justify-end">
                 <Button
+                ref={buttonRef2}
                   onClick={connectWithAnswer}
                   disabled={!webrtcService || !answerSignal || connectionStatus !== "connecting"}
                   size="sm"
