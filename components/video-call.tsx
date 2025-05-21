@@ -627,16 +627,21 @@ dude34()
         if (response.data.answerUpdated) {
           setOfferUpdated(true);
           console.log('this is working dude991');
-          clearInterval(intervalId); // ✅ Clear interval inside the same closure
+          clearInterval(intervalId); // ✅ This now refers to the correct interval
         }
       } catch (err) {
         console.error('Error checking offer status:', err);
         setError('Error fetching offer status');
+        clearInterval(intervalId); // ✅ Stop polling on error too
       }
     }, 2000);
   
-    return () => clearInterval(intervalId); // ✅ Cleanup on unmount
-  }, [done2, gameFromUrl]);
+    // Cleanup function on unmount or when deps change
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [done2, randomString]);
+  
   
 
   // Start local webcam
