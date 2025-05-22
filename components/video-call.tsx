@@ -131,7 +131,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
         console.log(result);
     
         if (data) {
-          const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
+          const newUrl4 = `https://fitclash.vercel.app/videocall3?token=${data.room}`;
           setUrl(newUrl4);
           setCopied(false);
           done2d(true)
@@ -524,7 +524,7 @@ dude34()
 
   const generateUrl = () => {
    
-    const newUrl = `https://fitclash.vercel.app/videocall?game=${randomString}`;
+    const newUrl = `https://fitclash.vercel.app/videocall3?token=${randomString}`;
     setUrl(newUrl);
     setCopied(false);
     done2d(true);
@@ -1042,7 +1042,7 @@ dude34()
 
   const generateUrl1 = (data: GameSessionData) => {
     if (data) {
-      const newUrl4 = `https://fitclash.vercel.app/videocall?game=${data.room}`;
+      const newUrl4 = `https://fitclash.vercel.app/videocall3?token=${data.room}`;
       setUrl(newUrl4);
       setCopied(false);
     } else {
