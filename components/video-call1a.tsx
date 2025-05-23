@@ -684,7 +684,7 @@ useEffect(() => {
       </div>
 
       {/* WebRTC Connection Controls */}
-      <Card>
+      <Card style={{display:'none'}}>
         <CardContent className="p-6">
           <div className="grid gap-4">
             <div className="grid gap-2">
