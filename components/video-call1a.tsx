@@ -713,8 +713,8 @@ useEffect(() => {
     </div>
               
             
-              <Label htmlFor="offer">Offer Signal</Label>
-              <div className="flex gap-2">
+              <Label style={{display:'none'}} htmlFor="offer">Offer Signal</Label>
+              <div style={{display:'none'}} className="flex gap-2">
                 <Textarea
                   id="offer"
                   value={offerSignal}
@@ -728,7 +728,7 @@ useEffect(() => {
                   </Button>
                 )}
               </div>
-              <div className="flex justify-end">
+              <div  style={{display:'none'}} className="flex justify-end">
                 <Button
                   onClick={createAnswer}
                   disabled={!localStream || !offerSignal || connectionStatus !== "disconnected"}
@@ -749,7 +749,7 @@ useEffect(() => {
               </div>
             </div>
 
-            <div className="grid gap-2">
+            <div style={{display:'none'}} className="grid gap-2">
               <Label htmlFor="answer">Answer Signal</Label>
               <div className="flex gap-2">
                 <Textarea
@@ -785,8 +785,8 @@ useEffect(() => {
       </Card>
 
       {/* Instructions */}
-      <Card>
-        <CardContent className="p-6">
+      <Card style={{display:'none'}}>
+        <CardContent  className="p-6">
           <h3 className="text-lg font-medium mb-2">How to use:</h3>
           <ol className="list-decimal list-inside space-y-2 text-sm">
             <li>Both users: Start your camera</li>

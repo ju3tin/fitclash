@@ -1204,7 +1204,7 @@ dude34()
           </CardContent>
         </Card>
       </div>
-      <div className="p-4 border rounded space-y-4 max-w-md w-full">
+      <div style={{display:'none'}} className="p-4 border rounded space-y-4 max-w-md w-full">
       <div className="h-64 overflow-y-auto border rounded p-2 bg-gray-50">
         {messages.map((msg, idx) => (
           <div key={idx} className="mb-2">
@@ -1229,7 +1229,7 @@ dude34()
         Send Message
       </button>
     </div> 
-    <div className="p-4 border rounded space-y-4 max-w-md w-full">
+    <div style={{display:'none'}} className="p-4 border rounded space-y-4 max-w-md w-full">
 
 {/* 
 lets win
@@ -1260,8 +1260,8 @@ lets win
     )}
   
 
-  <Label htmlFor="offer">Offer Signal</Label>
-  <div className="flex gap-2">
+  <Label style={{display:'none'}} htmlFor="offer">Offer Signal</Label>
+  <div style={{display:'none'}} className="flex gap-2">
     <Textarea
       id="offer"
       value={offerSignal}
@@ -1281,7 +1281,7 @@ lets win
     )}
   </div>
 
-  <div className="flex justify-end">
+  <div style={{display:'none'}} className="flex justify-end">
     <Button
       onClick={createAnswer}
       disabled={!localStream || !offerSignal || connectionStatus !== "disconnected"}
@@ -1293,7 +1293,7 @@ lets win
 </div>
 
 
-            <div className="grid gap-2">
+            <div style={{display:'none'}} className="grid gap-2">
               <Label htmlFor="answer">Answer Signal</Label>
               <div className="flex gap-2">
                 <Textarea
