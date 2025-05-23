@@ -1,10 +1,10 @@
-import { useSocket } from '@/context/SocketProvider';
+import { useSocket } from '../../../context/SocketProvider';
 import { useRouter } from 'next/router';
 import React, { useCallback, useEffect, useState } from 'react'
-import peer from '@/service/peer';
+import peer from '../../../services/peer';
 import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
-import VideoPlayer from '@/components/VideoPlayer';
+import VideoPlayer from '../../../components/VideoPlayer';
 import CallHandleButtons from '@/components/CallHandleButtons';
 
 const RoomPage = () => {
