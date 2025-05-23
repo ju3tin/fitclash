@@ -46,7 +46,7 @@ function VideoCallContent() {
 
         <VideoCall searchParams={searchParams} isTokenValid={isTokenValid} />
        
-        <div className="mt-8 text-sm text-gray-500">
+        <div style={{display:'none'}} className="mt-8 text-sm text-gray-500">
           <h2 className="font-medium text-lg mb-2">About This Demo</h2>
           <p className="mb-2">
             This application combines TensorFlow.js MoveNet for pose detection with WebRTC for peer-to-peer video
