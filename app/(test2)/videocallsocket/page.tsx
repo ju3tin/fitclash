@@ -11,11 +11,30 @@ function VideoCallContent() {
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      let data = await axios.get('https://webrtcsocket.onrender.com/api/data');
-      console.log(data.data);
+      try {
+        const response = await axios.get('/api/apicall1');
+        console.log(response.data);
+
+        // Stop polling if status is 200
+        if (response.status === 200) {
+          clearInterval(intervalId);
+          setWebrtc(true);
+          console.log('Polling stopped: Status 200 received');
+        }
+      } catch (error) {
+        console.error('API error:', error);
+      }
     }, 1000);
+
+    // Cleanup on component unmount
     return () => clearInterval(intervalId);
   }, []);
+
+  useEffect(() => {
+    if (webrtc) {
+      console.log('Webrtc is true');
+    }
+  }, [webrtc]);
 
   useEffect(() => {
     if (!searchParams) return;
