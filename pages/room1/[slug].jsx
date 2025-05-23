@@ -6,7 +6,7 @@ import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import VideoPlayer from '../../components/VideoPlayer';
 import CallHandleButtons from '../../components/CallHandleButtons';
-
+/*
 const RoomPage = () => {
     const socket = useSocket();
     const [remoteSocketId, setRemoteSocketId] = useState(null);
@@ -252,5 +252,12 @@ const RoomPage = () => {
 
     )
 }
-
+*/
+const RoomPage = () => {
+    return (
+        <div>
+            <h1>Room Page</h1>
+        </div>
+    )
+}
 export default RoomPage;
