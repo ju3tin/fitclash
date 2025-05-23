@@ -2,12 +2,28 @@
 import VideoCall from "../../../components/video-call1a"
 import RandomUrlGenerator from '../../../components/RandomUrlGenerator';
 import { useSearchParams } from "next/navigation";
+import { io } from "socket.io-client";
 import { useEffect, useState, Suspense } from "react";
 import axios from 'axios';
 function VideoCallContent() {
   const searchParams = useSearchParams();
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [webrtc, setWebrtc] = useState(false);
+  const [socket, setSocket] = useState(null);
+  const [room, setRoom] = useState(null);
+  const [peer, setPeer] = useState(null);
+  const [stream, setStream] = useState(null);
+  const [localStream, setLocalStream] = useState(null);
+  const [remoteStream, setRemoteStream] = useState(null);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isDisconnected, setIsDisconnected] = useState(false);
+  const [player1, setPlayer1] = useState<string | null>(null);
+  const [player2, setPlayer2] = useState<string | null>(null);
+  const [isPlayer1, setIsPlayer1] = useState(false);
+  const [isPlayer2, setIsPlayer2] = useState(false);
+  const [isHost, setIsHost] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  
 
   useEffect(() => {
     const intervalId = setInterval(async () => {
@@ -33,6 +49,10 @@ function VideoCallContent() {
   useEffect(() => {
     if (webrtc) {
       console.log('Webrtc is true');
+      const socket = io('https://webrtcsocket.onrender.com');
+      socket.on('connect', () => {
+        console.log('Connected to server');
+      });
     }
   }, [webrtc]);
 
@@ -44,11 +64,17 @@ function VideoCallContent() {
       console.log('Token from URL:', token);
       setIsTokenValid(true);
       // Do something with token
+      setIsPlayer2(true);
+      setPlayer2('player2');
+      console.log('i am', player2);
     } else {
+      setIsPlayer1(true);
+      setPlayer1('player1');
+      console.log('i am', player1);
       console.log('there is no token');
       setIsTokenValid(false);
     }
-  }, [searchParams]);
+  }, [searchParams, player1, player2]);
 
   return (
     <main className="min-h-screen p-4 md:p-8 bg-gray-50">
