@@ -33,7 +33,7 @@ export default function Test5() {
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4">User Data</h1>
       <div className="grid gap-4">
-        {data.users.map(user => (
+      {data?.users?.map(user => (
           <div key={user.id} className="border p-4 rounded shadow">
             <h2 className="text-xl font-semibold">{user.name}</h2>
             <p className="text-gray-600">{user.email}</p>
@@ -43,9 +43,13 @@ export default function Test5() {
       </div>
       <div className="mt-4 p-4 bg-gray-100 rounded">
         <h2 className="text-xl font-semibold mb-2">Stats</h2>
-        <p>Total Users: {data.stats.totalUsers}</p>
-        <p>Active Users: {data.stats.activeUsers}</p>
-        <p>Last Updated: {new Date(data.stats.lastUpdated).toLocaleString()}</p>
+        {data?.stats && (
+          <>
+            <p>Total Users: {data.stats.totalUsers}</p>
+            <p>Active Users: {data.stats.activeUsers}</p>
+            <p>Last Updated: {new Date(data.stats.lastUpdated).toLocaleString()}</p>
+          </>
+        )}
       </div>
     </div>
   );
