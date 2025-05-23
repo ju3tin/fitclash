@@ -29,19 +29,10 @@ function VideoCallContent() {
         <div className="mb-8 text-center flex flex-col items-center">
         <img src="/images/logo1.png" width="20%" className="w-1/5" />
         <h1 className="text-gray-600">Test Your Fitness Against Your Friends with Our Games</h1>
-        <h2 className="text-gray-600">Click The Button Below To Start.</h2>
-          <p>
-            <button
-            
-              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 flex items-center"
-            >
-              <img src="/images/gameicon.svg" alt="My Icon" className="w-5 h-5 mr-2" />
-              Start game
-            </button>
-          </p>
+      
         
       </div>
-          <p className="text-gray-600">Token Status: {isTokenValid ? "Valid" : "Invalid"}</p>
+          <p style={{display:'none'}} className="text-gray-600">Token Status: {isTokenValid ? "Valid" : "Invalid"}</p>
         </div>
 
         <VideoCall searchParams={searchParams} isTokenValid={isTokenValid} />
