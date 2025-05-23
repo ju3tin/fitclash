@@ -5,7 +5,7 @@ import peer from '../../../services/peer';
 import CallIcon from '@mui/icons-material/Call';
 import VideoCallIcon from '@mui/icons-material/VideoCall';
 import VideoPlayer from '../../../components/VideoPlayer';
-import CallHandleButtons from '@/components/CallHandleButtons';
+import CallHandleButtons from '../../../components/CallHandleButtons';
 
 const RoomPage = () => {
     const socket = useSocket();
