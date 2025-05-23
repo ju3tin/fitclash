@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useContext, useMemo } from 'react'
 import { io } from "socket.io-client";
 
@@ -9,7 +10,13 @@ export const useSocket = () => {
 }
 
 const SocketProvider = (props) => {
-    const socket = useMemo(() => io("webrtcsocket.onrender.com/"), []);
+    const socket = useMemo(() => {
+        if (typeof window !== 'undefined') {
+            return io("webrtcsocket.onrender.com/");
+        }
+        return null;
+    }, []);
+    
     return (
         <SocketContext.Provider value={socket}>
             {props.children}
