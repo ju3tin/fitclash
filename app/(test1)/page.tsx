@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 export default function Home() {
   function gotopage() {
-    window.location.href = "/app1";
+    window.location.href = "/videocall";
 
   }
 
