@@ -102,6 +102,7 @@
     "react-toastify": "^11.0.3",
     "react-use-websocket": "^3.0.0",
     "react-webcam": "^7.2.0",
+    "recharts": "^2.15.4",
     "shadcn-ui": "^0.9.5",
     "simple-peer": "^9.11.1",
     "socket.io": "^4.8.1",
