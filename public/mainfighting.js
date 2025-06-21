@@ -1,6 +1,6 @@
 kaboom({
     width: 1280,
-    height: 720,
+    height: window.innerHeight,
     scale: 0.7,
     debug: false
 })

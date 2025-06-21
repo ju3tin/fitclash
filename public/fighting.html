@@ -5,6 +5,26 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fighting game</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #111;
+        }
+        canvas {
+            display: block;
+            box-shadow: 0 0 32px #0008;
+            border-radius: 12px;
+            background: #222;
+        }
+    </style>
 </head>
 <body>
     <script src="https://unpkg.com/kaboom@3000.0.0-beta.2/dist/kaboom.js"></script>
