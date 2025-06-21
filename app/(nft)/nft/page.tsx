@@ -5,7 +5,7 @@ import { WalletProvider } from "../../../components/wallet-provider"
 import { FitnessTracker } from "../../../components/fitness-tracker"
 import { Scoreboard } from "../../../components/scoreboard"
 import { NFTRewards } from "../../../components/nft-rewards"
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "../../../components/ui/card1"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs"
 import { Activity, Trophy, Award } from "lucide-react"
 
