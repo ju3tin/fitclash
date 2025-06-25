@@ -4,6 +4,7 @@ import "./globals1.css";
 import { Analytics } from "@vercel/analytics/react";
 import Header from "../../components/header";
 import Script from "next/script";
+import { SolanaProvider } from "../../components/solanaprovider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
   children: React.ReactNode;
 }>) {
@@ -49,8 +50,10 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Header />
-        {children}
+        <SolanaProvider>
+          <Header />
+          {children}
+        </SolanaProvider>
         <Analytics />
       </body> 
       <Script src="./javascript/leg1.js" />
