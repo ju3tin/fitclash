@@ -1113,7 +1113,7 @@ dude34()
         {/* Local Video */}
         <Card>
           <CardContent className="p-0 relative">
-            <div className="relative aspect-video bg-black">
+            <div className="relative aspect-video">
             <GLBLoader
                 modelPath="/models/glb1/model1.glb"
                 width={500} 
@@ -1195,8 +1195,8 @@ dude34()
               <canvas style={{display:'none'}} ref={remoteCanvasRef} className="absolute inset-0 w-full h-full object-contain z-10" />
 
               {!remoteStream && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white">
-                  <p>Remote video will appear here</p>
+                <div className="absolute inset-0 flex items-center justify-center text-white">
+                  <p>Remote avatop will appear here</p>
                 </div>
               )}
             </div>
