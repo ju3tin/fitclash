@@ -1136,7 +1136,7 @@ dude34()
                   }
                 }}
               />
-              <canvas ref={localCanvasRef} className="absolute inset-0 w-full h-full object-contain z-10" />
+              <canvas style={{display:'none'}} ref={localCanvasRef} className="absolute inset-0 w-full h-full object-contain z-10" />
 
               {!localStream && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white">
@@ -1192,7 +1192,7 @@ dude34()
                   }
                 }}
               />
-              <canvas ref={remoteCanvasRef} className="absolute inset-0 w-full h-full object-contain z-10" />
+              <canvas style={{display:'none'}} ref={remoteCanvasRef} className="absolute inset-0 w-full h-full object-contain z-10" />
 
               {!remoteStream && (
                 <div className="absolute inset-0 flex items-center justify-center bg-black/60 text-white">
