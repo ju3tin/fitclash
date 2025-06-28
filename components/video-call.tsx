@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react"
 import axios from 'axios';
 import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
+import GLBLoader from "./GLBLoader";
 //import MessageSender from './pubnunb';
 //import { useSearchParams } from 'next/navigation'
 //import clientPromise from '../lib/mongodb';
@@ -1113,6 +1114,13 @@ dude34()
         <Card>
           <CardContent className="p-0 relative">
             <div className="relative aspect-video bg-black">
+            <GLBLoader
+                modelPath="/models/gameicon.glb"
+                width={500} 
+                height={400}
+                backgroundColor="#e5e7eb"
+                autoRotate={false}
+              />
               <video
                 ref={localVideoRef}
                 className="absolute inset-0 w-full h-full object-contain"

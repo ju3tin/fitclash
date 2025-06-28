@@ -96,7 +96,7 @@ export default function HomeContent() {
             width={500} 
             height={400}
             backgroundColor="#e5e7eb"
-            autoRotate={true}
+            autoRotate={false}
           />
         </div>
         <p className="text-gray-600 mt-2">
