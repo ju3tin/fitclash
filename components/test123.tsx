@@ -92,7 +92,7 @@ export default function HomeContent() {
         <h2 className="text-2xl font-bold text-gray-700 mb-4">3D Model Viewer</h2>
         <div className="flex justify-center">
           <GLBLoader 
-            modelPath="/models/your-model.glb" 
+            modelPath="/models/Xbot.glb" 
             width={500} 
             height={400}
             backgroundColor="#e5e7eb"
