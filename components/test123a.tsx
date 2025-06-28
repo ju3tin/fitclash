@@ -2,9 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import VideoCall from "./video-call";
+import VideoCall from "./video-call6";
 import Form from "./form";
-import GLBLoader from "./GLBLoader";
 
 export default function HomeContent() {
   const searchParams = useSearchParams();
@@ -79,30 +78,7 @@ export default function HomeContent() {
         )}
       </div>
 
-      <VideoCall
-        onSelect={handleSelect}
-        gameFromUrl={gameFromUrl}
-        selectedGameData={selectedGameData}
-        setSelectedGameData={setSelectedGameData}
-        hideOverlay={hideOverlay}
-      />
-
-      {/* GLB Model Demo Section */}
-      <div className="mt-8 text-center">
-        <h2 className="text-2xl font-bold text-gray-700 mb-4">3D Model Viewer</h2>
-        <div className="flex justify-center">
-          <GLBLoader 
-            modelPath="/models/your-model.glb" 
-            width={500} 
-            height={400}
-            backgroundColor="#e5e7eb"
-            autoRotate={true}
-          />
-        </div>
-        <p className="text-gray-600 mt-2">
-          Place your GLB file in the public/models/ directory and update the modelPath above
-        </p>
-      </div>
+      <VideoCall/>
     </>
   );
 }
