@@ -1170,6 +1170,13 @@ dude34()
         <Card>
           <CardContent className="p-0 relative">
             <div className="relative aspect-video bg-black">
+              <GLBLoader
+                modelPath="/models/gameicon.glb"
+                width={500} 
+                height={400}
+                backgroundColor="#e5e7eb"
+                autoRotate={false}
+              />
               <video
                 ref={remoteVideoRef}
                 className="absolute inset-0 w-full h-full object-contain"
