@@ -16,6 +16,7 @@ const Sidebar = () => {
           <Link href="/faq" className="block py-2 px-4 hover:bg-gray-700 rounded">Faq</Link>
           <Link href="/games" className="block py-2 px-4 hover:bg-gray-700 rounded">Games</Link>
           <Link href="/app1" className="block py-2 px-4 hover:bg-gray-700 rounded">Launch App</Link>
+          <Link href="/nft" className="block py-2 px-4 hover:bg-gray-700 rounded">Dashbaord</Link>
         </nav>
    </>
   
