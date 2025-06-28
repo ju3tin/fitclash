@@ -77,8 +77,15 @@ export default function HomeContent() {
           </p>
         )}
       </div>
-
-      <VideoCall/>
+<div className="" >
+      <VideoCall
+        onSelect={handleSelect}
+        gameFromUrl={gameFromUrl}
+        selectedGameData={selectedGameData}
+        setSelectedGameData={setSelectedGameData}
+        hideOverlay={hideOverlay}
+      />
+      </div>
     </>
   );
 }

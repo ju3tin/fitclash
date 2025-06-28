@@ -1,6 +1,35 @@
 "use client"
 
-import { useEffect, useRef, useState } from 'react';
+
+import { useRef, useState, useEffect } from "react"
+import axios from 'axios';
+import GameIcon from '../assets/gameicon.svg'; // Path to your SVG file
+//import MessageSender from './pubnunb';
+//import { useSearchParams } from 'next/navigation'
+//import clientPromise from '../lib/mongodb';
+//import client from "../lib/mongodb";
+//import { GetServerSideProps } from 'next';
+import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
+
+//import MessageSender from "./pubnunb"
+
+//import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
+import { NextResponse } from 'next/server';
+import * as tf from "@tensorflow/tfjs"
+import * as posedetection from "@tensorflow-models/pose-detection"
+import { Button } from "./ui/button"
+import { Card, CardContent } from "./ui/card"
+import { Label } from "./ui/label"
+//import RandomUrlGenerator from "./RandomUrlGenerator"
+import { Textarea } from "./ui/textarea"
+import { drawPose } from "../utils/drawing"
+import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-service"
+import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check, Wallet2 } from "lucide-react"
+import PubNub from 'pubnub';
+import { useSearchParams } from 'next/navigation';
+
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
@@ -11,6 +40,36 @@ interface GLBLoaderProps {
   height?: number;
   backgroundColor?: string;
   autoRotate?: boolean;
+}
+
+
+interface VideoCallProps {
+  onSelect: (room: any, game: any, betAmount: number, duration: { hours: number; minutes: number; seconds: number }) => void;
+  selectedGameData: {
+    game: any;
+    betAmount: number;
+    duration: { hours: number; minutes: number; seconds: number };
+  } | null;
+  gameFromUrl: string | null;
+  setSelectedGameData: (data: any) => void;
+  hideOverlay: () => void;
+}
+
+const generateRandomUUID = () => {
+  return 'user-' + Math.random().toString(36).substring(2, 10);
+};
+
+interface GameSessionData {
+  room: string;
+  game: any; // Replace 'any' with the actual type of your game object if known
+  betAmount: number;
+  duration: { hours: number; minutes: number; seconds: number };
+  offer: string;
+  timestamp: string;
+  offerread: string; 
+}
+interface gameFromUrl {
+  gameFromUrl: string | null;
 }
 
 const ThreeScene: React.FC<GLBLoaderProps> = ({ 
@@ -37,7 +96,7 @@ const ThreeScene: React.FC<GLBLoaderProps> = ({
 
     // Camera setup
     const camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000);
-    camera.position.set(0, 0, 5);
+    camera.position.set(0, 0, 2);
 
     // Renderer setup
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -113,6 +172,8 @@ const ThreeScene: React.FC<GLBLoaderProps> = ({
     };
     animate();
 
+     
+
     // Cleanup
     return () => {
       if (mountRef.current && renderer.domElement) {
@@ -163,7 +224,7 @@ const ThreeScene: React.FC<GLBLoaderProps> = ({
 };
 
 // Multiple GLB Loaders Component
-const MultipleGLBLoaders: React.FC = () => {
+export default function MultipleGLBLoaders({ onSelect, selectedGameData, gameFromUrl, setSelectedGameData, hideOverlay }: VideoCallProps) {
   const [models, setModels] = useState([
     { id: 1, path: '/models/glb1/model1.glb', name: 'Model 1' },
     { id: 2, path: '/models/glb2/model2.glb', name: 'Model 2' }
@@ -183,35 +244,21 @@ const MultipleGLBLoaders: React.FC = () => {
   };
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Multiple GLB Loaders</h2>
-        <button 
-          onClick={addModel}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Add Model
-        </button>
-      </div>
-      
+    <div style={{ textAlign: 'center' }}
+   >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {models.map((model) => (
           <div key={model.id} className="bg-white p-4 rounded-lg shadow-md">
             <div className="flex justify-between items-center mb-3">
               <h3 className="font-semibold">{model.name}</h3>
-              <button 
-                onClick={() => removeModel(model.id)}
-                className="text-red-500 hover:text-red-700 text-sm"
-              >
-                Remove
-              </button>
+             
             </div>
             <ThreeScene
               modelPath={model.path}
               width={300}
               height={250}
               backgroundColor="#f8f9fa"
-              autoRotate={true}
+              autoRotate={false}
             />
             <p className="text-sm text-gray-600 mt-2">{model.path}</p>
           </div>
@@ -220,5 +267,3 @@ const MultipleGLBLoaders: React.FC = () => {
     </div>
   );
 };
-
-export default MultipleGLBLoaders;
