@@ -1,0 +1,18 @@
+{
+    "features": [
+      "Login",
+      "Send a Chat Message",
+      "React to a message (Emoji)",
+      "Open a Message's Thread",
+      "Pin a Message",
+      "Quote a Message",
+      "Open your Profile Settings",
+      "Open the Chat Settings",
+      "Create a new Private Group",
+      "Change the Private Group name",
+      "Create a new 1:1 (Direct) Chat",
+      "@Mention another User",
+      "#Reference a Channel",
+      "Leave a Private Group"
+    ]
+}
