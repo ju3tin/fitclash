@@ -87,7 +87,7 @@ export default function HomeContent() {
         hideOverlay={hideOverlay}
       />
 
-      {/* GLB Model Demo Section */}
+      {/* GLB Model Demo Section
       <div className="mt-8 text-center">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">3D Model Viewer</h2>
         <div className="flex justify-center">
@@ -103,6 +103,7 @@ export default function HomeContent() {
           Place your GLB file in the public/models/ directory and update the modelPath above
         </p>
       </div>
+      */}
     </>
   );
 }
