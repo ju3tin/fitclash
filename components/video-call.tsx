@@ -1122,6 +1122,7 @@ dude34()
                 autoRotate={false}
               />
               <video
+              style={{display:'none'}}
                 ref={localVideoRef}
                 className="absolute inset-0 w-full h-full object-contain"
                 autoPlay
@@ -1178,6 +1179,7 @@ dude34()
                 autoRotate={false}
               />
               <video
+              style={{display:'none'}}
                 ref={remoteVideoRef}
                 className="absolute inset-0 w-full h-full object-contain"
                 autoPlay
