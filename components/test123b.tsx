@@ -6,7 +6,7 @@ import VideoCall from "./video-calla";
 import Form from "./form";
 import GLBLoader from "./GLBLoader";
 
-export default function HomeContent({ digits }: { digits?: number }) {
+export default function HomeContent({ digits, room }: { digits?: number, room?: string }) {
   const searchParams = useSearchParams();
   const gameFromUrl = searchParams ? searchParams.get("game") : null;
 
@@ -91,6 +91,7 @@ export default function HomeContent({ digits }: { digits?: number }) {
         setSelectedGameData={setSelectedGameData}
         hideOverlay={hideOverlay}
         digits={digits}
+        room={room}
       />
 
       {/* GLB Model Demo Section

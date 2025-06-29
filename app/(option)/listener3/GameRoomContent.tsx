@@ -10,7 +10,7 @@ import HomeContent from "../../../components/test123b";
 export default function GameRoomPage() {
   const searchParams = useSearchParams();
   const [digits] = useState(() => Math.floor(Math.random() * 9000000000) + 1000000000);
-  const room = searchParams?.get('room') || `game-room-${digits}`;
+  const room = searchParams?.get('room') || `${digits}`;
   const uuid = searchParams?.get('uuid') || `player-${Math.floor(Math.random() * 10000)}`;
 
   const [messages, setMessages] = useState<string[]>([]);
@@ -83,7 +83,7 @@ export default function GameRoomPage() {
       <h2 className="text-lg">Your ID: {uuid}</h2>
       <h3 className="text-lg">Players in room: {players.size}</h3>
      
-        <HomeContent digits={digits} />
+        <HomeContent digits={digits} room={room} />
      
       <div className="max-h-64 overflow-y-auto border p-4 rounded space-y-2">
         {messages.map((msg, idx) => (

@@ -43,6 +43,7 @@ interface VideoCallProps {
   setSelectedGameData: (data: any) => void;
   hideOverlay: () => void;
   digits?: number; // Optional digits prop
+  room?: string; // Optional room prop
 }
 
 const generateRandomUUID = () => {
@@ -61,7 +62,7 @@ interface GameSessionData {
 interface gameFromUrl {
   gameFromUrl: string | null;
 }
-export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, setSelectedGameData, hideOverlay, digits }: VideoCallProps) {
+export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, setSelectedGameData, hideOverlay, digits, room }: VideoCallProps) {
   console.log("Game from URL:", gameFromUrl);
 
 
