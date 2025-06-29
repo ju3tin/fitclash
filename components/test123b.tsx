@@ -6,7 +6,7 @@ import VideoCall from "./video-call";
 import Form from "./form";
 import GLBLoader from "./GLBLoader";
 
-export default function HomeContent() {
+export default function HomeContent({ digits }: { digits?: number }) {
   const searchParams = useSearchParams();
   const gameFromUrl = searchParams ? searchParams.get("game") : null;
 
@@ -58,6 +58,11 @@ export default function HomeContent() {
 
   return (
     <>
+      {/* Display digits for testing */}
+      {digits && (
+        <div style={{ color: 'red', fontWeight: 'bold' }}>Digits: {digits}</div>
+      )}
+
       {isOverlayVisible && (
         <Form setOverlayVisible={setOverlayVisible} onSelect={handleSelect} />
       )}

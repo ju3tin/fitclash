@@ -82,7 +82,7 @@ export default function GameRoomPage() {
       <h1 className="text-2xl font-bold">Game Room: {room}</h1>
       <h2 className="text-lg">Your ID: {uuid}</h2>
       <h3 className="text-lg">Players in room: {players.size}</h3>
-      <HomeContent />
+      <HomeContent digits={digits} />
 
       <div className="max-h-64 overflow-y-auto border p-4 rounded space-y-2">
         {messages.map((msg, idx) => (
