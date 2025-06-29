@@ -10,7 +10,8 @@ import HomeContent from "../../../components/test123b";
 export default function GameRoomPage() {
   const searchParams = useSearchParams();
   const [digits] = useState(() => Math.floor(Math.random() * 9000000000) + 1000000000);
-  const room = searchParams?.get('room') || `${digits}`;
+  const roomParam = searchParams?.get('room');
+  const room = roomParam ? roomParam : `${digits}`;
   const uuid = searchParams?.get('uuid') || `player-${Math.floor(Math.random() * 10000)}`;
 
   const [messages, setMessages] = useState<string[]>([]);
