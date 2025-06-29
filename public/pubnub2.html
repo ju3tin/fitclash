@@ -81,7 +81,7 @@ input.addEventListener('keypress', function (e) {
   <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.8.2.5.min.js"></script>
   <script>var countTx = 0, countRx = 0, id = 'user_' + Math.random();
     (function () {
-      var pubnub = new PubNub({publishKey: 'demo', subscribeKey: 'demo', userId: id}); // Your PubNub keys here. Get them from https://dashboard.pubnub.com.
+      var pubnub = new PubNub({publishKey: 'pub-c-561a7378-fa06-4c50-a331-5c0056d0163c', subscribeKey: 'sub-c-17b7db8a-3915-11e4-9868-02ee2ddab7fe', userId: id}); // Your PubNub keys here. Get them from https://dashboard.pubnub.com.
       var box = document.getElementById("outputDiv"), input = document.getElementById("input"), channel = '10chat';
       pubnub.addListener({
         message: function (m) {
