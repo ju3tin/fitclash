@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import PubNub from 'pubnub';
 import ChatMessages from '../../../components/ChatMessages';
-import ChatInput from '../../../components/chatinput';
+import ChatInput from '../../../components/ChatInput';
 
 export default function HomePage() {
   const [messages, setMessages] = useState<string[]>([]);
