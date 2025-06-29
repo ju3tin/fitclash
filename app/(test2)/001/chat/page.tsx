@@ -13,7 +13,6 @@ import {
   Message as pnMessage
 } from '@pubnub/chat'
 import Image from 'next/image'
-import { roboto } from '@/app/fonts'
 import Header from './ui-components/header'
 import ChatSelectionMenu from './ui-components/chatSelectionMenu'
 import Avatar from './ui-components/avatar'
@@ -42,14 +41,19 @@ import {
   ChatEventTypes,
   UnreadMessagesOnChannel,
   PresenceIcon
-} from '@/app/types'
-import { getAuthKey } from "@/app/getAuthKey"
-import { actionCompleted } from 'pubnub-demo-integration'
+} from '../types'
+import { getAuthKey } from "../getAuthKey"
+
+// Mock function for demo integration
+const actionCompleted = (params: any) => {
+  // No-op function for demo integration
+  console.log('Action completed:', params);
+}
 
 export default function Page () {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [userId, setUserId] = useState<String | null>('')
+  const [userId, setUserId] = useState<string | null>(null)
   const [chat, setChat] = useState<Chat | null>(null)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [guidedDemo, setGuidedDemo] = useState<String | null>(null)
@@ -318,7 +322,7 @@ export default function Page () {
   /* Initialization logic */
   useEffect(() => {
     async function init () {
-      setUserId(searchParams.get('userId'))
+      setUserId(searchParams?.get('userId') || null)
       if (userId == null || userId === '') {
         setLoadMessage('Retrieving User ID')
         return
@@ -345,7 +349,7 @@ export default function Page () {
         typingTimeout: 5000,
         storeUserActivityTimestamps: true,
         storeUserActivityInterval: 300000, /* 5 minutes */
-        authKey: accessManagerToken,
+        authKey: accessManagerToken?.toString(),
       })
       setChat(localChat)
       setCurrentUser(localChat.currentUser)
@@ -566,8 +570,10 @@ export default function Page () {
               ;(publicChannel as any).name = channels[index].name
             }
             if (channels[index].custom?.profileUrl) {
-              publicChannel.custom.profileUrl =
-                channels[index].custom.profileUrl
+              if (publicChannel.custom) {
+                publicChannel.custom.profileUrl =
+                  channels[index].custom.profileUrl
+              }
             }
             return publicChannel
           }
@@ -825,7 +831,7 @@ export default function Page () {
   }
 
   function logout () {
-    const identifier = searchParams.get('identifier')
+    const identifier = searchParams?.get('identifier')
     if (identifier)
       {
         router.replace(`/?identifier=${identifier}`)
