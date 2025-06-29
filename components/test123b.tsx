@@ -2,7 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import VideoCall from "./video-call";
+import VideoCall from "./video-calla";
 import Form from "./form";
 import GLBLoader from "./GLBLoader";
 
@@ -90,6 +90,7 @@ export default function HomeContent({ digits }: { digits?: number }) {
         selectedGameData={selectedGameData}
         setSelectedGameData={setSelectedGameData}
         hideOverlay={hideOverlay}
+        digits={digits}
       />
 
       {/* GLB Model Demo Section
