@@ -78,14 +78,14 @@ export default function GameRoomPage() {
   };
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <div className="p-8 max-w-2xl mx-auto space-y-4">
       <h1 className="text-2xl font-bold">Game Room: {room}</h1>
       <h2 className="text-lg">Your ID: {uuid}</h2>
       <h3 className="text-lg">Players in room: {players.size}</h3>
-      <Suspense fallback={<div>Loading...</div>}>
+     
         <HomeContent digits={digits} />
-      </Suspense>
-
+     
       <div className="max-h-64 overflow-y-auto border p-4 rounded space-y-2">
         {messages.map((msg, idx) => (
           <div key={idx} className="p-2 bg-gray-100 rounded">
@@ -107,5 +107,7 @@ export default function GameRoomPage() {
         </button>
       </div>
     </div>
+    </Suspense>
+
   );
 }
