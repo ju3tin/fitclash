@@ -14,7 +14,7 @@ let players = new Set();
 pubnub.subscribe({ channels: [room], withPresence: true });
 
 pubnub.addListener({
-    message: function(event) {
+    message: function(event) { 
         const messageArea = document.getElementById('messages');
         const msg = `${event.publisher}: ${event.message.text}`;
         const p = document.createElement('p');
