@@ -1124,7 +1124,7 @@ dude34()
         {/* Local Video */}
         <Card>
           <CardContent className="p-0 relative">
-            <div className="relative aspect-video">
+            <div className="relative aspect-video" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
             <GLBLoader
                 modelPath="/models/glb1/model1.glb"
                 width={500} 
@@ -1181,7 +1181,7 @@ dude34()
         {/* Remote Video */}
         <Card>
           <CardContent className="p-0 relative">
-            <div className="relative aspect-video">
+            <div className="relative aspect-video" style={{display:'flex', justifyContent:'center', alignItems:'center'}}>
               <GLBLoader
                 modelPath="/models/glb2/model2.glb"
                 width={500} 
