@@ -136,7 +136,7 @@ export default function VideoCall({ onSelect, selectedGameData, gameFromUrl, set
         console.log(result);
     
         if (data) {
-          const newUrl4 = `https://fitclash.vercel.app/videocall3?token=${data.room}`;
+          const newUrl4 = `https://fitclash.vercel.app/listener3?room=${room}`;
           setUrl(newUrl4);
           setCopied(false);
           done2d(true)
