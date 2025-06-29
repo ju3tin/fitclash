@@ -12,8 +12,8 @@ export default function HomePage() {
 
   useEffect(() => {
     const pubnub = new PubNub({
-      publishKey: process.env.NEXT_PUBLIC_PUBNUB_PUBLISH_KEY as string,
-      subscribeKey: process.env.NEXT_PUBLIC_PUBNUB_SUBSCRIBE_KEY as string,
+      publishKey: process.env.PUBNUB_PUBLISH_KEY as string,
+      subscribeKey: process.env.PUBNUB_SUBSCRIBE_KEY as string,
       uuid: uuid,
     });
 
