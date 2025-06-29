@@ -29,6 +29,8 @@ import { WebRTCService, type PeerEventCallbacks } from "../services/webrtc-servi
 import { Loader2, Camera, CameraOff, Phone, PhoneOff, Copy, Check, Wallet2 } from "lucide-react"
 import PubNub from 'pubnub';
 import { useSearchParams } from 'next/navigation';
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader';
 
 interface VideoCallProps {
   onSelect: (room: any, game: any, betAmount: number, duration: { hours: number; minutes: number; seconds: number }) => void;
