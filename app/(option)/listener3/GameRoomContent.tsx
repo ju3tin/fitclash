@@ -78,7 +78,7 @@ export default function GameRoomPage() {
   };
 
   return (
-    <div className="p-8 max-w-2xl mx-auto space-y-4">
+    <div className="">
       <h1 className="text-2xl font-bold">Game Room: {room}</h1>
       <h2 className="text-lg">Your ID: {uuid}</h2>
       <h3 className="text-lg">Players in room: {players.size}</h3>
