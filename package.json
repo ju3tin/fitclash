@@ -135,6 +135,7 @@
     "viem": "^2.21.41",
     "wagmi": "^2.12.29",
     "ws": "^8.18.3",
+    "xrpl": "^4.3.0",
     "youtube-dl-exec": "2.4.6"
   },
   "devDependencies": {

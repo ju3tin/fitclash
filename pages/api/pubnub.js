@@ -2,7 +2,7 @@
 import PubNub from 'pubnub';
 
 export default async function handler(req, res) {
-  const { channel, message, uuid } = req.query;
+  const { channel, uuid } = req.query;
 
   if (!channel) {
     return res.status(400).json({ error: 'Channel parameter is required.' });
@@ -15,11 +15,11 @@ export default async function handler(req, res) {
   const pubnub = new PubNub({
     publishKey: process.env.PUBNUB_PUBLISH_KEY,
     subscribeKey: process.env.PUBNUB_SUBSCRIBE_KEY,
-    uuid: uuid, // Use dynamic UUID
+    uuid: uuid,
   });
 
   if (req.method === 'GET') {
-    // Fetch last 10 messages from the channel
+    // Fetch last 10 messages
     try {
       const history = await pubnub.fetchMessages({
         channels: [channel],
@@ -33,12 +33,14 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'POST') {
-    // Send a message to the channel
-    try {
-      if (!message) {
-        return res.status(400).json({ error: 'Message parameter is required.' });
-      }
+    // Send message (message should be in request body)
+    const { message } = req.body;
 
+    if (!message) {
+      return res.status(400).json({ error: 'Message parameter is required in request body.' });
+    }
+
+    try {
       await pubnub.publish({
         channel: channel,
         message: message,
