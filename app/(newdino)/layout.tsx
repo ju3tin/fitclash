@@ -5,7 +5,7 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
 import axios from "axios";
 import axiosInstance from '../../lib/axiosInstance';
 import { SolanaProvider } from "../../components/solanaprovider";
-
+import Script from 'next/script';
 
 export default function RootLayout({
     children,
@@ -32,7 +32,11 @@ export default function RootLayout({
           <meta name="twitter:title" content="FitClash" />
           <meta name="twitter:description" content="FitClash - Fitness Competition Platform" />
           <meta name="twitter:image" content="https://fitclash.vercel.app/images/logo3.png" />
-          
+          <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+          <link rel="stylesheet" href="/assets/css/index1.css" />
+          <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet" />
+          <Script src="/assets/js/index1.js" strategy="beforeInteractive" />
+    
           <title>FitClash</title>
         </head>
         <body className="layout--splash" dir="ltr">
