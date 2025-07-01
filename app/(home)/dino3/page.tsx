@@ -57,7 +57,7 @@ export default function Home() {
            </template>
           </div>
         </div>
-        <div dangerouslySetInnerHTML={{ __html: htmlContent }} />
+       {/*  <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
         <div id="info1">Info Text</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" />
