@@ -59,7 +59,7 @@ export default function Home() {
         </div>
        {/*  <div dangerouslySetInnerHTML={{ __html: htmlContent }} /> */}
         <div id="info1">Info Text</div>
-
+        <Script src="/assets/js/2nd.js" strategy="afterInteractive" />
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs" />
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection" />
         <Script src="/assets/js/1st.js" strategy="afterInteractive" />
