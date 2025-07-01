@@ -1,14 +1,17 @@
 'use client';
 import { useRef, useEffect, useState } from 'react';
+import * as tf from '@tensorflow/tfjs';
+import * as posedetection from '@tensorflow-models/pose-detection';
+import '@tensorflow/tfjs-backend-webgl';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { Suspense } from "react";
 import Header from "../../../components/header";
-import { SolanaProvider } from "../../../components/solanaprovider";
-
 
 export default function DinoGame() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [detector, setDetector] = useState<posedetection.PoseDetector | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
@@ -16,6 +19,59 @@ export default function DinoGame() {
   const scoreRef = useRef(0);
 
   const { connected } = useWallet();
+
+  // MoveNet Setup
+  useEffect(() => {
+    const setupCamera = async () => {
+      const video = videoRef.current;
+      if (!video) return;
+
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { width: 640, height: 480 },
+        audio: false,
+      });
+      video.srcObject = stream;
+      await video.play();
+    };
+
+    const loadDetector = async () => {
+      await tf.setBackend('webgl');
+      const loadedDetector = await posedetection.createDetector(posedetection.SupportedModels.MoveNet, {
+        modelType: posedetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
+      });
+      setDetector(loadedDetector);
+    };
+
+    setupCamera();
+    loadDetector();
+  }, []);
+
+  const detectJump = async (jumpCallback: () => void) => {
+    if (!detector || !videoRef.current) return;
+
+    const video = videoRef.current;
+    const poses = await detector.estimatePoses(video);
+
+    if (poses.length > 0) {
+      const keypoints = poses[0].keypoints;
+
+      const leftHip = keypoints.find((k) => k.name === 'left_hip');
+      const rightHip = keypoints.find((k) => k.name === 'right_hip');
+
+      if (
+        leftHip && rightHip &&
+        leftHip.score !== undefined && rightHip.score !== undefined &&
+        leftHip.score > 0.5 && rightHip.score > 0.5
+      ) {
+        const avgY = (leftHip.y + rightHip.y) / 2;
+
+        // Use a simple threshold for jump detection
+        if (avgY < 250) { // Adjust this threshold based on testing
+          jumpCallback();
+        }
+      }
+    }
+  };
 
   useEffect(() => {
     if (!isRunning) return;
@@ -44,7 +100,7 @@ export default function DinoGame() {
 
     document.addEventListener('keydown', handleKeyDown);
 
-    const gameLoop = () => {
+    const gameLoop = async () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw ground
@@ -92,6 +148,9 @@ export default function DinoGame() {
         }
       }
 
+      // Jump Detection
+      await detectJump(jump);
+
       // Update score
       if (frameCount % 5 === 0) {
         scoreRef.current += 1;
@@ -108,7 +167,7 @@ export default function DinoGame() {
       document.removeEventListener('keydown', handleKeyDown);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [isRunning]);
+  }, [isRunning, detector]);
 
   const resetGame = () => {
     scoreRef.current = 0;
@@ -120,45 +179,46 @@ export default function DinoGame() {
   if (!connected) {
     return (
       <>
-      <Header />
-      <Suspense fallback={<div>Loading...</div>}>
-       
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-        <h1 className="text-3xl font-bold mb-4">Connect Your Solana Wallet to Play</h1>
-        <WalletMultiButton />
-      </div>
-      </Suspense>
+        <Header />
+        <Suspense fallback={<div>Loading...</div>}>
+          <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+            <h1 className="text-3xl font-bold mb-4">Connect Your Solana Wallet to Play</h1>
+            <WalletMultiButton />
+          </div>
+        </Suspense>
       </>
     );
   }
 
   return (
     <>
-    <Header />
-    <Suspense fallback={<div>Loading...</div>}>
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
-      <h1 className="text-3xl font-bold mb-4">Chrome Dino Game</h1>
-      <canvas ref={canvasRef} width={800} height={300} className="border border-black" />
+      <Header />
+      <Suspense fallback={<div>Loading...</div>}>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+          <h1 className="text-3xl font-bold mb-4">Chrome Dino Game (Jump with Your Body!)</h1>
+          <canvas ref={canvasRef} width={800} height={300} className="border border-black" />
 
-      <div className="mt-4 text-xl">Score: {score}</div>
-      <div className="mt-2 text-xl">High Score: {highScore}</div>
+          <video ref={videoRef} width={640} height={480} className="mt-4" autoPlay muted />
 
-      {!isRunning && !gameOver && (
-        <button onClick={() => setIsRunning(true)} className="mt-4 px-4 py-2 bg-black text-white rounded">
-          Start Game
-        </button>
-      )}
+          <div className="mt-4 text-xl">Score: {score}</div>
+          <div className="mt-2 text-xl">High Score: {highScore}</div>
 
-      {gameOver && (
-        <div className="flex flex-col items-center">
-          <div className="text-2xl font-bold text-red-600 mt-4">Game Over!</div>
-          <button onClick={resetGame} className="mt-4 px-4 py-2 bg-black text-white rounded">
-            Restart Game
-          </button>
+          {!isRunning && !gameOver && (
+            <button onClick={() => setIsRunning(true)} className="mt-4 px-4 py-2 bg-black text-white rounded">
+              Start Game
+            </button>
+          )}
+
+          {gameOver && (
+            <div className="flex flex-col items-center">
+              <div className="text-2xl font-bold text-red-600 mt-4">Game Over!</div>
+              <button onClick={resetGame} className="mt-4 px-4 py-2 bg-black text-white rounded">
+                Restart Game
+              </button>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-    </Suspense>
+      </Suspense>
     </>
   );
 }
