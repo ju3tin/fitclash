@@ -80,13 +80,13 @@ export default function DinoGame() {
         obstacles[i].x -= 6;
   
         // Draw obstacle as image
-        ctx.drawImage(obstacleImage, obstacles[i].x, 230, obstacles[i].width, 70);
+        ctx.drawImage(obstacleImage, obstacles[i].x, 250, obstacles[i].width, 70);
   
         // Check collision
         if (
           dino.x < obstacles[i].x + obstacles[i].width &&
           dino.x + dino.width > obstacles[i].x &&
-          dino.y + dino.height > 230
+          dino.y + dino.height > 250
         ) {
           setIsRunning(false);
           setGameOver(true);
