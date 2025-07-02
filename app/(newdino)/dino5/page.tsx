@@ -32,7 +32,7 @@ export default function DinoGame() {
     const obstacleImage = new Image();
     obstacleImage.src = '/images/gor.png'; // Path to your obstacle image
   
-    const dino = { x: 100, y: 250, width: 100, height: 100, velocity: 0, gravity: 0.6, jumping: false };
+    const dino = { x: 50, y: 200, width: 100, height: 100, velocity: 0, gravity: 0.6, jumping: false };
     const obstacles: { x: number; width: number; }[] = [];
     let obstacleTimer = 0;
     let animationFrameId: number;
@@ -64,8 +64,8 @@ export default function DinoGame() {
       // Update Dino position
       dino.velocity += dino.gravity;
       dino.y += dino.velocity;
-      if (dino.y >= 250) {
-        dino.y = 250;
+      if (dino.y >= 200) {
+        dino.y = 200;
         dino.jumping = false;
       }
   
@@ -80,13 +80,13 @@ export default function DinoGame() {
         obstacles[i].x -= 6;
   
         // Draw obstacle as image
-        ctx.drawImage(obstacleImage, obstacles[i].x, 270, obstacles[i].width, 30);
+        ctx.drawImage(obstacleImage, obstacles[i].x, 230, obstacles[i].width, 70);
   
         // Check collision
         if (
           dino.x < obstacles[i].x + obstacles[i].width &&
           dino.x + dino.width > obstacles[i].x &&
-          dino.y + dino.height > 270
+          dino.y + dino.height > 230
         ) {
           setIsRunning(false);
           setGameOver(true);
