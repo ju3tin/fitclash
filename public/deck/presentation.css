@@ -1,0 +1,138 @@
+:root {
+    --electric-blue: #00ffff; /* A vibrant cyan */
+    --neon-green: #39ff14; /* A vivid lime green */
+    --dark-bg: #0C0C0D;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+}
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    overflow: hidden; 
+    background-color: var(--dark-bg);
+    color: #E5E7EB; /* A light gray for better readability than pure white */
+}
+
+#presentation-container { 
+    position: relative; 
+    width: 100vw; 
+    height: 100vh; 
+}
+
+.presentation-slide {
+    position: absolute !important; 
+    inset: 0 !important; 
+    transition: opacity 0.8s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.8s !important;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    padding: 5vw; 
+    overflow: hidden; 
+    box-sizing: border-box;
+    opacity: 0; 
+    visibility: hidden; 
+    pointer-events: none; 
+    z-index: 1;
+}
+
+.presentation-slide:first-child {
+    opacity: 1; 
+    visibility: visible; 
+    pointer-events: auto; 
+    z-index: 2;
+}
+
+/* Base card styling */
+.card-base {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-base:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Text shadow for glow effect */
+.text-shadow-glow {
+    text-shadow: 0 0 8px rgba(0, 255, 255, 0.5), 0 0 20px rgba(0, 255, 255, 0.3);
+}
+
+
+/* Slide-specific gradients and styles */
+.bg-problem-gradient { background: radial-gradient(circle at 90% 10%, #3d1a22, var(--dark-bg) 60%); }
+.bg-solution-gradient { background: radial-gradient(circle at 10% 10%, #10333f, var(--dark-bg) 60%); }
+.bg-tech-gradient { background: radial-gradient(circle at 90% 90%, #1f3d2f, var(--dark-bg) 60%); }
+.bg-market-gradient { background: radial-gradient(circle at 10% 90%, #10333f, var(--dark-bg) 60%); }
+.bg-model-gradient { background: radial-gradient(ellipse at center, #1a233b, var(--dark-bg) 70%); }
+.bg-traction-gradient { background: radial-gradient(circle at 50% 0%, #1f3d2f, var(--dark-bg) 50%); }
+.bg-team-gradient { background: radial-gradient(ellipse at top, #1a233b, var(--dark-bg) 70%); }
+.bg-ask-gradient { background: radial-gradient(circle at 90% 10%, #10333f, var(--dark-bg) 70%); }
+
+/* Component styles */
+
+.tech-card {
+    @apply card-base text-center flex flex-col items-center;
+    border-color: rgba(57, 255, 20, 0.2);
+}
+.tech-card:hover {
+    border-color: rgba(57, 255, 20, 0.4);
+    box-shadow: 0 0 25px rgba(57, 255, 20, 0.1);
+}
+
+.market-card {
+    @apply card-base text-center;
+    border-color: rgba(0, 255, 255, 0.2);
+}
+.market-card:hover {
+    border-color: rgba(0, 255, 255, 0.4);
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.1);
+}
+.revenue-card {
+    @apply card-base text-left p-6;
+    border-color: var(--border-color);
+}
+.revenue-card:hover {
+    border-color: rgba(0, 255, 255, 0.4);
+}
+.traction-item {
+    @apply flex items-center gap-6 p-4 bg-white/5 rounded-2xl border border-white/10 w-full max-w-2xl mx-auto;
+    transition: all 0.3s ease;
+}
+.traction-item:hover {
+    transform: scale(1.03);
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: rgba(57, 255, 20, 0.4);
+}
+.traction-icon {
+    @apply p-4 bg-neon-green/10 rounded-full flex-shrink-0;
+}
+.gtm-phase {
+    @apply p-6 bg-white/5 rounded-2xl border border-white/10;
+    transition: all 0.3s ease;
+}
+.gtm-phase:hover {
+    transform: translateY(-5px);
+    border-color: var(--electric-blue);
+    background-color: rgba(0, 255, 255, 0.05);
+}
+
+.team-member {
+    @apply text-center;
+}
+
+[data-animate] {
+    opacity: 0;
+}
+
+.presentation-slide.layout-fullscreen { padding: 0; }
+@media (max-width: 768px) {
+    h1 { font-size: 3.5rem; }
+    h2 { font-size: 2rem; line-height: 2.5rem; }
+    .presentation-slide { padding: 1.5rem; }
+    .grid { grid-template-columns: 1fr !important; }
+}
