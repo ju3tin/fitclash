@@ -42,6 +42,17 @@
 </head>
 
 <body id="t" class="offline">
+    <div id="settings" style="position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 5px;">
+        <label>Top Line (%):
+          <input type="range" id="topLine" min="0" max="100" value="25">
+          <span id="topLineValue">25</span>
+        </label>
+        <br>
+        <label>Bottom Line (%):
+          <input type="range" id="bottomLine" min="0" max="100" value="75">
+          <span id="bottomLineValue">75</span>
+        </label>
+      </div>
     <div style="display: none;" class="topright">Top Right</div>
     <video id="video" playsinline autoplay muted></video>
     <canvas id="canvas"></canvas>
@@ -87,6 +98,18 @@
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
 <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection"></script>
 <script>
+
+let topLinePercent = 25;   // default: 25% down
+let bottomLinePercent = 75; // default: 75% down
+document.getElementById('topLine').addEventListener('input', (e) => {
+  topLinePercent = e.target.value;
+  document.getElementById('topLineValue').textContent = topLinePercent;
+});
+document.getElementById('bottomLine').addEventListener('input', (e) => {
+  bottomLinePercent = e.target.value;
+  document.getElementById('bottomLineValue').textContent = bottomLinePercent;
+});
+
     async function setup() {
         try {
             const video = document.getElementById('video');
@@ -283,18 +306,19 @@ if (keypoints[13].score > 0.3 && keypoints[15].score > 0.3) {
     ctx.lineWidth = 2; // Line width
     ctx.stroke();
 }
-ctx.beginPath();
-ctx.moveTo(0, canvas.height / 4); // Start at the middle of the canvas height
-ctx.lineTo(canvas.width, canvas.height / 4); // End at the middle of the canvas height
-ctx.strokeStyle = "red"; // Line color
-ctx.lineWidth = 3; // Line width
-ctx.stroke();
 
 ctx.beginPath();
-    ctx.moveTo(0, canvas.height * 0.75); // Start at 3/4 of the canvas height
-    ctx.lineTo(canvas.width, canvas.height * 0.75); // End at the full width of the canvas
-    ctx.strokeStyle = "red"; // Line color
-    ctx.lineWidth = 2; // Line width
+    ctx.moveTo(0, canvas.height * (topLinePercent / 100));
+    ctx.lineTo(canvas.width, canvas.height * (topLinePercent / 100));
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(0, canvas.height * (bottomLinePercent / 100));
+    ctx.lineTo(canvas.width, canvas.height * (bottomLinePercent / 100));
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 3;
     ctx.stroke();
 }
 
@@ -303,8 +327,8 @@ async function checkEyePosition(keypoints) {
                     const rightEye = keypoints[1]; // Right Eye
                     const leftHip = keypoints[11]; // Left Hip
                     const rightHip = keypoints[12]; // Right Hip
-                    const thresholdY = canvas.height / 4;
-                    const redLineY = canvas.height * 0.75;
+                    const thresholdY = canvas.height * (topLinePercent / 100);
+                    const redLineY = canvas.height * (bottomLinePercent / 100);
                     if(leftHip.y > redLineY || rightHip.y > redLineY) {
                         document.getElementById('info1').innerText = "Crouch";
                         //////////////////
